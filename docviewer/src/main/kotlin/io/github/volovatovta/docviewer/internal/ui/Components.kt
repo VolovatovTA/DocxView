@@ -40,6 +40,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -261,25 +262,33 @@ internal fun FastScrollbar(
         BoxWithConstraints(Modifier.fillMaxHeight().width(if (label != null) 160.dp else 36.dp)) {
             val density = LocalDensity.current
             val trackPx = with(density) { maxHeight.toPx() }
-            val thumbPx = (trackPx * visibleFraction()).coerceIn(with(density) { 44.dp.toPx() }, trackPx * 0.5f)
+            val maxThumb = trackPx * 0.5f
+            val thumbPx = (trackPx * visibleFraction()).coerceIn(minOf(with(density) { 44.dp.toPx() }, maxThumb), maxThumb)
+            val geometry by rememberUpdatedState(trackPx to thumbPx)
+            val scrollTo by rememberUpdatedState(onScrollTo)
             val position = if (dragging) dragFraction else fraction().coerceIn(0f, 1f)
             val thumbTop = ((trackPx - thumbPx) * position).roundToInt()
             val thumbWidth by animateFloatAsState(if (dragging) 8f else 5f, label = "thumbWidth")
             Box(
-                Modifier.align(Alignment.TopEnd).width(36.dp).fillMaxHeight().pointerInput(trackPx, thumbPx) {
-                    fun toFraction(y: Float) = ((y - thumbPx / 2) / (trackPx - thumbPx)).coerceIn(0f, 1f)
+                Modifier.align(Alignment.TopEnd).width(36.dp).fillMaxHeight().pointerInput(Unit) {
+                    // Geometry changes mid-drag in lazy lists, so it is read through updated state instead of restarting the gesture.
+                    fun toFraction(y: Float): Float {
+                        val (track, thumb) = geometry
+                        val range = track - thumb
+                        return if (range <= 0f) 0f else ((y - thumb / 2) / range).coerceIn(0f, 1f)
+                    }
                     detectVerticalDragGestures(
                         onDragStart = { offset ->
                             dragging = true
                             dragFraction = toFraction(offset.y)
-                            onScrollTo(dragFraction)
+                            scrollTo(dragFraction)
                         },
                         onDragEnd = { dragging = false },
                         onDragCancel = { dragging = false },
                     ) { change, _ ->
                         change.consume()
                         dragFraction = toFraction(change.position.y)
-                        onScrollTo(dragFraction)
+                        scrollTo(dragFraction)
                     }
                 },
             ) {

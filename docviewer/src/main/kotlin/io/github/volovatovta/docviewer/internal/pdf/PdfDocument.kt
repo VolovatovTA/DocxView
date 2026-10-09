@@ -104,6 +104,11 @@ internal class PdfDocument private constructor(
                 fd.close()
                 throw CorruptedDocumentException("Cannot open PDF", e)
             }
+            if (renderer.pageCount == 0) {
+                renderer.close()
+                fd.close()
+                throw CorruptedDocumentException("PDF has no pages")
+            }
             try {
                 val sizes = (0 until renderer.pageCount).map { i ->
                     renderer.openPage(i).use { page -> PdfPageSize(page.width.toFloat().coerceAtLeast(1f), page.height.toFloat().coerceAtLeast(1f)) }

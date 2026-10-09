@@ -33,6 +33,10 @@ import io.github.volovatovta.docviewer.internal.ui.ErrorView
 import io.github.volovatovta.docviewer.internal.ui.LoadingView
 import io.github.volovatovta.docviewer.internal.ui.PasswordView
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /** Shows a PDF, DOCX, DOC, CSV/TSV or plain-text document; a remembered [state] drives search, navigation and zoom. */
 @Composable
@@ -74,11 +78,20 @@ public fun DocumentViewer(
         state.resetForNewDocument()
         state.onSourceChanged(source)
         state.status = DocumentStatus.Loading()
+        val effectScope = this
         try {
-            val file = resolved ?: DocumentLoader.resolve(context, source) { progress -> state.status = DocumentStatus.Loading(progress) }
-                .also { resolved = it }
+            // Progress is posted through the effect scope so a cancelled load can never overwrite a newer status.
+            // Downloads stay cancellable; a copy orphaned by a late cancellation is swept from the cache within a day.
+            val file = resolved ?: DocumentLoader.resolve(context, source) { progress ->
+                effectScope.launch { state.status = DocumentStatus.Loading(progress) }
+            }.also { resolved = it }
             state.status = DocumentStatus.Loading()
-            val loaded = DocumentLoader.open(file, source, state.password, currentConfig.csvOptions)
+            // Opening is not cancellable midway, so a result that arrives after cancellation is closed here instead of leaking.
+            val loaded = withContext(NonCancellable) { DocumentLoader.open(file, source, state.password, currentConfig.csvOptions) }
+            if (!isActive) {
+                loaded.close()
+                throw CancellationException()
+            }
             document = loaded
             state.status = DocumentStatus.Ready(loaded.info)
         } catch (e: CancellationException) {

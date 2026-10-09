@@ -30,8 +30,14 @@ public sealed class DocumentSource {
         public val bytes: ByteArray,
         public val fileName: String? = null,
         override val format: DocumentFormat? = null,
-    ) : DocumentSource()
+    ) : DocumentSource() {
+        // Same array instance = same document, so an inline `DocumentSource.bytes(b)` does not reload on recomposition.
+        override fun equals(other: Any?): Boolean = other is FromBytes && other.bytes === bytes && other.fileName == fileName && other.format == format
 
+        override fun hashCode(): Int = System.identityHashCode(bytes) * 31 + (fileName?.hashCode() ?: 0)
+    }
+
+    // Compared by identity: remember it, or every recomposition starts a new load.
     public class FromStream(
         public val fileName: String? = null,
         override val format: DocumentFormat? = null,

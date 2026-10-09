@@ -172,7 +172,8 @@ internal object DocumentLoader {
             val name = disposition?.let { Regex("filename\\*?=(?:UTF-8'')?\"?([^\";]+)\"?").find(it)?.groupValues?.get(1) }
                 ?.let { runCatching { Uri.decode(it) }.getOrDefault(it) }
                 ?: url.path.substringAfterLast('/').takeIf { it.isNotEmpty() }?.let { Uri.decode(it) }
-            val length = connection.contentLengthLong.takeIf { it > 0 }
+            // URLConnection.contentLengthLong is API 24+.
+            val length = connection.getHeaderField("Content-Length")?.toLongOrNull()?.takeIf { it > 0 }
             return copyToCache(context, name, connection.contentType, length, onProgress) { connection.inputStream }
         } catch (e: IOException) {
             throw if (e is NetworkException) e else NetworkException("Download failed", e)
@@ -209,6 +210,7 @@ internal object DocumentLoader {
                             val progress = (copied.toFloat() / size).coerceIn(0f, 1f)
                             if (progress - lastReported >= 0.01f) {
                                 lastReported = progress
+                                coroutineContext.ensureActive()
                                 onProgress(progress)
                             }
                         }

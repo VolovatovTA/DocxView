@@ -92,7 +92,7 @@ internal fun GridViewer(document: TableDocument, state: DocumentViewerState, con
     val columns = document.columnCount.coerceAtLeast(1)
 
     // Widths from the header and a sample of rows; numeric columns are right-aligned like in spreadsheets.
-    val layout = remember(document, colors) {
+    val layout = remember(document, colors, config.showCsvRowNumbers) {
         val sample = document.rows.take(200)
         val minW = with(density) { 56.dp.toPx() }
         val maxW = with(density) { 300.dp.toPx() }

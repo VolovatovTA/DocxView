@@ -188,9 +188,13 @@ private class PdfViewport(
         // When zooming out to fit-width, pick the pivot that lands exactly where the commit will clamp.
         pivot = if (clamped == 1f && scale > 1f) Offset(hOffset / (scale - 1f), focus.y) else focus
         interacting = true
-        animate(1f, clamped / scale, animationSpec = tween(260)) { value, _ -> gestureZoom = value }
-        commitZoom(clamped, pivot)
-        interacting = false
+        try {
+            animate(1f, clamped / scale, animationSpec = tween(260)) { value, _ -> gestureZoom = value }
+        } finally {
+            // Commit wherever the animation stopped, otherwise a cancelled zoom leaves the transient transform behind.
+            commitZoom(scale * gestureZoom, pivot)
+            interacting = false
+        }
     }
 
     fun fling(scope: CoroutineScope, vx: Float, vy: Float, decay: DecayAnimationSpec<Float>) {

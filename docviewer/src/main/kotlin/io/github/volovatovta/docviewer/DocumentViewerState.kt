@@ -80,7 +80,8 @@ public class DocumentViewerState(initialPage: Int = 0, initialZoom: Float = 1f) 
     internal var controller: ViewerController? = null
         set(value) {
             field = value
-            if (value != null && searchQuery.isNotEmpty()) search(searchQuery)
+            // A viewer recreated for the same document (rotation, resize) keeps its hits and position.
+            if (value != null && searchQuery.isNotEmpty() && searchHits.isEmpty() && !isSearching) search(searchQuery)
         }
     internal var scope: CoroutineScope? = null
     internal var lastSource: DocumentSource? = null
@@ -101,6 +102,7 @@ public class DocumentViewerState(initialPage: Int = 0, initialZoom: Float = 1f) 
         }
         isSearching = true
         searchJob = scope.launch {
+            val self = coroutineContext[Job]
             try {
                 controller.search(query).collect { hits ->
                     val first = searchHits.isEmpty() && hits.isNotEmpty()
@@ -112,7 +114,7 @@ public class DocumentViewerState(initialPage: Int = 0, initialZoom: Float = 1f) 
                     }
                 }
             } finally {
-                isSearching = false
+                if (searchJob === self) isSearching = false
             }
         }
     }
@@ -179,6 +181,7 @@ public class DocumentViewerState(initialPage: Int = 0, initialZoom: Float = 1f) 
 
     internal fun onSourceChanged(source: DocumentSource) {
         if (lastSource != null && lastSource != source) {
+            password = null
             currentPage = 0
             pendingPage = null
             zoom = 1f
