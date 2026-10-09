@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Sample" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowBackground">@color/window</item>
+    </style>
+
+    <style name="Theme.Sample.AppCompat" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/accent</item>
+        <item name="colorAccent">@color/accent</item>
+        <item name="android:windowBackground">@color/window</item>
+    </style>
+
+    <color name="accent">#2F6FEB</color>
+    <color name="window">#EFF1F4</color>
+    <color name="toolbar_text">#1B1D21</color>
+</resources>

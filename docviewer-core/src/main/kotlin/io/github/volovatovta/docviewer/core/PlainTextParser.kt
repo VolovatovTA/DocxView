@@ -13,7 +13,7 @@ public object PlainTextParser {
 
     public fun parse(file: File): FlowDocument {
         val decoded = TextDecoding.decode(file.readBytes())
-        return parse(decoded.text, monospace = file.extension.lowercase() in CODE_EXTENSIONS, title = file.nameWithoutExtension)
+        return parse(decoded.text, monospace = file.extension.lowercase() in CODE_EXTENSIONS)
     }
 
     public fun parse(text: String, monospace: Boolean = false, title: String? = null): FlowDocument {

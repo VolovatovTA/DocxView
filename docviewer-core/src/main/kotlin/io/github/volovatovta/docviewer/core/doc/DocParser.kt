@@ -11,6 +11,8 @@ import io.github.volovatovta.docviewer.core.doc.CompoundFile.Companion.u32
 import io.github.volovatovta.docviewer.core.docx.Numbering
 import io.github.volovatovta.docviewer.core.model.Block
 import io.github.volovatovta.docviewer.core.model.FlowDocument
+import io.github.volovatovta.docviewer.core.model.ImageRun
+import io.github.volovatovta.docviewer.core.model.ImageStore
 import io.github.volovatovta.docviewer.core.model.Inline
 import io.github.volovatovta.docviewer.core.model.PageBreak
 import io.github.volovatovta.docviewer.core.model.Paragraph
@@ -35,18 +37,18 @@ public object DocParser {
         if (cfb.find("EncryptedPackage") != null || cfb.find("EncryptionInfo") != null) throw PasswordProtectedException()
         val word = cfb.stream("WordDocument") ?: throw UnsupportedFormatException("OLE file is not a Word document")
         try {
-            return parseWord(cfb, word, file.nameWithoutExtension)
+            return parseWord(cfb, word)
         } catch (e: IndexOutOfBoundsException) {
             throw CorruptedDocumentException("Damaged DOC structure", e)
         }
     }
 
-    private fun parseWord(cfb: CompoundFile, word: ByteArray, name: String): FlowDocument {
+    private fun parseWord(cfb: CompoundFile, word: ByteArray): FlowDocument {
         if (word.size < 0x20 || u16(word, 0) != 0xA5EC) throw CorruptedDocumentException("Bad Word FIB")
         val nFib = u16(word, 2)
         val flags = u16(word, 0x0A)
         if (flags and 0x0100 != 0) throw PasswordProtectedException()
-        if (nFib < 0xC1) return parseLegacy(word, name)
+        if (nFib < 0xC1) return parseLegacy(word)
 
         val fib = Fib(word)
         val table = cfb.stream(if (flags and 0x0200 != 0) "1Table" else "0Table") ?: throw CorruptedDocumentException("Missing table stream")
@@ -56,11 +58,12 @@ public object DocParser {
         val pap = PropertyRuns.parsePapx(word, table, fib.fcLcb(13))
         val lists = runCatching { ListTables.parse(table, fib.fcLcb(73), fib.fcLcb(74)) }.getOrNull()
         val baseSize = chp.dominantSize(chars.fc)
-        return FlowDocument(SizeNormalizer.normalize(DocBuilder(chars, chp, pap, lists, baseSize).build()), name)
+        val images = DocImageStore(cfb.stream("Data") ?: ByteArray(0))
+        return FlowDocument(SizeNormalizer.normalize(DocBuilder(chars, chp, pap, lists, baseSize, images).build()), title = null, images = images)
     }
 
     // Word 6/95: no piece table in the 97 sense, but the text is stored contiguously between fcMin and fcMac.
-    private fun parseLegacy(word: ByteArray, name: String): FlowDocument {
+    private fun parseLegacy(word: ByteArray): FlowDocument {
         val fcMin = u32(word, 0x18)
         val fcMac = u32(word, 0x1C)
         if (fcMin <= 0 || fcMac <= fcMin || fcMac > word.size) throw UnsupportedFormatException("Unsupported Word 6/95 document")
@@ -73,7 +76,7 @@ public object DocParser {
                 else -> if (c < ' ') '\u0000' else c
             }
         }.filter { it != '\u0000' }.joinToString("")
-        return PlainTextParser.parse(text, title = name)
+        return PlainTextParser.parse(text)
     }
 
     private class Fib(private val word: ByteArray) {
@@ -165,6 +168,8 @@ internal class CharProps(
     val caps: Boolean = false,
     val smallCaps: Boolean = false,
     val special: Boolean = false,
+    // Offset of the PICF structure in the Data stream for inline pictures.
+    val picLocation: Int = -1,
 )
 
 internal class ParaProps(
@@ -286,7 +291,7 @@ internal class PropertyRuns<T>(private val starts: IntArray, private val ends: I
         private fun readChp(b: ByteArray, from: Int, to: Int): CharProps {
             var bold = false; var italic = false; var underline = false; var strike = false; var hidden = false
             var color: Int? = null; var highlight: Int? = null; var size: Int? = null; var vAlign = VerticalAlign.Baseline
-            var caps = false; var smallCaps = false; var special = false
+            var caps = false; var smallCaps = false; var special = false; var picLocation = -1
             Sprms.forEach(b, from, to) { sprm, op ->
                 when (sprm) {
                     0x0835 -> bold = toggle(b[op].toInt() and 0xFF)
@@ -296,6 +301,7 @@ internal class PropertyRuns<T>(private val starts: IntArray, private val ends: I
                     0x083A -> smallCaps = toggle(b[op].toInt() and 0xFF)
                     0x083B -> caps = toggle(b[op].toInt() and 0xFF)
                     0x0855 -> special = b[op].toInt() != 0
+                    0x6A03 -> picLocation = u32(b, op)
                     0x2A3E -> underline = b[op].toInt() != 0
                     0x4A43 -> size = u16(b, op)
                     0x2A42 -> color = ico(b[op].toInt() and 0xFF)
@@ -312,7 +318,7 @@ internal class PropertyRuns<T>(private val starts: IntArray, private val ends: I
                     }
                 }
             }
-            return CharProps(bold, italic, underline, strike, hidden, color, highlight, size, vAlign, caps, smallCaps, special)
+            return CharProps(bold, italic, underline, strike, hidden, color, highlight, size, vAlign, caps, smallCaps, special, picLocation)
         }
 
         private fun readPap(b: ByteArray, from: Int, to: Int): ParaProps {
@@ -464,6 +470,7 @@ private class DocBuilder(
     private val pap: PropertyRuns<ParaProps>,
     private val lists: ListTables?,
     private val baseSize: Int,
+    private val images: DocImageStore,
 ) {
     private val blocks = ArrayList<Block>()
     private var inlines = ArrayList<Inline>()
@@ -494,6 +501,7 @@ private class DocBuilder(
                     '\u000B', '\u000E' -> append('\n', fc)
                     '\u001E' -> append('‑', fc)
                     '\t', ' ' -> append(c, fc)
+                    '\u0001' -> append(c, fc)
                     else -> if (c >= ' ') append(c, fc)
                 }
             }
@@ -511,6 +519,13 @@ private class DocBuilder(
 
     private fun append(c: Char, fc: Int) {
         val props = chp.at(fc)
+        if (props.special && c == '\u0001' && props.picLocation >= 0 && !props.hidden) {
+            images.describe(props.picLocation)?.let { picture ->
+                flushRun()
+                inlines += ImageRun(picture.id, picture.widthPt, picture.heightPt)
+            }
+            return
+        }
         if (props.hidden || props.special) return
         val style = styleOf(props)
         val link = fields.lastOrNull { it.link != null }?.link
@@ -600,5 +615,42 @@ private class DocBuilder(
         val trimmed = code.trim()
         if (!trimmed.startsWith("HYPERLINK", ignoreCase = true) || Regex("\\\\l\\b").containsMatchIn(trimmed)) return null
         return Regex("\"([^\"]+)\"").find(trimmed)?.groupValues?.get(1)
+    }
+}
+
+// Inline pictures live in the Data stream as PICF + OfficeArt records; the PNG/JPEG payload is located by signature.
+internal class DocImageStore(private val data: ByteArray) : ImageStore {
+    class Picture(val id: String, val widthPt: Float?, val heightPt: Float?)
+
+    fun describe(offset: Int): Picture? {
+        if (offset < 0 || offset + 0x44 > data.size) return null
+        val lcb = u32(data, offset)
+        if (lcb <= 0x44 || offset + lcb > data.size || u16(data, offset + 4) != 0x44) return null
+        payloadRange(offset) ?: return null
+        val dxaGoal = u16(data, offset + 0x1C)
+        val dyaGoal = u16(data, offset + 0x1E)
+        val mx = u16(data, offset + 0x20).takeIf { it > 0 } ?: 1000
+        val my = u16(data, offset + 0x22).takeIf { it > 0 } ?: 1000
+        val width = dxaGoal * mx / 1000f / 20f
+        val height = dyaGoal * my / 1000f / 20f
+        return Picture("doc-pic:$offset", width.takeIf { it > 0 }, height.takeIf { it > 0 })
+    }
+
+    override fun open(imageId: String): ByteArray? {
+        val offset = imageId.removePrefix("doc-pic:").toIntOrNull() ?: return null
+        val range = payloadRange(offset) ?: return null
+        return data.copyOfRange(range.first, range.last + 1)
+    }
+
+    private fun payloadRange(offset: Int): IntRange? {
+        val end = offset + u32(data, offset)
+        var i = offset + 0x44
+        while (i + 4 <= end) {
+            val png = data[i] == 0x89.toByte() && data[i + 1] == 'P'.code.toByte() && data[i + 2] == 'N'.code.toByte() && data[i + 3] == 'G'.code.toByte()
+            val jpeg = data[i] == 0xFF.toByte() && data[i + 1] == 0xD8.toByte() && data[i + 2] == 0xFF.toByte()
+            if (png || jpeg) return i until end
+            i++
+        }
+        return null
     }
 }

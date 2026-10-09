@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">DocViewer</string>
+    <string name="search_hint">Search</string>
+    <string name="prev">Previous</string>
+    <string name="next">Next</string>
+</resources>
