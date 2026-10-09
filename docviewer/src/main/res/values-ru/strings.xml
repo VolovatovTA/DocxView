@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dv_loading">Открываем документ…</string>
+    <string name="dv_error_title">Не удалось открыть документ</string>
+    <string name="dv_error_unsupported">Этот формат файла не поддерживается.</string>
+    <string name="dv_error_corrupted">Файл повреждён или имеет неожиданную структуру.</string>
+    <string name="dv_error_io">Не удалось прочитать файл.</string>
+    <string name="dv_error_network">Не удалось скачать файл. Проверьте подключение.</string>
+    <string name="dv_error_pdf_password_old_android">PDF с паролем можно открыть на Android 15 и новее.</string>
+    <string name="dv_error_doc_password">Документы Word с паролем не поддерживаются.</string>
+    <string name="dv_error_empty">Документ пуст.</string>
+    <string name="dv_retry">Повторить</string>
+    <string name="dv_password_title">Документ защищён</string>
+    <string name="dv_password_subtitle">Введите пароль, чтобы открыть его.</string>
+    <string name="dv_password_hint">Пароль</string>
+    <string name="dv_password_wrong">Неверный пароль. Попробуйте ещё раз.</string>
+    <string name="dv_password_open">Открыть</string>
+    <string name="dv_page_indicator">%1$d / %2$d</string>
+    <string name="dv_csv_truncated">Показаны первые %1$s строк</string>
+    <string name="dv_image_unsupported">Изображение не отображается</string>
+    <string name="dv_close">Закрыть</string>
+    <string name="dv_page_description">Страница %1$d из %2$d</string>
+</resources>

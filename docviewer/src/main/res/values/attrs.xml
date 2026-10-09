@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="DocumentView">
+        <!-- Optional source: "asset:///file.pdf", "file:///path", "content://..." or "https://..." -->
+        <attr name="dv_source" format="string" />
+        <attr name="dv_theme" format="enum">
+            <enum name="auto" value="0" />
+            <enum name="light" value="1" />
+            <enum name="dark" value="2" />
+        </attr>
+        <attr name="dv_accentColor" format="color" />
+        <attr name="dv_backgroundColor" format="color" />
+        <attr name="dv_pageColor" format="color" />
+        <attr name="dv_textColor" format="color" />
+        <attr name="dv_pageSpacing" format="dimension" />
+        <attr name="dv_maxZoom" format="float" />
+        <attr name="dv_doubleTapZoom" format="float" />
+        <attr name="dv_textSize" format="dimension" />
+        <attr name="dv_textSelectable" format="boolean" />
+        <attr name="dv_showPageIndicator" format="boolean" />
+        <attr name="dv_showScrollbar" format="boolean" />
+        <attr name="dv_pdfNightMode" format="boolean" />
+        <attr name="dv_csvRowNumbers" format="boolean" />
+    </declare-styleable>
+</resources>
