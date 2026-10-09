@@ -1,0 +1,6 @@
+# Sample and fixture documents must stay byte-exact (CRLF and cp1251 are part of the test).
+*.csv -text
+*.txt -text
+*.doc binary
+*.docx binary
+*.pdf binary
