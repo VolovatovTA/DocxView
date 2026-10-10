@@ -34,7 +34,7 @@ internal val BundledSamples = listOf(
     ),
     Sample(
         title = "CSV · 2,000 rows",
-        subtitle = "Windows-1251 and \";\", like an Excel export",
+        subtitle = "Semicolons and quoted fields, like an Excel export",
         badge = "CSV",
         color = BadgeColors.Csv,
         location = "asset:///sample.csv",

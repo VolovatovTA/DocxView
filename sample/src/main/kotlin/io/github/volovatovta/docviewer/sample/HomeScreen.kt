@@ -54,7 +54,7 @@ internal fun HomeScreen(onOpen: (String) -> Unit, modifier: Modifier = Modifier)
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = { LargeTopAppBar(title = { Text("DocViewer SDK") }, scrollBehavior = scrollBehavior) },
+        topBar = { LargeTopAppBar(title = { Text("DocxView") }, scrollBehavior = scrollBehavior) },
     ) { padding ->
         LazyColumn(
             contentPadding = PaddingValues(

@@ -1,7 +1,7 @@
-Заметки к релизу DocViewer 1.0
+DocxView 1.0 release notes
 
-• PDF: рендер страниц тайлами, поиск (Android 15+), ночной режим.
-• DOCX/DOC: стили, списки, таблицы, сноски, картинки.
-• CSV: автоопределение разделителя и кодировки.
+• PDF: tiled rendering, search (Android 15+), night mode.
+• DOCX/DOC: styles, lists, tables, footnotes, images.
+• CSV: delimiter and encoding detection.
 
-Просто текстовый файл — тоже открывается.
+A plain text file opens too.
