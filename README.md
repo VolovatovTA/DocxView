@@ -206,8 +206,8 @@ Baseline Profile that covers the viewer screen, or set `textSelectable = false`.
 ## Building and testing
 
 ```bash
-./gradlew :docviewer-core:test        # parser unit tests on real documents
-./gradlew :sample:installDebug
+./gradlew build                       # compile, unit tests, lint, detekt, Konsist, public API check
+./gradlew :sample:installDebug        # demo app with every format, in Compose and in XML
 
 # Instrumented PDF stress tests (engine + UI with real gestures) on a device or emulator
 tools/fetch-test-pdfs.sh              # optional: hard real-world PDFs from the pdf.js test suite
@@ -217,8 +217,38 @@ tools/fetch-test-pdfs.sh              # optional: hard real-world PDFs from the 
 The test documents in `docviewer-core/src/test/resources` were saved by real editors:
 LibreOffice (DOC/DOCX with lists, tables and links) and macOS `textutil`.
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) to contribute and [SECURITY.md](SECURITY.md) to report
-vulnerabilities.
+## Quality gates
+
+Every pull request runs the same checks as `./gradlew build` plus a few more, and must keep
+all of them green:
+
+| Check | Command | What it guards |
+|---|---|---|
+| Unit tests | `./gradlew test` | parsers on real documents, viewer geometry, table layout |
+| Instrumented tests | `./gradlew :docviewer:connectedDebugAndroidTest` | PDF engine and UI on API 30 and 35 in CI |
+| Detekt | `./gradlew detekt` | code smells, ktlint formatting and Compose rules, zero findings allowed |
+| Android Lint | `./gradlew lint` | warnings are errors |
+| Public API | `./gradlew apiCheck` (`apiDump` to update) | binary compatibility of the published API |
+| Coverage | `./gradlew koverHtmlReport koverVerify` | merged line coverage must not drop below the baseline |
+| Architecture | `./gradlew :konsist:test assertModuleGraph` | parsers stay free of Android, internals stay internal |
+| Dependencies | `./gradlew buildHealth` | no unused or misdeclared dependencies |
+
+Test results are annotated on the pull request, coverage is posted as a comment, and every
+report plus the sample APK is attached to the workflow run.
+
+## Crash reports and diagnostics
+
+DocxView collects nothing and sends nothing: it has no analytics or crash reporting of its
+own, so it never touches your users' data or your privacy declarations.
+
+- **Failures are values, not crashes.** A file that cannot be opened ends in
+  `DocumentStatus.Failed(error)` (or `onStatusChanged` for XML), with a typed exception:
+  `UnsupportedFormatException`, `CorruptedDocumentException`, `PasswordProtectedException`.
+  Forward it to your own crash reporter as a non-fatal if you want to see it.
+- **A crash inside the library** shows up in your app's crash reporter (Firebase Crashlytics,
+  Sentry, Play Console) with `io.github.volovatovta.docviewer` frames in the stack trace.
+- **Report it** through a [bug report](https://github.com/VolovatovTA/DocxView/issues/new/choose)
+  with the stack trace, the device and, ideally, the document that triggers it.
 
 ## License
 
