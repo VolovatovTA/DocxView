@@ -1,13 +1,12 @@
 plugins {
     `java-library`
     alias(libs.plugins.kotlin.jvm)
-    `maven-publish`
+    alias(libs.plugins.maven.publish)
 }
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
-    withSourcesJar()
 }
 
 kotlin {
@@ -20,11 +19,8 @@ dependencies {
     testImplementation(libs.kotlin.test)
 }
 
-publishing {
-    publications {
-        create<MavenPublication>("release") {
-            artifactId = "docviewer-core"
-            from(components["java"])
-        }
-    }
+mavenPublishing {
+    publishToMavenCentral()
+    // Maven Central requires signed artifacts; local publishing works without a key.
+    if (providers.gradleProperty("signingInMemoryKey").isPresent) signAllPublications()
 }

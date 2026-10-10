@@ -4,3 +4,9 @@
 *.doc binary
 *.docx binary
 *.pdf binary
+*.png binary
+*.jar binary
+
+# Scripts run on CI and macOS/Linux shells regardless of the committer's OS.
+gradlew text eol=lf
+*.bat text eol=crlf

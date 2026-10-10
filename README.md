@@ -1,5 +1,9 @@
 # DocViewer SDK
 
+[![CI](https://github.com/VolovatovTA/DocViewer/actions/workflows/ci.yml/badge.svg)](https://github.com/VolovatovTA/DocViewer/actions/workflows/ci.yml)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.volovatovta.docviewer/docviewer)](https://central.sonatype.com/artifact/io.github.volovatovta.docviewer/docviewer)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
+
 Просмотр **PDF, DOCX, DOC, CSV/TSV и TXT** внутри Android-приложения — одним компонентом,
 который одинаково встраивается в **Jetpack Compose** и в **XML-разметку**.
 Без нативных библиотек и без Apache POI: PDF рисует системный `PdfRenderer`, офисные
@@ -46,19 +50,16 @@
 
 ## Подключение
 
-Пока библиотека не опубликована, проще всего подключить модули исходниками
-(`docviewer` + `docviewer-core`) или опубликовать в локальный Maven:
-
-```bash
-./gradlew publishToMavenLocal
-```
+Библиотека публикуется в Maven Central:
 
 ```kotlin
-// settings.gradle.kts: repositories { mavenLocal() }
 dependencies {
     implementation("io.github.volovatovta.docviewer:docviewer:1.0.0")
+    // Только парсеры, без Android: "io.github.volovatovta.docviewer:docviewer-core:1.0.0"
 }
 ```
+
+Локальная сборка из исходников — `./gradlew publishToMavenLocal` и `mavenLocal()` в репозиториях.
 
 `minSdk 23`, `compileSdk 36`. Для загрузки по URL приложению нужно разрешение `INTERNET`.
 
@@ -185,9 +186,30 @@ sample           демо: Compose-экран со всеми форматами
 ## Сборка и тесты
 
 ```bash
-./gradlew :docviewer-core:test        # 33 теста парсеров на реальных файлах
+./gradlew :docviewer-core:test        # 34 теста парсеров на реальных файлах
 ./gradlew :sample:installDebug
 ```
 
 Тестовые документы в `docviewer-core/src/test/resources` сохранены настоящими
 редакторами: LibreOffice (DOC/DOCX со списками, таблицами и ссылками) и macOS `textutil`.
+
+Как выпустить релиз — в [RELEASING.md](RELEASING.md); участие в разработке — в
+[CONTRIBUTING.md](CONTRIBUTING.md); об уязвимостях — по инструкции в [SECURITY.md](SECURITY.md).
+
+## Лицензия
+
+```
+Copyright 2026 Timofei Volovatov
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```
