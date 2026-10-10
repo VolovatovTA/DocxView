@@ -9,6 +9,8 @@ import io.github.volovatovta.docviewer.core.model.TableCell
 import io.github.volovatovta.docviewer.core.model.TableRow
 import io.github.volovatovta.docviewer.core.model.TextAlignment
 import io.github.volovatovta.docviewer.core.model.TextRun
+import io.github.volovatovta.docviewer.core.ooxml.Relationships
+import io.github.volovatovta.docviewer.core.ooxml.get
 import org.xml.sax.Attributes
 
 internal class ParagraphBuilder {

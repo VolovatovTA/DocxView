@@ -1,4 +1,4 @@
-package io.github.volovatovta.docviewer.core.docx
+package io.github.volovatovta.docviewer.core.ooxml
 
 import org.xml.sax.Attributes
 import org.xml.sax.InputSource

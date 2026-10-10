@@ -1,5 +1,7 @@
 package io.github.volovatovta.docviewer.core.doc
 
+import io.github.volovatovta.docviewer.core.binary.int32
+import io.github.volovatovta.docviewer.core.binary.uint8
 // Formatted disk pages ([MS-DOC] 2.9.71-72): 512-byte pages that map text ranges to CHPX/PAPX formatting.
 internal object FormattedDiskPages {
 

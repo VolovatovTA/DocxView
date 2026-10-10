@@ -1,6 +1,11 @@
 package io.github.volovatovta.docviewer.core.docx
 
 import io.github.volovatovta.docviewer.core.model.ParagraphStyle
+import io.github.volovatovta.docviewer.core.ooxml.Xml
+import io.github.volovatovta.docviewer.core.ooxml.get
+import io.github.volovatovta.docviewer.core.ooxml.isOn
+import io.github.volovatovta.docviewer.core.ooxml.localName
+import io.github.volovatovta.docviewer.core.ooxml.parseHexColor
 import org.xml.sax.Attributes
 import org.xml.sax.helpers.DefaultHandler
 import java.io.InputStream

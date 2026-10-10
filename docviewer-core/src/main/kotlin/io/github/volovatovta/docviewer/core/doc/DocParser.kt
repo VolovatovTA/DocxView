@@ -7,6 +7,7 @@ import io.github.volovatovta.docviewer.core.SizeNormalizer
 import io.github.volovatovta.docviewer.core.TextDecoding
 import io.github.volovatovta.docviewer.core.UnsupportedFormatException
 import io.github.volovatovta.docviewer.core.model.FlowDocument
+import io.github.volovatovta.docviewer.core.ole.CompoundFile
 import java.io.File
 
 // Word 97-2003 binary format ([MS-DOC]): text via the piece table, formatting via CHPX/PAPX formatted disk pages.

@@ -1,6 +1,8 @@
 package io.github.volovatovta.docviewer.core.doc
 
 import io.github.volovatovta.docviewer.core.CorruptedDocumentException
+import io.github.volovatovta.docviewer.core.binary.int32
+import io.github.volovatovta.docviewer.core.binary.uint16
 
 // Position and length of a structure inside a stream, as stored in the FIB's fc/lcb pairs.
 internal class StreamRange(val offset: Int, val length: Int) {

@@ -1,5 +1,8 @@
 package io.github.volovatovta.docviewer.core.docx
 
+import io.github.volovatovta.docviewer.core.ooxml.get
+import io.github.volovatovta.docviewer.core.ooxml.int
+import io.github.volovatovta.docviewer.core.ooxml.localName
 import org.xml.sax.Attributes
 import org.xml.sax.helpers.DefaultHandler
 

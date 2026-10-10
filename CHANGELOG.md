@@ -3,8 +3,15 @@
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
 uses [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [1.1.0] — 2026-10-10
 
+- Excel workbooks: XLSX and XLS (Excel 97–2003) open with every visible sheet, tabs below the
+  grid, values formatted as Excel shows them (dates, currencies, percentages, custom formats,
+  both date systems) and search across all sheets.
+- `DocumentReader` in `docviewer-core` reads any supported file into `DocumentContent` (text or
+  sheets) on any JVM, with `ReadOptions` for CSV settings and a memory budget.
+- Formats are detected and read through one registry: supporting a format takes one reader.
+- `TableSource.delimiter` is deprecated: only CSV has a delimiter.
 - PDF no longer crashes when memory runs out while rendering a page (seen on Android 6–7,
   where bitmaps share the app heap): the page cache is trimmed and the page is retried, or
   left blank until it can be drawn.

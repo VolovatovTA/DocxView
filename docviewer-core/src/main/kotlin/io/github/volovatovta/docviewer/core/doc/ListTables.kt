@@ -1,5 +1,9 @@
 package io.github.volovatovta.docviewer.core.doc
 
+import io.github.volovatovta.docviewer.core.binary.int32
+import io.github.volovatovta.docviewer.core.binary.uint16
+import io.github.volovatovta.docviewer.core.binary.uint8
+import io.github.volovatovta.docviewer.core.binary.utf16
 import io.github.volovatovta.docviewer.core.docx.Numbering
 
 // List definitions ([MS-DOC] PlfLst and PlfLfo) that turn a paragraph's list reference into its visible marker.

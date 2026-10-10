@@ -3,6 +3,10 @@ package io.github.volovatovta.docviewer.core.docx
 import io.github.volovatovta.docviewer.core.model.BorderLine
 import io.github.volovatovta.docviewer.core.model.TextAlignment
 import io.github.volovatovta.docviewer.core.model.VerticalAlign
+import io.github.volovatovta.docviewer.core.ooxml.get
+import io.github.volovatovta.docviewer.core.ooxml.int
+import io.github.volovatovta.docviewer.core.ooxml.onOff
+import io.github.volovatovta.docviewer.core.ooxml.parseHexColor
 import org.xml.sax.Attributes
 
 private typealias RunPropertyReader = (Attributes, RunProperties) -> Unit

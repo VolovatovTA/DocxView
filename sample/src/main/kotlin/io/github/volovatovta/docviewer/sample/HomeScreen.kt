@@ -37,15 +37,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import io.github.volovatovta.docviewer.core.model.DocumentFormat
 
 private const val DemoUrl = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
 
-private val PickableMimeTypes = arrayOf(
-    "application/pdf",
-    "application/msword",
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    "text/*",
-)
+// Every format the viewer reads, so a new one shows up in the picker by itself; "text/*" covers source code.
+private val PickableMimeTypes = (DocumentFormat.entries.flatMap { it.mimeTypes } + "text/*").toTypedArray()
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

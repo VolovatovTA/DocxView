@@ -1,13 +1,11 @@
 package io.github.volovatovta.docviewer.internal
 
 import io.github.volovatovta.docviewer.DocumentInfo
-import io.github.volovatovta.docviewer.core.model.FlowDocument
-import io.github.volovatovta.docviewer.core.model.TableSource
-import io.github.volovatovta.docviewer.core.stream.TextFile
+import io.github.volovatovta.docviewer.core.format.DocumentContent
 import io.github.volovatovta.docviewer.internal.pdf.PdfDocument
 import java.io.Closeable
 
-// An opened document, one kind per viewer.
+// An opened document: PDF pages drawn by the platform, or content read by docviewer-core.
 internal sealed interface LoadedDocument : Closeable {
     val info: DocumentInfo
 
@@ -15,19 +13,7 @@ internal sealed interface LoadedDocument : Closeable {
         override fun close() = document.close()
     }
 
-    // Plain text read from disk keeps its lines, so the viewer can lay them out without parsing the whole file.
-    class Flow(
-        val document: FlowDocument,
-        override val info: DocumentInfo,
-        val lines: TextFile? = null
-    ) : LoadedDocument {
-        override fun close() {
-            document.close()
-            lines?.close()
-        }
-    }
-
-    class Grid(val document: TableSource, override val info: DocumentInfo) : LoadedDocument {
-        override fun close() = document.close()
+    class Parsed(val content: DocumentContent, override val info: DocumentInfo) : LoadedDocument {
+        override fun close() = content.close()
     }
 }

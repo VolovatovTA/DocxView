@@ -3,6 +3,7 @@ package io.github.volovatovta.docviewer.core.docx
 import io.github.volovatovta.docviewer.core.CorruptedDocumentException
 import io.github.volovatovta.docviewer.core.SizeNormalizer
 import io.github.volovatovta.docviewer.core.model.FlowDocument
+import io.github.volovatovta.docviewer.core.ooxml.RelationshipTypes
 
 // Reads the parts of a .docx in dependency order: styles and numbering first, then the body, then the notes.
 internal class DocxReader(private val docx: DocxPackage) {

@@ -1,5 +1,6 @@
 package io.github.volovatovta.docviewer.core.doc
 
+import io.github.volovatovta.docviewer.core.binary.startsWith
 import io.github.volovatovta.docviewer.core.model.Block
 import io.github.volovatovta.docviewer.core.model.ImageRun
 import io.github.volovatovta.docviewer.core.model.Inline

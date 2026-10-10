@@ -6,7 +6,7 @@
 [![Min API](https://img.shields.io/badge/min%20API-23%20(Android%206.0)-brightgreen.svg)](https://developer.android.com/tools/releases/platforms)
 [![Max API](https://img.shields.io/badge/tested%20up%20to%20API-37%20(Android%2017)-brightgreen.svg)](#compatibility)
 
-View **PDF, DOCX, DOC, CSV/TSV and TXT** inside an Android app with a single component that
+View **PDF, Word (DOCX, DOC), Excel (XLSX, XLS), CSV/TSV and TXT** inside an Android app with a single component that
 works the same in **Jetpack Compose** and in **XML layouts**.
 No WebView, no native libraries, no Apache POI: PDF pages are drawn by the platform
 `PdfRenderer`, office formats and CSV are parsed by a pure Kotlin/JVM parser.
@@ -38,6 +38,14 @@ No WebView, no native libraries, no Apache POI: PDF pages are drawn by the platf
 - text reflows to the screen width, scales with a pinch, and can be selected and copied;
 - document colors are adjusted for the dark theme, so black text never disappears.
 
+**XLSX and XLS (Excel 97–2003)**
+- every visible sheet, with tabs below the grid as in Excel; hidden sheets stay hidden;
+- values shown the way Excel shows them: dates and times, currencies, percentages,
+  thousands separators, scientific notation, custom number formats, both date systems
+  (1900 and 1904), booleans and formula errors;
+- formulas show the result Excel saved with them; search covers every sheet and switches to
+  the sheet of each match.
+
 **CSV / TSV**
 - RFC 4180: quotes, line breaks inside cells, escaped `""`;
 - automatic detection of the delimiter (`,` `;` `Tab` `|`), the encoding (UTF-8/16 with or
@@ -57,8 +65,8 @@ The library is published to Maven Central:
 
 ```kotlin
 dependencies {
-    implementation("io.github.volovatovta.docviewer:docviewer:1.0.0")
-    // Parsers only, no Android: "io.github.volovatovta.docviewer:docviewer-core:1.0.0"
+    implementation("io.github.volovatovta.docviewer:docviewer:1.1.0")
+    // Parsers only, no Android: "io.github.volovatovta.docviewer:docviewer-core:1.1.0"
 }
 ```
 
@@ -161,25 +169,38 @@ The `docviewer-core` module is pure Kotlin/JVM with no Android dependencies. Use
 for example to index documents or build previews on a server:
 
 ```kotlin
-val doc: FlowDocument = DocxParser.parse(file)      // also DocParser, PlainTextParser
-val table: TableDocument = CsvParser.parse(csvFile)
-val matches = FlowSearch.search(doc, "needle")
-val format = FormatDetector.detect(file)
+val format = FormatDetector.detect(file)                    // by content, not by file name
+DocumentReader.read(file).use { content ->
+    when (content) {
+        is DocumentContent.Flow -> FlowSearch.search(content.document, "needle")  // DOCX, DOC, TXT
+        is DocumentContent.Sheets -> content.workbook.sheets.map { it.name }       // XLSX, XLS, CSV
+    }
+}
 ```
+
+`ReadOptions(memoryBudgetBytes = ...)` refuses files that would not fit before parsing them, which
+also protects a server from archives that unpack into gigabytes.
 
 ## Architecture
 
 ```
-docviewer-core   document model (Paragraph / Table / TextRun / ImageRun ...)
-                 DOCX: ZIP + SAX (styles, numbering, relationships, footnotes, fields)
-                 DOC:  OLE2 compound file → FIB → piece table → CHPX/PAPX FKPs → list tables
-                 CSV:  RFC 4180 tokenizer, delimiter/encoding/header detection
+docviewer-core   format/  one reader per format, a registry that detects formats by content,
+                          DocumentReader: a file in, DocumentContent (Flow or Sheets) out
+                 model/   FlowDocument (paragraphs, tables, runs, images), Workbook of sheets
+                 docx/ doc/          Word: WordprocessingML via SAX / OLE2 piece tables
+                 sheet/xlsx/ xls/    Excel: SpreadsheetML parts / BIFF8 records; number formats
+                 text/ stream/       CSV and TXT, read from disk on demand
+                 ooxml/ ole/ binary/ ZIP packages, OLE2 containers, little-endian data
 docviewer        DocumentViewer (Compose) and DocumentView (a View hosting ComposeView)
                  pdf/  PdfRenderer on a dedicated thread, layout, gestures, tiles, search
-                 flow/ rendering of the model: paragraphs, lists, tables, images
-                 grid/ CSV table
+                 flow/ text: paragraphs, lists, tables, images
+                 grid/ sheets: tabs, pinned header, search across sheets
 sample           demo app: a Compose screen for every format and an XML screen
 ```
+
+Every format but PDF ends up as one of two kinds of content, and each kind has one viewer.
+A new format of an existing kind needs a reader in `docviewer-core` and nothing else; see
+[CONTRIBUTING](CONTRIBUTING.md#adding-a-format).
 
 ## Limitations
 
@@ -189,7 +210,9 @@ sample           demo app: a Compose screen for every format and an XML screen
 - DOC/DOCX: headers and footers, comments, OMML equations (shown as plain text), text wrapping
   and floating shapes are not reproduced; EMF/WMF images are shown as placeholders.
   Password-protected Word documents are not supported and fail with a clear message.
-- Word 6.0/95 documents open as plain text.
+- Word 6.0/95 documents open as plain text; Excel 5.0/95 workbooks are not supported.
+- Spreadsheets: formulas are not recalculated, merged cells, cell colors, charts and images
+  are not shown; password-protected workbooks fail with a clear message.
 - UTF-16 CSV/TXT files cannot be streamed; they are parsed in memory, and such CSV is limited
   to 500,000 rows (`CsvOptions.maxRows`).
 - Plain text lines longer than 800 bytes are shown wrapped into several list items; search
@@ -205,6 +228,8 @@ How much memory a document needs depends on its format:
 | TXT, CSV/TSV (UTF-8, Windows-125x) | streamed from disk: one indexing pass, rows and lines read on demand | ~5 MB for a 23 MB file |
 | DOCX | parsed in memory | ~7× the unpacked `word/document.xml` |
 | DOC | parsed in memory | ~8× the file |
+| XLSX | parsed in memory | ~6× the unpacked sheet and string XML |
+| XLS | parsed in memory | ~8× the file |
 | TXT, CSV in UTF-16 | parsed in memory | ~5× (TXT), ~9× (CSV) the file |
 
 Before parsing in memory, the viewer compares that estimate with the heap the app has left

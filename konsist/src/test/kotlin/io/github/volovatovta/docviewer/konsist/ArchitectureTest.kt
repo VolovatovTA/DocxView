@@ -16,6 +16,20 @@ class ArchitectureTest {
         core.files.assertFalse { it.importsAny("android.", "androidx.") }
     }
 
+    // The parsers run on Android 6 too, where java.time and newer java.nio APIs do not exist yet.
+    @Test
+    fun `parsers use only APIs that Android has since API 23`() {
+        core.files.assertFalse { it.importsAny("java.time", "java.nio.file") }
+    }
+
+    // Supporting a format takes one reader registered in Formats; nothing else may pick formats by hand.
+    @Test
+    fun `format readers are objects named after their format`() {
+        core.objects()
+            .filter { it.hasParentWithName("FormatReader") }
+            .assertTrue { it.hasInternalModifier && it.name.endsWith("Format") }
+    }
+
     @Test
     fun `parsers do not depend on the viewer`() {
         core.files.assertFalse { file ->

@@ -6,6 +6,12 @@ import io.github.volovatovta.docviewer.core.model.PageBreak
 import io.github.volovatovta.docviewer.core.model.Paragraph
 import io.github.volovatovta.docviewer.core.model.RunStyle
 import io.github.volovatovta.docviewer.core.model.VerticalAlign
+import io.github.volovatovta.docviewer.core.ooxml.Relationships
+import io.github.volovatovta.docviewer.core.ooxml.get
+import io.github.volovatovta.docviewer.core.ooxml.int
+import io.github.volovatovta.docviewer.core.ooxml.localName
+import io.github.volovatovta.docviewer.core.ooxml.onOff
+import io.github.volovatovta.docviewer.core.ooxml.parseHexColor
 import org.xml.sax.Attributes
 import org.xml.sax.helpers.DefaultHandler
 

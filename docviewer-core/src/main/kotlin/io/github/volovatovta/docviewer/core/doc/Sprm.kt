@@ -1,5 +1,8 @@
 package io.github.volovatovta.docviewer.core.doc
 
+import io.github.volovatovta.docviewer.core.binary.uint16
+import io.github.volovatovta.docviewer.core.binary.uint8
+
 // Single property modifiers ([MS-DOC] 2.6); names mirror the spec, e.g. sprmCFBold is CHAR_BOLD.
 internal object Sprm {
     const val CHAR_BOLD = 0x0835

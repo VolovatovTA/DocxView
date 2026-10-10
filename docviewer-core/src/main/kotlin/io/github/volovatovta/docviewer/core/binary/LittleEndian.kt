@@ -1,4 +1,4 @@
-package io.github.volovatovta.docviewer.core.doc
+package io.github.volovatovta.docviewer.core.binary
 
 import io.github.volovatovta.docviewer.core.CorruptedDocumentException
 
@@ -38,6 +38,13 @@ internal fun ByteArray.int32(offset: Int): Int {
 }
 
 internal fun ByteArray.uint32(offset: Int): Long = int32(offset).toUInt().toLong()
+
+internal fun ByteArray.int64(offset: Int): Long {
+    val high = int32(offset + Int.SIZE_BYTES).toLong()
+    return uint32(offset) or (high shl Int.SIZE_BITS)
+}
+
+internal fun ByteArray.float64(offset: Int): Double = Double.fromBits(int64(offset))
 
 internal fun ByteArray.startsWith(prefix: ByteArray, at: Int = 0): Boolean =
     at >= 0 && at <= size - prefix.size && prefix.indices.all { this[at + it] == prefix[it] }

@@ -3,16 +3,10 @@ package io.github.volovatovta.docviewer.internal.grid
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.lazy.LazyListState
-import io.github.volovatovta.docviewer.core.model.TableSource
-import io.github.volovatovta.docviewer.internal.ViewerController
 import io.github.volovatovta.docviewer.internal.flow.goToItem
 import io.github.volovatovta.docviewer.internal.flow.showContextAbove
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 
-internal class GridHit(val row: Int, val column: Int)
+internal class GridHit(val sheet: Int, val row: Int, val column: Int)
 
 private object GridNavigation {
     const val ANIMATED_DISTANCE = 100
@@ -23,43 +17,28 @@ private object GridNavigation {
     const val HORIZONTAL_SCROLL_MILLIS = 250
 }
 
-internal class GridController(
-    private val document: TableSource,
+// Scrolls the grid of the sheet on screen to a row or a cell.
+internal class SheetNavigator(
     private val listState: LazyListState,
     private val scroll: GridScroll,
     private val grid: GridLayout,
     var viewportWidth: Float,
     var viewportHeight: Float,
-) : ViewerController {
+) {
 
-    override fun search(query: String): Flow<List<Any>> = flow {
-        val hits = ArrayList<GridHit>()
-        document.forEachRow { row, cells ->
-            cells.forEachIndexed { column, cell ->
-                if (cell.contains(query, ignoreCase = true)) hits += GridHit(row, column)
-            }
+    suspend fun reveal(row: Int, column: Int) {
+        if (!isRowVisible(row)) {
+            scrollToRow(row, animate = true)
+            listState.showContextAbove(row, viewportHeight * GridNavigation.CONTEXT_ABOVE_MATCH)
         }
-        emit(hits)
-    }.flowOn(Dispatchers.Default)
-
-    override suspend fun reveal(hit: Any) {
-        val match = hit as GridHit
-        if (!isRowVisible(match.row)) {
-            scrollToItem(match.row, animate = true)
-            listState.showContextAbove(match.row, viewportHeight * GridNavigation.CONTEXT_ABOVE_MATCH)
-        }
-        val target = horizontalTarget(match.column) ?: return
+        val target = horizontalTarget(column) ?: return
         animate(scroll.offset, target, animationSpec = tween(GridNavigation.HORIZONTAL_SCROLL_MILLIS)) { value, _ ->
             scroll.offset = value
         }
     }
 
-    override suspend fun scrollToItem(index: Int, animate: Boolean) =
+    suspend fun scrollToRow(index: Int, animate: Boolean) =
         listState.goToItem(index, animate, GridNavigation.ANIMATED_DISTANCE)
-
-    override suspend fun zoomBy(factor: Float) = Unit
-
-    override suspend fun zoomTo(zoom: Float) = Unit
 
     private fun isRowVisible(row: Int): Boolean = listState.layoutInfo.visibleItemsInfo.any {
         it.index == row && it.offset >= 0 && it.offset + it.size <= viewportHeight * GridNavigation.VISIBLE_BOTTOM

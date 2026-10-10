@@ -1,6 +1,12 @@
-package io.github.volovatovta.docviewer.core.doc
+package io.github.volovatovta.docviewer.core.ole
 
 import io.github.volovatovta.docviewer.core.CorruptedDocumentException
+import io.github.volovatovta.docviewer.core.binary.int32
+import io.github.volovatovta.docviewer.core.binary.startsWith
+import io.github.volovatovta.docviewer.core.binary.uint16
+import io.github.volovatovta.docviewer.core.binary.uint32
+import io.github.volovatovta.docviewer.core.binary.uint8
+import io.github.volovatovta.docviewer.core.binary.utf16
 import java.io.ByteArrayOutputStream
 
 // Minimal reader for OLE2 / Compound File Binary ([MS-CFB]) containers.
@@ -32,6 +38,11 @@ internal class CompoundFile(private val data: ByteArray) {
         .takeIf { it >= 0 }
         ?.let { start -> readSectorChain(start, Long.MAX_VALUE).toIntArray() }
         ?: IntArray(0)
+
+    /** Names of the streams in the container, lowercased. */
+    val streamNames: Set<String> by lazy {
+        entries.filter { it.type == TYPE_STREAM }.map { it.name.lowercase() }.toSet()
+    }
 
     fun find(name: String): Entry? =
         entries.firstOrNull { it.type == TYPE_STREAM && it.name.equals(name, ignoreCase = true) }

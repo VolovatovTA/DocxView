@@ -6,6 +6,8 @@ private object BadgeColors {
     val Pdf = Color(0xFFE5484D)
     val Docx = Color(0xFF2F6FEB)
     val Doc = Color(0xFF1D3F91)
+    val Xlsx = Color(0xFF1E7B45)
+    val Xls = Color(0xFF145A32)
     val Csv = Color(0xFF12A150)
     val Txt = Color(0xFF6B7280)
 }
@@ -39,6 +41,20 @@ internal val BundledSamples = listOf(
         badge = "DOC",
         color = BadgeColors.Doc,
         location = "asset:///sample.doc",
+    ),
+    Sample(
+        title = "Excel · XLSX",
+        subtitle = "Three sheets with tabs, dates, dollars and percentages; search spans every sheet",
+        badge = "XLSX",
+        color = BadgeColors.Xlsx,
+        location = "asset:///sample.xlsx",
+    ),
+    Sample(
+        title = "Excel 97 · XLS",
+        subtitle = "The same workbook in the legacy binary format",
+        badge = "XLS",
+        color = BadgeColors.Xls,
+        location = "asset:///sample.xls",
     ),
     Sample(
         title = "CSV · 2,000 rows",
