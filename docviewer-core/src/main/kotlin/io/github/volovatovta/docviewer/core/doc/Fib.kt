@@ -78,8 +78,10 @@ private object FibBase {
     const val FLAGS = 0x0A
     const val LEGACY_TEXT_START = 0x18
     const val LEGACY_TEXT_END = 0x1C
+
     // Word 97 and later, then Word 6.0 and 95, which share one identifier.
     val WORD_IDENTIFIERS = setOf(0xA5EC, 0xA5DC)
+
     const val FIRST_WORD_97_VERSION = 0xC1
     const val ENCRYPTED_FLAG = 0x0100
     const val TABLE_1_FLAG = 0x0200
