@@ -9,6 +9,7 @@ import org.junit.runner.RunWith
 import kotlin.concurrent.thread
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 
 // Platform pdfium before Android 9 stayed broken for the whole process after one failed load.
 @RunWith(AndroidJUnit4::class)
@@ -25,6 +26,15 @@ class PdfConcurrencyTest {
             PdfDocument.open(book, password = null).use { document ->
                 assertNotNull(runBlocking { document.render(0, 200, 280) })
             }
+        }
+    }
+
+    // An absurd bitmap is refused before pdfium can touch it; the next normal page still renders.
+    @Test
+    fun oversizedRenderIsRefusedWithoutHarm() {
+        PdfDocument.open(book, password = null).use { document ->
+            assertNull(runBlocking { document.render(0, HUGE_PX, HUGE_PX) })
+            assertNotNull(runBlocking { document.render(0, 200, 280) })
         }
     }
 
@@ -55,5 +65,10 @@ class PdfConcurrencyTest {
         }
         workers.forEach { it.join() }
         failures.firstOrNull()?.let { throw it }
+    }
+
+    private companion object {
+        // About 1.6 GB of pixels: more than any app heap or emulator has.
+        const val HUGE_PX = 20_000
     }
 }

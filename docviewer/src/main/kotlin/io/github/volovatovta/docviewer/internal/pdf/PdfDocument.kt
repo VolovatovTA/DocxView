@@ -41,6 +41,7 @@ internal class PdfDocument private constructor(
     val isSearchSupported: Boolean get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM
 
     // Renders the region [left, top, left + width, top + height] of the page scaled to pageWidthPx x pageHeightPx.
+    // Out of memory, reclaim() frees what it can before one more try; still failing, the page stays blank for now.
     suspend fun render(
         index: Int,
         pageWidthPx: Int,
@@ -49,9 +50,10 @@ internal class PdfDocument private constructor(
         top: Int = 0,
         width: Int = pageWidthPx,
         height: Int = pageHeightPx,
+        reclaim: () -> Unit = {},
     ): Bitmap? = onPdfThread {
-        if (width <= 0 || height <= 0) return@onPdfThread null
-        val bitmap = createBitmap(width, height)
+        if (width <= 0 || height <= 0 || width.toLong() * height > MAX_BITMAP_PIXELS) return@onPdfThread null
+        val bitmap = allocate(width, height) ?: reclaim().let { allocate(width, height) } ?: return@onPdfThread null
         bitmap.eraseColor(Color.WHITE)
         renderer.openPage(index).use { page ->
             val matrix = Matrix().apply {
@@ -61,6 +63,13 @@ internal class PdfDocument private constructor(
             page.render(bitmap, null, matrix, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
         }
         bitmap
+    }
+
+    // Before Android 8 bitmap pixels live in the app's heap, so a large page can exhaust it on older phones.
+    private fun allocate(width: Int, height: Int): Bitmap? = try {
+        createBitmap(width, height)
+    } catch (ignored: OutOfMemoryError) {
+        null
     }
 
     // Real sizes of the given pages; a page pdfium cannot measure keeps the first page's size.
@@ -98,6 +107,9 @@ internal class PdfDocument private constructor(
     }
 
     companion object {
+        // pdfium corrupts native memory on huge bitmaps; the viewer never needs more than a screen.
+        private const val MAX_BITMAP_PIXELS = 4096L * 4096
+
         private const val OPEN_FAILED = "Cannot open PDF"
         private const val READ_FAILED = "Cannot read PDF pages"
         private const val NO_PAGES = "PDF has no pages"
