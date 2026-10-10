@@ -13,7 +13,7 @@ No WebView, no native libraries, no Apache POI: PDF pages are drawn by the platf
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/showcase-dark.png">
-  <img alt="DocxView screens: a PDF, a Word document in the dark theme, PDF search and CSV search" src="docs/showcase-light.png">
+  <img alt="DocxView screens: a PDF, a Word document in the dark theme, an Excel workbook with sheet tabs, PDF search and CSV search" src="docs/showcase-light.png">
 </picture>
 
 ## Features

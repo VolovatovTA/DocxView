@@ -4,7 +4,10 @@
 import sys
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 docs = sys.argv[1]
-shots = [("pdf", "PDF"), ("docx_dark", "Word · dark theme"), ("pdf_search", "PDF search"), ("csv_search", "CSV search")]
+shots = [
+    ("pdf", "PDF"), ("docx_dark", "Word · dark theme"), ("xlsx", "Excel · sheet tabs"),
+    ("pdf_search", "PDF search"), ("csv_search", "CSV search"),
+]
 S = 2                      # render at 2x for crisp edges, screenshots are scaled up from 320 px
 W, H = 320 * S, 720 * S
 GAP, PAD, RADIUS = 36 * S, 40 * S, 30 * S

@@ -64,7 +64,7 @@ internal fun HomeScreen(onOpen: (String) -> Unit, modifier: Modifier = Modifier)
         ) {
             item {
                 Text(
-                    text = "One component for PDF, DOCX, DOC, CSV and TXT — in Compose and in XML.",
+                    text = "One component for PDF, Word, Excel, CSV and TXT — in Compose and in XML.",
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(bottom = SampleDimens.SectionGap),
