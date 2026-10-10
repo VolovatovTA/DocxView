@@ -6,3 +6,15 @@ local.properties
 .DS_Store
 .kotlin/
 captures/
+
+# Secrets: signing keys, keystores and credentials never belong in the repo.
+*.jks
+*.keystore
+*.gpg
+*.asc
+*.p12
+*.pem
+secring.*
+signing.properties
+keystore.properties
+.env

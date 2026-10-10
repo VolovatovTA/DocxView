@@ -1,8 +1,11 @@
+import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
+import com.vanniktech.maven.publish.JavadocJar
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    `maven-publish`
+    alias(libs.plugins.maven.publish)
 }
 
 android {
@@ -22,12 +25,6 @@ android {
     buildFeatures {
         compose = true
     }
-
-    publishing {
-        singleVariant("release") {
-            withSourcesJar()
-        }
-    }
 }
 
 kotlin {
@@ -43,11 +40,11 @@ dependencies {
     implementation(libs.androidx.core.ktx)
 }
 
-publishing {
-    publications {
-        create<MavenPublication>("release") {
-            artifactId = "docviewer"
-            afterEvaluate { from(components["release"]) }
-        }
-    }
+mavenPublishing {
+    // AGP's bundled Dokka can't read Kotlin 2.2 sealed classes, so ship an empty javadoc jar
+    // (accepted by Maven Central), same as the JVM module.
+    configure(AndroidSingleVariantLibrary(javadocJar = JavadocJar.Empty()))
+    publishToMavenCentral()
+    // Maven Central requires signed artifacts; local publishing works without a key.
+    if (providers.gradleProperty("signingInMemoryKey").isPresent) signAllPublications()
 }
