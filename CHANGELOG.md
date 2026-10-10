@@ -43,6 +43,8 @@ uses [Semantic Versioning](https://semver.org/).
   free heap; rendered pages and pictures are dropped when the system runs low on memory.
 - An Excel 97–2003 or Word 97–2003 file too large to read whole is refused as too large
   instead of reported as an unknown format.
+- Word 6.0/95 documents open as plain text again, as documented; their header was rejected
+  as damaged.
 - Excel formats: fractions (`# ?/?`, `?/8`), the dates Excel invents (0 January and
   29 February 1900) and `#####` for dates outside Excel's range; number formats are parsed
   once per workbook rather than once per cell.
