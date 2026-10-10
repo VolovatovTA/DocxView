@@ -13,6 +13,7 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -62,20 +63,32 @@ internal fun ParagraphView(
     modifier: Modifier = Modifier,
     compact: Boolean = false,
 ) {
-    if (paragraph.inlines.isEmpty()) {
+    ParagraphPieceView(ParagraphPiece.whole(paragraph), context, modifier, compact)
+}
+
+// Renders a whole paragraph or one part of a long one: spacing, marker and first-line indent belong to its ends.
+@Composable
+internal fun ParagraphPieceView(
+    piece: ParagraphPiece,
+    context: FlowContext,
+    modifier: Modifier = Modifier,
+    compact: Boolean = false,
+) {
+    if (piece.source.inlines.isEmpty()) {
         EmptyLine(context, compact, modifier)
         return
     }
-    val style = paragraph.style
-    val textStyle = paragraphTextStyle(paragraph, context, isInHeaderRow = LocalInHeaderRow.current)
-    val boxModifier = modifier.paragraphBox(style, context.scale, compact)
+    val style = piece.source.style
+    val textStyle = paragraphTextStyle(piece, context, isInHeaderRow = LocalInHeaderRow.current)
+    val boxModifier = modifier.paragraphBox(style, context.scale, compact, piece)
     val marker = style.listMarker
     if (marker == null) {
-        Box(boxModifier) { ParagraphContent(paragraph, context, textStyle) }
+        Box(boxModifier) { ParagraphContent(piece, context, textStyle) }
     } else {
         Row(boxModifier) {
-            ListMarker(marker, textStyle, context.scale)
-            Box(Modifier.weight(1f)) { ParagraphContent(paragraph, context, textStyle) }
+            // Later parts of a long list item keep the marker's room so their text stays aligned.
+            ListMarker(marker, textStyle, context.scale, Modifier.alpha(if (piece.isFirst) 1f else 0f))
+            Box(Modifier.weight(1f)) { ParagraphContent(piece, context, textStyle) }
         }
     }
 }
@@ -99,15 +112,15 @@ private fun ListMarker(marker: String, textStyle: TextStyle, scale: Float, modif
 }
 
 @Composable
-private fun ParagraphContent(paragraph: Paragraph, context: FlowContext, textStyle: TextStyle) {
-    val matches = context.search.matchesIn(paragraph)
-    if (paragraph.inlines.none { it is ImageRun }) {
-        val text = remember(paragraph, matches, context.search.current, context.colors) {
-            paragraphText(paragraph.inlines.filterIsInstance<TextRun>(), offset = 0, matches, context)
+private fun ParagraphContent(piece: ParagraphPiece, context: FlowContext, textStyle: TextStyle) {
+    val matches = context.search.matchesIn(piece.source)
+    if (piece.inlines.none { it is ImageRun }) {
+        val text = remember(piece, matches, context.search.current, context.colors) {
+            paragraphText(piece.inlines.filterIsInstance<TextRun>(), piece.textOffset, matches, context)
         }
         BasicText(text, style = textStyle)
     } else {
-        val segments = remember(paragraph) { paragraph.segments() }
+        val segments = remember(piece) { piece.segments() }
         Column(Modifier.fillMaxWidth()) {
             for (segment in segments) {
                 when (segment) {
@@ -130,10 +143,10 @@ private sealed interface ParagraphSegment {
     class Image(val run: ImageRun) : ParagraphSegment
 }
 
-private fun Paragraph.segments(): List<ParagraphSegment> {
+private fun ParagraphPiece.segments(): List<ParagraphSegment> {
     val segments = ArrayList<ParagraphSegment>()
     var pending = ArrayList<TextRun>()
-    var offset = 0
+    var offset = textOffset
     fun flushText() {
         if (pending.isEmpty()) return
         segments += ParagraphSegment.Text(pending, offset)
@@ -153,7 +166,8 @@ private fun Paragraph.segments(): List<ParagraphSegment> {
     return segments
 }
 
-private fun paragraphTextStyle(paragraph: Paragraph, context: FlowContext, isInHeaderRow: Boolean): TextStyle {
+private fun paragraphTextStyle(piece: ParagraphPiece, context: FlowContext, isInHeaderRow: Boolean): TextStyle {
+    val paragraph = piece.source
     val style = paragraph.style
     val isHeading = style.headingLevel > 0
     val runSizes = paragraph.inlines.mapNotNull { (it as? TextRun)?.style?.relativeSize }
@@ -166,7 +180,7 @@ private fun paragraphTextStyle(paragraph: Paragraph, context: FlowContext, isInH
         fontWeight = if (isHeading || isInHeaderRow) FontWeight.SemiBold else null,
         textAlign = style.alignment.toTextAlign(),
         lineHeight = if (hasTallRuns || isHeading) TextUnit.Unspecified else ParagraphSpec.BODY_LINE_HEIGHT_EM.em,
-        textIndent = firstLineIndent(style, context.scale),
+        textIndent = if (piece.isFirst) firstLineIndent(style, context.scale) else null,
     )
 }
 
@@ -188,7 +202,12 @@ private fun firstLineIndent(style: ParagraphStyle, scale: Float): TextIndent? {
     return TextIndent(firstLine = (style.firstLineIndentPt.coerceIn(-limit, limit) * scale).sp)
 }
 
-private fun Modifier.paragraphBox(style: ParagraphStyle, scale: Float, compact: Boolean): Modifier {
+private fun Modifier.paragraphBox(
+    style: ParagraphStyle,
+    scale: Float,
+    compact: Boolean,
+    piece: ParagraphPiece,
+): Modifier {
     val isHeading = style.headingLevel > 0
     val spacingFactor = if (compact) ParagraphSpec.COMPACT_SPACING_FACTOR else 1f
     val defaultBefore = if (isHeading) ParagraphSpec.HEADING_SPACE_BEFORE_PT else 0f
@@ -201,8 +220,8 @@ private fun Modifier.paragraphBox(style: ParagraphStyle, scale: Float, compact: 
     return fillMaxWidth()
         .padding(
             start = style.indentStartPt.coerceIn(0f, ParagraphSpec.MAX_INDENT_PT).ptToDp(scale),
-            top = (before * spacingFactor).ptToDp(scale),
-            bottom = (after * spacingFactor).ptToDp(scale),
+            top = if (piece.isFirst) (before * spacingFactor).ptToDp(scale) else 0.dp,
+            bottom = if (piece.isLast) (after * spacingFactor).ptToDp(scale) else 0.dp,
         )
         .then(style.background?.let { Modifier.background(Color(it)) } ?: Modifier)
         .then(if (isHeading) Modifier.semantics { heading() } else Modifier)

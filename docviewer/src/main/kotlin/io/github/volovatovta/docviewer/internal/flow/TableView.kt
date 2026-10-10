@@ -1,7 +1,7 @@
 package io.github.volovatovta.docviewer.internal.flow
 
 import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.rememberScrollableState
+import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,10 +22,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.layout.Measurable
-import androidx.compose.ui.layout.MeasureResult
-import androidx.compose.ui.layout.MeasureScope
-import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -35,7 +31,6 @@ import androidx.compose.ui.unit.dp
 import io.github.volovatovta.docviewer.DocumentViewerColors
 import io.github.volovatovta.docviewer.core.model.Table
 import io.github.volovatovta.docviewer.core.model.TableCell
-import io.github.volovatovta.docviewer.core.model.TableRow
 import kotlin.math.roundToInt
 
 private object TableSpec {
@@ -51,63 +46,70 @@ private object TableSpec {
     val BorderWidth = 1.dp
 }
 
-// One rectangle of the grid as drawn: merged continuation cells have no top border.
-private class CellBox(
-    val row: Int,
-    val firstColumn: Int,
-    val lastColumn: Int,
-    val mergedWithAbove: Boolean,
-    val background: Int?,
-)
-
-// Written during measure, read while drawing the grid and clamping the scroll.
-private class TableGeometry {
-    var columnX = IntArray(0)
-    var rowY = IntArray(0)
-    var cells: List<CellBox> = emptyList()
+// Shared by every row of one table: column widths and the horizontal scroll position.
+internal class TableRuntime(val columns: ColumnContent) {
+    var offset by mutableFloatStateOf(0f)
     var contentWidth = 0
     var viewportWidth = 0
     val maxOffset: Int get() = (contentWidth - viewportWidth).coerceAtLeast(0)
-}
 
-private class MeasuredRow(val height: Int, val cells: List<Pair<Placeable, Int>>, val boxes: List<CellBox>)
-
-@Composable
-internal fun TableView(table: Table, context: FlowContext, modifier: Modifier = Modifier) {
-    if (table.rows.isEmpty()) return
-    var offset by remember(table) { mutableFloatStateOf(0f) }
-    val geometry = remember(table) { TableGeometry() }
-    val scrollState = rememberScrollableState { delta ->
+    val scroll = ScrollableState { delta ->
         val previous = offset
-        offset = (offset - delta).coerceIn(0f, geometry.maxOffset.toFloat())
+        offset = (offset - delta).coerceIn(0f, maxOffset.toFloat())
         previous - offset
     }
+}
+
+// Tables nested inside cells are small enough to render whole.
+@Composable
+internal fun TableView(table: Table, context: FlowContext, modifier: Modifier = Modifier) {
+    Column(modifier.fillMaxWidth()) {
+        table.rows.indices.forEach { row -> TableRowView(table, row, context) }
+    }
+}
+
+// One row of a table, laid out on the table's shared column grid; top-level tables render one row per list item.
+@Composable
+internal fun TableRowView(table: Table, rowIndex: Int, context: FlowContext, modifier: Modifier = Modifier) {
+    val runtime = rememberTableRuntime(table, context)
+    val geometry = remember(table, rowIndex) { RowGeometry() }
+    val row = table.rows[rowIndex]
+    val isLast = rowIndex == table.rows.lastIndex
     val cellPadding = TableSpec.CellPadding * context.scale
-    val columns = rememberColumnContent(table, context, cellPadding)
     Layout(
         content = {
-            // Every cell is a direct child of the layout; rows only exist in the measure policy.
-            table.rows.forEach { row ->
-                CompositionLocalProvider(LocalInHeaderRow provides row.isHeader) {
-                    row.cells.forEach { cell -> TableCellContent(cell, context, cellPadding) }
-                }
+            CompositionLocalProvider(LocalInHeaderRow provides row.isHeader) {
+                row.cells.forEach { cell -> TableCellContent(cell, context, cellPadding) }
             }
         },
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = TableSpec.VerticalMargin)
+            .padding(
+                top = if (rowIndex == 0) TableSpec.VerticalMargin else 0.dp,
+                bottom = if (isLast) TableSpec.VerticalMargin else 0.dp,
+            )
             .clipToBounds()
-            .scrollable(scrollState, Orientation.Horizontal)
+            .scrollable(runtime.scroll, Orientation.Horizontal)
             .drawWithContent {
                 drawContent()
-                drawFadingEdges(geometry, offset, context.colors.page)
+                drawFadingEdges(runtime, context.colors.page)
             }
-            .drawBehind { drawGrid(table, geometry, offset, context.colors) },
+            .drawBehind { drawRowGrid(geometry, runtime.offset, row.isHeader, isLast, context.colors) },
     ) { measurables, constraints ->
         val minColumn = (TableSpec.MinColumnWidth.toPx() * context.scale).roundToInt().toFloat()
-        val widths = columnWidths(table, columns, constraints.maxWidth.toFloat(), minColumn)
-        val minRowHeight = (TableSpec.MinRowHeight.toPx() * context.scale).roundToInt()
-        measureTable(table, measurables, constraints, widths, geometry, minRowHeight) { offset }
+        val edges = columnEdges(columnWidths(table, runtime.columns, constraints.maxWidth.toFloat(), minColumn))
+        runtime.contentWidth = edges.last()
+        runtime.viewportWidth = constraints.maxWidth
+        val slots = cellSlots(row.cells, edges.size - 1)
+        val placeables = measurables.zip(slots) { measurable, slot ->
+            measurable.measure(Constraints.fixedWidth(edges[slot.lastColumn] - edges[slot.firstColumn]))
+        }
+        val minHeight = (TableSpec.MinRowHeight.toPx() * context.scale).roundToInt()
+        geometry.update(edges, slots, maxOf(minHeight, placeables.maxOfOrNull { it.height } ?: 0))
+        layout(constraints.maxWidth, geometry.height) {
+            val shift = runtime.offset.roundToInt()
+            placeables.zip(slots) { placeable, slot -> placeable.placeWithLayer(edges[slot.firstColumn] - shift, 0) }
+        }
     }
 }
 
@@ -120,43 +122,47 @@ private fun TableCellContent(cell: TableCell, context: FlowContext, cellPadding:
 }
 
 @Composable
-private fun rememberColumnContent(table: Table, context: FlowContext, cellPadding: Dp): ColumnContent {
+private fun rememberTableRuntime(table: Table, context: FlowContext): TableRuntime {
     val measurer = rememberTextMeasurer(cacheSize = 0)
     val density = LocalDensity.current
-    return context.tableColumns.getOrPut(table) {
+    return context.tables.getOrPut(table) {
         val padding = with(density) {
-            (cellPadding + TableSpec.CellExtraHorizontalPadding).toPx() * 2 + TableSpec.MeasureSafety.toPx()
+            (TableSpec.CellPadding * context.scale + TableSpec.CellExtraHorizontalPadding).toPx() * 2 +
+                TableSpec.MeasureSafety.toPx()
         }
-        measureColumns(table, measurer, TextStyle(fontSize = context.textSize), padding)
+        TableRuntime(measureColumns(table, measurer, TextStyle(fontSize = context.textSize), padding))
     }
 }
 
-private fun MeasureScope.measureTable(
-    table: Table,
-    measurables: List<Measurable>,
-    constraints: Constraints,
-    widths: FloatArray,
-    geometry: TableGeometry,
-    minRowHeight: Int,
-    offset: () -> Float,
-): MeasureResult {
-    val columnX = columnEdges(widths)
-    val remaining = measurables.iterator()
-    val rows = table.rows.mapIndexed { index, row -> measureRow(row, index, remaining, columnX, minRowHeight) }
-    val rowY = IntArray(rows.size + 1)
-    rows.forEachIndexed { index, row -> rowY[index + 1] = rowY[index] + row.height }
-    geometry.columnX = columnX
-    geometry.rowY = rowY
-    geometry.cells = rows.flatMap { it.boxes }
-    geometry.contentWidth = columnX.last()
-    geometry.viewportWidth = constraints.maxWidth
-    val width = if (constraints.hasBoundedWidth) constraints.maxWidth else columnX.last()
-    return layout(width, rowY.last()) {
-        val shift = offset().roundToInt()
-        rows.forEachIndexed { index, row ->
-            row.cells.forEach { (placeable, x) -> placeable.placeWithLayer(x - shift, rowY[index]) }
-        }
+// The columns one cell spans; rows with fewer cells than the grid get an empty slot for the rest.
+private class CellSlot(val firstColumn: Int, val lastColumn: Int, val mergedWithAbove: Boolean, val background: Int?)
+
+// Written by the measure pass, read when drawing the grid behind the cells.
+private class RowGeometry {
+    var edges = IntArray(0)
+        private set
+    var slots: List<CellSlot> = emptyList()
+        private set
+    var height = 0
+        private set
+
+    fun update(edges: IntArray, slots: List<CellSlot>, height: Int) {
+        this.edges = edges
+        this.slots = slots
+        this.height = height
     }
+}
+
+private fun cellSlots(cells: List<TableCell>, columnCount: Int): List<CellSlot> {
+    var column = 0
+    val slots = cells.map { cell ->
+        val first = column.coerceAtMost(columnCount - 1)
+        val last = (column + cell.colSpan).coerceAtMost(columnCount).coerceAtLeast(first + 1)
+        column = last
+        CellSlot(first, last, cell.mergedWithAbove, cell.background)
+    }
+    if (column >= columnCount) return slots
+    return slots + CellSlot(column, columnCount, mergedWithAbove = false, background = null)
 }
 
 private fun columnEdges(widths: FloatArray): IntArray {
@@ -165,37 +171,33 @@ private fun columnEdges(widths: FloatArray): IntArray {
     return edges
 }
 
-private fun measureRow(
-    row: TableRow,
-    rowIndex: Int,
-    measurables: Iterator<Measurable>,
-    columnX: IntArray,
-    minHeight: Int,
-): MeasuredRow {
-    val count = columnX.size - 1
-    val placed = ArrayList<Pair<Placeable, Int>>()
-    val boxes = ArrayList<CellBox>()
-    var column = 0
-    for (cell in row.cells) {
-        val first = column.coerceAtMost(count - 1)
-        val last = (column + cell.colSpan).coerceAtMost(count).coerceAtLeast(first + 1)
-        column = last
-        val width = columnX[last] - columnX[first]
-        placed += measurables.next().measure(Constraints.fixedWidth(width)) to columnX[first]
-        boxes += CellBox(rowIndex, first, last, cell.mergedWithAbove, cell.background)
+private fun DrawScope.drawRowGrid(
+    geometry: RowGeometry,
+    offset: Float,
+    isHeader: Boolean,
+    isLast: Boolean,
+    colors: DocumentViewerColors,
+) {
+    val stroke = TableSpec.BorderWidth.toPx()
+    val bottom = size.height - stroke / 2
+    geometry.slots.forEach { slot ->
+        val left = geometry.edges[slot.firstColumn] - offset
+        val right = geometry.edges[slot.lastColumn] - offset
+        val fill = slot.background?.let(::Color) ?: colors.tableHeader.takeIf { isHeader }
+        fill?.let { drawRect(it, Offset(left, 0f), Size(right - left, size.height)) }
+        if (!slot.mergedWithAbove) drawLine(colors.tableBorder, Offset(left, 0f), Offset(right, 0f), stroke)
+        drawLine(colors.tableBorder, Offset(left, 0f), Offset(left, size.height), stroke)
+        drawLine(colors.tableBorder, Offset(right, 0f), Offset(right, size.height), stroke)
+        if (isLast) drawLine(colors.tableBorder, Offset(left, bottom), Offset(right, bottom), stroke)
     }
-    // Rows with fewer cells than the grid still get borders for the missing part.
-    if (column < count) boxes += CellBox(rowIndex, column, count, mergedWithAbove = false, background = null)
-    val height = maxOf(minHeight, placed.maxOfOrNull { it.first.height } ?: 0)
-    return MeasuredRow(height, placed, boxes)
 }
 
 // Fading edges hint that the table continues off-screen.
-private fun DrawScope.drawFadingEdges(geometry: TableGeometry, offset: Float, page: Color) {
-    val maxOffset = geometry.maxOffset
+private fun DrawScope.drawFadingEdges(runtime: TableRuntime, page: Color) {
+    val maxOffset = runtime.maxOffset
     if (maxOffset <= 0) return
     val fade = TableSpec.FadeWidth.toPx()
-    if (offset < maxOffset - 1) {
+    if (runtime.offset < maxOffset - 1) {
         val start = size.width - fade
         drawRect(
             brush = Brush.horizontalGradient(listOf(Color.Transparent, page), startX = start, endX = size.width),
@@ -203,44 +205,11 @@ private fun DrawScope.drawFadingEdges(geometry: TableGeometry, offset: Float, pa
             size = Size(fade, size.height),
         )
     }
-    if (offset > 1) {
+    if (runtime.offset > 1) {
         drawRect(
             brush = Brush.horizontalGradient(listOf(page, Color.Transparent), startX = 0f, endX = fade),
             topLeft = Offset.Zero,
             size = Size(fade, size.height),
         )
     }
-}
-
-private fun DrawScope.drawGrid(table: Table, geometry: TableGeometry, offset: Float, colors: DocumentViewerColors) {
-    val stroke = TableSpec.BorderWidth.toPx()
-    geometry.cells.forEach { cell ->
-        drawCell(cell, table.rows[cell.row].isHeader, geometry, offset, colors, stroke)
-    }
-    val bottom = geometry.rowY.last() - stroke / 2
-    drawLine(
-        color = colors.tableBorder,
-        start = Offset(geometry.columnX.first() - offset, bottom),
-        end = Offset(geometry.columnX.last() - offset, bottom),
-        strokeWidth = stroke,
-    )
-}
-
-private fun DrawScope.drawCell(
-    cell: CellBox,
-    isHeader: Boolean,
-    geometry: TableGeometry,
-    offset: Float,
-    colors: DocumentViewerColors,
-    stroke: Float,
-) {
-    val left = geometry.columnX[cell.firstColumn] - offset
-    val right = geometry.columnX[cell.lastColumn] - offset
-    val top = geometry.rowY[cell.row].toFloat()
-    val bottom = geometry.rowY[cell.row + 1].toFloat()
-    val fill = cell.background?.let(::Color) ?: colors.tableHeader.takeIf { isHeader }
-    fill?.let { drawRect(it, Offset(left, top), Size(right - left, bottom - top)) }
-    if (!cell.mergedWithAbove) drawLine(colors.tableBorder, Offset(left, top), Offset(right, top), stroke)
-    drawLine(colors.tableBorder, Offset(left, top), Offset(left, bottom), stroke)
-    drawLine(colors.tableBorder, Offset(right, top), Offset(right, bottom), stroke)
 }

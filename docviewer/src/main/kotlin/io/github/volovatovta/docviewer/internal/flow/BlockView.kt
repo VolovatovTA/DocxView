@@ -30,6 +30,15 @@ private object BlockSpec {
 }
 
 @Composable
+internal fun FlowItemView(item: FlowItem, context: FlowContext, modifier: Modifier = Modifier) {
+    when (item) {
+        is FlowItem.ParagraphPart -> ParagraphPieceView(item.piece, context, modifier)
+        is FlowItem.TableRowItem -> TableRowView(item.table, item.row, context, modifier)
+        is FlowItem.WholeBlock -> BlockView(item.block, context, modifier)
+    }
+}
+
+@Composable
 internal fun BlockView(
     block: Block,
     context: FlowContext,

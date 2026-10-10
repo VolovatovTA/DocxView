@@ -29,6 +29,7 @@ private object FlowNavigation {
 
 internal class FlowController(
     private val document: FlowDocument,
+    private val plan: FlowPlan,
     private val listState: LazyListState,
     var viewportHeight: Float,
     private val currentScale: () -> Float,
@@ -40,20 +41,22 @@ internal class FlowController(
 
     override suspend fun reveal(hit: Any) {
         val match = hit as FlowMatch
-        if (isComfortablyVisible(match.blockIndex)) return
-        scrollToItem(match.blockIndex, animate = true)
-        listState.showContextAbove(match.blockIndex, viewportHeight * FlowNavigation.CONTEXT_ABOVE_MATCH)
+        val item = plan.itemOf(match)
+        if (isComfortablyVisible(item)) return
+        listState.goToItem(item, animate = true, FlowNavigation.ANIMATED_DISTANCE)
+        listState.showContextAbove(item, viewportHeight * FlowNavigation.CONTEXT_ABOVE_MATCH)
     }
 
+    // Callers count top-level blocks; the list counts paragraph parts and table rows.
     override suspend fun scrollToItem(index: Int, animate: Boolean) =
-        listState.goToItem(index, animate, FlowNavigation.ANIMATED_DISTANCE)
+        listState.goToItem(plan.itemOf(index), animate, FlowNavigation.ANIMATED_DISTANCE)
 
     override suspend fun zoomBy(factor: Float) = zoomTo(currentScale() * factor)
 
     override suspend fun zoomTo(zoom: Float) = onScale(TextScale.clamp(zoom))
 
-    private fun isComfortablyVisible(blockIndex: Int): Boolean {
-        val item = listState.layoutInfo.visibleItemsInfo.firstOrNull { it.index == blockIndex } ?: return false
+    private fun isComfortablyVisible(itemIndex: Int): Boolean {
+        val item = listState.layoutInfo.visibleItemsInfo.firstOrNull { it.index == itemIndex } ?: return false
         val bottom = item.offset + minOf(item.size, FlowNavigation.MAX_CHECKED_BLOCK_HEIGHT_PX)
         return item.offset > viewportHeight * FlowNavigation.COMFORT_TOP &&
             bottom < viewportHeight * FlowNavigation.COMFORT_BOTTOM

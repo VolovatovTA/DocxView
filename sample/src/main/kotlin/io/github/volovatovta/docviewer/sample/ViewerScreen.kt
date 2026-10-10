@@ -65,9 +65,7 @@ internal fun ViewerScreen(location: String, onBack: () -> Unit, modifier: Modifi
         modifier = modifier,
         topBar = {
             TopAppBar(
-                navigationIcon = {
-                    IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back") }
-                },
+                navigationIcon = { BackButton(onBack) },
                 title = {
                     if (searching) SearchField(query, onQueryChange = { query = it }) else DocumentTitle(state.info)
                 },
@@ -108,6 +106,13 @@ internal fun ViewerScreen(location: String, onBack: () -> Unit, modifier: Modifi
     }
 }
 
+@Composable
+private fun BackButton(onBack: () -> Unit) {
+    IconButton(onClick = onBack) {
+        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+    }
+}
+
 // Waits for a pause in typing so a page-by-page PDF search is not restarted on every keystroke.
 @Composable
 private fun DebouncedSearch(state: DocumentViewerState, query: String, active: Boolean) {
@@ -124,7 +129,11 @@ private fun DebouncedSearch(state: DocumentViewerState, query: String, active: B
 @Composable
 private fun DocumentTitle(info: DocumentInfo?) {
     Column {
-        Text(info?.title ?: info?.fileName ?: "Document", maxLines = 1, overflow = TextOverflow.Ellipsis)
+        Text(
+            info?.title ?: info?.fileName ?: "Document",
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
         if (info != null) {
             Text(
                 text = "${info.format} · ${formatSize(info.sizeBytes)}",
@@ -157,7 +166,11 @@ private fun SearchField(query: String, onQueryChange: (String) -> Unit) {
 }
 
 @Composable
-private fun RowScope.SearchActions(state: DocumentViewerState, queryIsBlank: Boolean, onClose: () -> Unit) {
+private fun RowScope.SearchActions(
+    state: DocumentViewerState,
+    queryIsBlank: Boolean,
+    onClose: () -> Unit
+) {
     val count = state.searchResultCount
     Text(searchCounter(state, queryIsBlank), style = MaterialTheme.typography.labelLarge)
     IconButton(onClick = state::previousSearchResult, enabled = count > 0) {
@@ -190,7 +203,12 @@ private fun RowScope.ViewerActions(
 ) {
     val info = state.info
     if (info?.isSearchSupported != false) {
-        IconButton(onClick = onSearch, enabled = info != null) { Icon(Icons.Default.Search, "Search") }
+        IconButton(onClick = onSearch, enabled = info != null) {
+            Icon(
+                Icons.Default.Search,
+                "Search"
+            )
+        }
     }
     var menuOpen by remember { mutableStateOf(false) }
     IconButton(onClick = { menuOpen = true }) { Icon(Icons.Default.MoreVert, "More") }
@@ -199,8 +217,16 @@ private fun RowScope.ViewerActions(
         MenuItem("Zoom in", closeMenu, state::zoomIn)
         MenuItem("Zoom out", closeMenu, state::zoomOut)
         MenuItem("Reset zoom", closeMenu, state::resetZoom)
-        MenuItem(if (nightPdf) "Normal PDF pages" else "PDF night mode", closeMenu, onToggleNightPdf)
-        MenuItem(if (selectable) "Disable text selection" else "Enable text selection", closeMenu, onToggleSelectable)
+        MenuItem(
+            if (nightPdf) "Normal PDF pages" else "PDF night mode",
+            closeMenu,
+            onToggleNightPdf
+        )
+        MenuItem(
+            if (selectable) "Disable text selection" else "Enable text selection",
+            closeMenu,
+            onToggleSelectable
+        )
         MenuItem("Go to start", closeMenu) { state.goToPage(0) }
     }
 }

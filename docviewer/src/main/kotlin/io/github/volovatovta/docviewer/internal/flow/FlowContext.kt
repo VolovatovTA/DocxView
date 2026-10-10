@@ -20,8 +20,8 @@ internal class FlowContext(
     val search: SearchHighlights,
     val onLink: (String) -> Unit,
     val images: FlowImages,
-    // Survives list items leaving the screen, so tables are not re-measured on every scroll back.
-    val tableColumns: MutableMap<Table, ColumnContent>,
+    // Survives list items leaving the screen: each table is measured once and its rows share one scroll.
+    val tables: MutableMap<Table, TableRuntime>,
 )
 
 @Immutable

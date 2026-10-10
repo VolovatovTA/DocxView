@@ -67,7 +67,8 @@ internal fun FlowViewer(
     onLink: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val initialItem = remember { state.consumeInitialPage() }.coerceIn(0, document.blocks.lastIndex.coerceAtLeast(0))
+    val plan = remember(document) { FlowPlan.of(document) }
+    val initialItem = remember { plan.itemOf(state.consumeInitialPage()) }
     val listState = rememberLazyListState(initialFirstVisibleItemIndex = initialItem)
     var scale by remember(document) { mutableFloatStateOf(TextScale.clamp(state.zoom)) }
     val applyScale: (Float) -> Unit = { value ->
@@ -79,11 +80,11 @@ internal fun FlowViewer(
     BoxWithConstraints(modifier.fillMaxSize().background(colors.background)) {
         val viewportHeight = with(LocalDensity.current) { maxHeight.toPx() }
         val controller = remember(document, listState) {
-            FlowController(document, listState, viewportHeight, currentScale = { scale }, onScale = applyScale)
+            FlowController(document, plan, listState, viewportHeight, currentScale = { scale }, onScale = applyScale)
         }
         controller.viewportHeight = viewportHeight
         BindController(state, controller)
-        TrackCurrentItem(listState, state)
+        TrackCurrentItem(listState, state, toPage = plan::blockOf)
 
         // The "paper" column spans the full height even when the document is shorter than the screen.
         Box(
@@ -96,9 +97,9 @@ internal fun FlowViewer(
         )
         Box(Modifier.fillMaxSize().pinchToScaleText(currentScale = { scale }, onScale = applyScale)) {
             if (config.textSelectable) {
-                SelectionContainer { FlowList(document, listState, context, config.maxContentWidth) }
+                SelectionContainer { FlowList(plan, listState, context, config.maxContentWidth) }
             } else {
-                FlowList(document, listState, context, config.maxContentWidth)
+                FlowList(plan, listState, context, config.maxContentWidth)
             }
         }
         if (config.showScrollbar) {
@@ -114,7 +115,7 @@ internal fun FlowViewer(
 
 @Composable
 private fun FlowList(
-    document: FlowDocument,
+    plan: FlowPlan,
     listState: LazyListState,
     context: FlowContext,
     maxContentWidth: Dp,
@@ -125,7 +126,7 @@ private fun FlowList(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        itemsIndexed(document.blocks) { index, block ->
+        itemsIndexed(plan.items, contentType = { _, item -> item::class }) { index, item ->
             Box(
                 Modifier
                     .widthIn(max = maxContentWidth)
@@ -134,10 +135,10 @@ private fun FlowList(
                         start = FlowViewerSpec.HorizontalPadding,
                         end = FlowViewerSpec.HorizontalPadding,
                         top = if (index == 0) FlowViewerSpec.TopPadding else 0.dp,
-                        bottom = if (index == document.blocks.lastIndex) FlowViewerSpec.BottomPadding else 0.dp,
+                        bottom = if (index == plan.items.lastIndex) FlowViewerSpec.BottomPadding else 0.dp,
                     ),
             ) {
-                BlockView(block, context)
+                FlowItemView(item, context)
             }
         }
     }
@@ -155,7 +156,7 @@ private fun rememberFlowContext(
     val hits = remember(state.searchHits) { state.searchHits.filterIsInstance<FlowMatch>() }
     val highlights = remember(hits) { FlowSearch.byParagraph(hits) }
     val imageCache = remember(document) { ImageBitmapCache() }
-    val tableColumns = remember(document, scale) { IdentityHashMap<Table, ColumnContent>() }
+    val tables = remember(document, scale) { IdentityHashMap<Table, TableRuntime>() }
     return FlowContext(
         colors = colors,
         textSize = config.textSize * scale,
@@ -163,7 +164,7 @@ private fun rememberFlowContext(
         search = SearchHighlights(highlights, hits.getOrNull(state.currentSearchResult)),
         onLink = onLink,
         images = FlowImages(document.images, imageCache),
-        tableColumns = tableColumns,
+        tables = tables,
     )
 }
 

@@ -5,6 +5,8 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import io.github.volovatovta.docviewer.DocumentViewerColors
@@ -61,9 +63,14 @@ internal fun BindController(state: DocumentViewerState, controller: ViewerContro
 }
 
 @Composable
-internal fun TrackCurrentItem(listState: LazyListState, state: DocumentViewerState) {
+internal fun TrackCurrentItem(listState: LazyListState, state: DocumentViewerState, toPage: (Int) -> Int = { it }) {
+    val currentToPage by rememberUpdatedState(toPage)
     LaunchedEffect(listState) {
-        snapshotFlow { listState.firstVisibleItemIndex }.distinctUntilChanged().collect { state.currentPage = it }
+        snapshotFlow {
+            currentToPage(
+                listState.firstVisibleItemIndex
+            )
+        }.distinctUntilChanged().collect { state.currentPage = it }
     }
 }
 
