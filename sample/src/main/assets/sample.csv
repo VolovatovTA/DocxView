@@ -1,0 +1,2001 @@
+Date;City;Product;Quantity;Price;Total;Comment
+2026-02-19;Berlin;Laptop;18;19;342;Repeat order
+2026-09-13;New York;Phone;12;199;2388;
+2026-06-14;Sydney;Router;2;59;118;
+2026-05-23;London;Phone;1;29;29;
+2026-01-11;Toronto;Headphones;8;199;1592;
+2026-09-26;Sydney;Monitor;4;199;796;
+2026-01-16;Berlin;Mouse;11;349;3839;
+2026-02-22;Sydney;Keyboard;13;19;247;
+2026-01-28;London;Router;1;59;59;Courier delivery
+2026-02-02;Paris;Monitor;10;349;3490;
+2026-09-02;Toronto;Keyboard;18;799;14382;
+2026-08-20;Sydney;Headphones;3;29;87;"Pickup; pay by card"
+2026-06-18;Sydney;Monitor;12;349;4188;
+2026-07-27;Berlin;Phone;13;349;4537;
+2026-09-22;Madrid;Keyboard;19;1299;24681;
+2026-08-24;Madrid;Router;13;29;377;
+2026-05-25;Paris;Keyboard;19;799;15181;"Pickup; pay by card"
+2026-04-28;Tokyo;Phone;19;349;6631;
+2026-05-07;Tokyo;Laptop;20;1299;25980;
+2026-03-19;Toronto;Mouse;9;199;1791;"Pickup; pay by card"
+2026-07-23;Madrid;Mouse;11;199;2189;"Pickup; pay by card"
+2026-08-24;London;Phone;15;349;5235;Courier delivery
+2026-02-07;Tokyo;Mouse;2;199;398;"Pickup; pay by card"
+2026-03-20;New York;Headphones;7;1299;9093;
+2026-03-14;London;Monitor;6;1299;7794;
+2026-05-02;Toronto;Router;4;19;76;
+2026-01-01;Toronto;Tablet;19;799;15181;
+2026-04-21;Madrid;Phone;14;199;2786;
+2026-05-03;Sydney;Monitor;5;349;1745;
+2026-09-23;Toronto;Tablet;15;349;5235;Courier delivery
+2026-05-04;Toronto;Monitor;15;59;885;
+2026-05-22;Berlin;Keyboard;16;349;5584;
+2026-02-04;Berlin;Tablet;6;59;354;Repeat order
+2026-03-15;Madrid;Headphones;20;199;3980;
+2026-03-25;Sydney;Tablet;6;799;4794;
+2026-01-28;Berlin;Laptop;4;59;236;
+2026-09-12;Toronto;Phone;16;349;5584;
+2026-06-16;London;Keyboard;15;349;5235;Courier delivery
+2026-02-19;London;Keyboard;9;349;3141;
+2026-07-27;Berlin;Keyboard;7;349;2443;
+2026-09-06;Berlin;Mouse;13;1299;16887;
+2026-08-14;Sydney;Tablet;9;59;531;Courier delivery
+2026-08-17;Tokyo;Router;18;349;6282;
+2026-01-04;Paris;Router;1;349;349;
+2026-04-07;Paris;Laptop;6;349;2094;
+2026-05-22;Berlin;Keyboard;17;799;13583;Courier delivery
+2026-01-01;Toronto;Mouse;15;1299;19485;
+2026-01-11;Toronto;Tablet;17;19;323;
+2026-02-28;New York;Monitor;12;799;9588;
+2026-02-28;Paris;Phone;11;1299;14289;
+2026-01-14;London;Mouse;8;199;1592;
+2026-02-18;Sydney;Mouse;6;199;1194;
+2026-08-25;Sydney;Router;16;59;944;
+2026-06-28;Toronto;Router;6;199;1194;"""Urgent"", call ahead"
+2026-04-01;Paris;Headphones;17;59;1003;
+2026-03-07;New York;Keyboard;12;29;348;"Pickup; pay by card"
+2026-01-05;London;Keyboard;19;199;3781;
+2026-01-13;Madrid;Tablet;15;199;2985;
+2026-04-13;New York;Phone;14;19;266;Courier delivery
+2026-04-04;Sydney;Router;16;19;304;"Pickup; pay by card"
+2026-02-12;London;Laptop;7;29;203;
+2026-05-16;Paris;Headphones;10;59;590;Repeat order
+2026-06-11;London;Laptop;1;1299;1299;
+2026-01-04;New York;Monitor;14;19;266;
+2026-08-02;Paris;Tablet;1;29;29;
+2026-08-12;New York;Phone;7;1299;9093;
+2026-07-03;Tokyo;Keyboard;10;1299;12990;
+2026-09-11;Sydney;Keyboard;14;19;266;
+2026-03-12;Sydney;Router;13;1299;16887;"""Urgent"", call ahead"
+2026-06-09;Berlin;Phone;8;199;1592;Repeat order
+2026-01-27;Madrid;Monitor;16;19;304;
+2026-01-20;New York;Router;4;59;236;
+2026-06-01;London;Mouse;15;1299;19485;"""Urgent"", call ahead"
+2026-06-19;Tokyo;Monitor;13;1299;16887;Courier delivery
+2026-04-23;New York;Keyboard;15;19;285;"Pickup; pay by card"
+2026-04-10;Paris;Mouse;5;349;1745;Courier delivery
+2026-06-26;Paris;Router;18;349;6282;
+2026-02-20;New York;Monitor;6;349;2094;
+2026-08-13;Paris;Monitor;7;59;413;
+2026-06-13;Madrid;Monitor;16;1299;20784;
+2026-07-07;London;Laptop;10;1299;12990;Repeat order
+2026-06-12;Paris;Router;15;59;885;Courier delivery
+2026-06-14;London;Mouse;3;349;1047;
+2026-06-08;Sydney;Router;8;59;472;Courier delivery
+2026-03-24;Paris;Mouse;3;59;177;
+2026-06-07;Sydney;Router;20;199;3980;Repeat order
+2026-05-01;Berlin;Monitor;14;199;2786;Courier delivery
+2026-09-17;New York;Router;1;799;799;
+2026-08-14;New York;Tablet;2;29;58;"""Urgent"", call ahead"
+2026-05-05;London;Router;15;799;11985;
+2026-04-05;Madrid;Headphones;10;199;1990;
+2026-03-14;Tokyo;Router;13;1299;16887;"""Urgent"", call ahead"
+2026-06-28;Tokyo;Headphones;16;349;5584;"Pickup; pay by card"
+2026-06-26;Tokyo;Mouse;1;199;199;
+2026-09-05;New York;Keyboard;17;19;323;
+2026-08-12;Toronto;Laptop;2;19;38;
+2026-05-14;Toronto;Laptop;16;29;464;
+2026-05-09;Paris;Router;20;349;6980;Repeat order
+2026-01-01;Sydney;Laptop;14;799;11186;
+2026-03-24;Sydney;Tablet;6;1299;7794;"Pickup; pay by card"
+2026-03-02;New York;Router;18;29;522;
+2026-09-22;Sydney;Tablet;2;1299;2598;Repeat order
+2026-03-03;Berlin;Monitor;17;799;13583;
+2026-08-09;Tokyo;Router;14;1299;18186;
+2026-06-05;New York;Phone;10;349;3490;
+2026-08-19;Tokyo;Laptop;16;1299;20784;
+2026-02-16;Berlin;Headphones;11;349;3839;
+2026-02-12;New York;Router;9;19;171;
+2026-06-06;Sydney;Phone;15;29;435;
+2026-01-11;Toronto;Phone;11;19;209;
+2026-07-09;Sydney;Monitor;18;59;1062;
+2026-09-04;London;Laptop;16;29;464;Courier delivery
+2026-05-16;Madrid;Headphones;10;799;7990;
+2026-03-08;Madrid;Keyboard;10;349;3490;
+2026-08-22;Sydney;Laptop;5;29;145;"Pickup; pay by card"
+2026-03-10;Paris;Keyboard;5;199;995;
+2026-03-18;Paris;Phone;5;19;95;
+2026-01-09;London;Keyboard;4;199;796;
+2026-07-12;London;Mouse;4;29;116;
+2026-04-03;Toronto;Router;1;59;59;Repeat order
+2026-01-24;Toronto;Router;4;799;3196;Repeat order
+2026-09-10;Madrid;Keyboard;19;199;3781;
+2026-05-24;Berlin;Headphones;18;199;3582;"Pickup; pay by card"
+2026-04-05;New York;Laptop;6;59;354;
+2026-01-06;London;Phone;14;349;4886;Courier delivery
+2026-05-03;Madrid;Router;19;799;15181;
+2026-04-11;Madrid;Tablet;11;29;319;
+2026-06-28;Toronto;Headphones;11;349;3839;
+2026-09-08;Toronto;Mouse;10;59;590;
+2026-03-16;Toronto;Keyboard;10;199;1990;Repeat order
+2026-01-03;Sydney;Phone;20;349;6980;
+2026-05-02;Paris;Phone;18;1299;23382;
+2026-09-07;New York;Router;13;29;377;"""Urgent"", call ahead"
+2026-09-12;New York;Headphones;4;199;796;Repeat order
+2026-08-12;London;Router;12;349;4188;
+2026-06-03;New York;Keyboard;5;59;295;
+2026-05-07;New York;Laptop;3;29;87;
+2026-06-27;Paris;Router;18;799;14382;Repeat order
+2026-09-13;Paris;Router;11;799;8789;
+2026-04-04;Berlin;Monitor;5;59;295;
+2026-01-16;Berlin;Router;14;19;266;Repeat order
+2026-09-21;Sydney;Headphones;9;29;261;
+2026-02-03;Madrid;Tablet;14;59;826;
+2026-08-14;London;Tablet;3;1299;3897;
+2026-06-07;Sydney;Monitor;14;349;4886;
+2026-09-17;Paris;Monitor;2;799;1598;
+2026-05-12;Madrid;Mouse;6;29;174;Repeat order
+2026-03-19;Toronto;Tablet;7;349;2443;
+2026-08-02;Sydney;Headphones;11;1299;14289;"Pickup; pay by card"
+2026-03-27;London;Router;7;199;1393;"Pickup; pay by card"
+2026-04-11;Berlin;Laptop;4;349;1396;
+2026-01-08;Sydney;Tablet;11;199;2189;
+2026-05-12;Tokyo;Laptop;13;29;377;
+2026-04-10;Madrid;Keyboard;11;799;8789;
+2026-04-07;Toronto;Mouse;19;29;551;
+2026-09-14;Berlin;Headphones;6;799;4794;Repeat order
+2026-09-28;Madrid;Router;15;59;885;
+2026-09-14;Madrid;Mouse;1;349;349;
+2026-08-12;Sydney;Router;13;1299;16887;
+2026-03-19;Toronto;Monitor;6;19;114;"""Urgent"", call ahead"
+2026-05-16;Berlin;Router;12;349;4188;
+2026-06-27;Paris;Monitor;12;199;2388;
+2026-05-18;Toronto;Phone;18;349;6282;
+2026-09-24;Toronto;Phone;10;19;190;
+2026-04-10;Paris;Phone;16;59;944;
+2026-06-24;Madrid;Keyboard;4;59;236;
+2026-07-18;Toronto;Monitor;18;199;3582;
+2026-04-06;Berlin;Monitor;2;349;698;
+2026-07-28;Toronto;Phone;4;349;1396;
+2026-06-08;Tokyo;Monitor;9;19;171;
+2026-07-05;Tokyo;Tablet;7;19;133;
+2026-09-07;Paris;Mouse;6;59;354;
+2026-06-04;London;Keyboard;9;1299;11691;
+2026-02-11;Berlin;Keyboard;3;29;87;"""Urgent"", call ahead"
+2026-09-05;Toronto;Router;2;799;1598;
+2026-07-26;Sydney;Headphones;14;349;4886;
+2026-07-05;New York;Laptop;10;349;3490;
+2026-04-26;Berlin;Mouse;6;199;1194;
+2026-09-19;Toronto;Mouse;12;59;708;
+2026-02-16;Sydney;Headphones;4;29;116;
+2026-03-09;Berlin;Monitor;5;19;95;
+2026-02-01;London;Phone;20;19;380;"Pickup; pay by card"
+2026-05-06;New York;Monitor;15;349;5235;Repeat order
+2026-03-01;New York;Tablet;10;799;7990;
+2026-06-04;New York;Mouse;17;799;13583;
+2026-06-21;Paris;Router;13;19;247;Repeat order
+2026-04-08;Berlin;Phone;15;29;435;"""Urgent"", call ahead"
+2026-02-18;Paris;Headphones;13;19;247;
+2026-06-08;Paris;Router;4;19;76;
+2026-07-22;Paris;Phone;19;349;6631;
+2026-08-17;London;Headphones;10;1299;12990;
+2026-09-05;Tokyo;Keyboard;19;349;6631;
+2026-05-04;London;Router;8;59;472;
+2026-01-01;New York;Router;3;199;597;Repeat order
+2026-09-28;Madrid;Laptop;20;19;380;
+2026-05-27;Madrid;Router;2;59;118;
+2026-03-10;London;Phone;10;1299;12990;
+2026-04-03;Berlin;Phone;2;19;38;"Pickup; pay by card"
+2026-03-03;Tokyo;Laptop;17;799;13583;"Pickup; pay by card"
+2026-08-03;Sydney;Tablet;16;19;304;
+2026-08-11;New York;Tablet;18;1299;23382;
+2026-08-24;Tokyo;Mouse;10;199;1990;"""Urgent"", call ahead"
+2026-08-14;Madrid;Mouse;12;19;228;
+2026-04-19;New York;Phone;11;349;3839;
+2026-02-21;Berlin;Router;8;199;1592;
+2026-07-14;New York;Tablet;9;199;1791;"""Urgent"", call ahead"
+2026-05-17;Paris;Keyboard;13;59;767;Repeat order
+2026-07-24;London;Phone;8;29;232;Courier delivery
+2026-09-18;Sydney;Mouse;16;199;3184;
+2026-09-23;Berlin;Laptop;16;199;3184;
+2026-03-13;London;Monitor;7;349;2443;Courier delivery
+2026-05-18;Berlin;Phone;4;349;1396;
+2026-07-16;Toronto;Router;14;29;406;
+2026-01-19;Toronto;Tablet;17;19;323;
+2026-02-10;Paris;Monitor;18;199;3582;
+2026-04-28;Toronto;Mouse;7;199;1393;
+2026-04-27;Paris;Phone;3;59;177;
+2026-04-05;Tokyo;Monitor;1;349;349;
+2026-03-12;Paris;Mouse;9;59;531;
+2026-07-09;New York;Phone;18;1299;23382;
+2026-09-07;Madrid;Mouse;9;349;3141;
+2026-02-14;Sydney;Tablet;10;59;590;
+2026-02-20;London;Laptop;19;29;551;
+2026-03-08;Toronto;Laptop;6;1299;7794;
+2026-09-03;Sydney;Tablet;4;1299;5196;
+2026-08-25;Madrid;Keyboard;18;59;1062;
+2026-03-12;Madrid;Headphones;16;19;304;
+2026-08-13;Madrid;Tablet;13;1299;16887;
+2026-09-11;Madrid;Router;12;799;9588;
+2026-02-23;Tokyo;Keyboard;18;199;3582;
+2026-03-06;Tokyo;Tablet;8;349;2792;
+2026-04-28;Toronto;Laptop;3;59;177;
+2026-02-21;Madrid;Tablet;20;19;380;"Pickup; pay by card"
+2026-08-22;Sydney;Monitor;16;1299;20784;
+2026-02-07;London;Headphones;4;1299;5196;
+2026-04-02;Madrid;Laptop;3;799;2397;
+2026-06-23;Madrid;Headphones;4;349;1396;"Pickup; pay by card"
+2026-09-21;New York;Mouse;11;799;8789;"Pickup; pay by card"
+2026-06-15;Sydney;Router;19;199;3781;
+2026-05-03;Paris;Keyboard;5;349;1745;"""Urgent"", call ahead"
+2026-07-08;Toronto;Headphones;18;59;1062;
+2026-05-12;London;Keyboard;11;59;649;"Pickup; pay by card"
+2026-08-13;Sydney;Mouse;13;799;10387;
+2026-06-15;New York;Router;4;799;3196;
+2026-08-18;Madrid;Mouse;17;799;13583;"""Urgent"", call ahead"
+2026-08-26;Madrid;Phone;10;19;190;Courier delivery
+2026-09-19;Tokyo;Laptop;6;29;174;"Pickup; pay by card"
+2026-04-15;London;Headphones;6;29;174;
+2026-09-22;London;Laptop;12;799;9588;
+2026-01-26;Toronto;Headphones;11;199;2189;
+2026-08-10;Madrid;Tablet;6;799;4794;
+2026-01-12;London;Tablet;8;19;152;
+2026-03-11;London;Keyboard;1;29;29;
+2026-09-21;New York;Laptop;12;349;4188;Repeat order
+2026-06-05;Tokyo;Mouse;18;29;522;
+2026-07-05;Madrid;Phone;12;1299;15588;"""Urgent"", call ahead"
+2026-07-27;New York;Monitor;13;19;247;
+2026-02-01;Berlin;Monitor;9;199;1791;
+2026-07-25;Paris;Monitor;14;799;11186;
+2026-03-14;Toronto;Phone;14;19;266;"""Urgent"", call ahead"
+2026-06-17;Paris;Phone;1;29;29;
+2026-03-08;Toronto;Laptop;12;799;9588;
+2026-05-07;Berlin;Router;8;799;6392;
+2026-03-25;Sydney;Headphones;17;349;5933;Repeat order
+2026-02-07;Sydney;Monitor;13;1299;16887;
+2026-06-09;Tokyo;Phone;7;1299;9093;"""Urgent"", call ahead"
+2026-06-17;London;Headphones;18;1299;23382;
+2026-04-07;Sydney;Mouse;11;349;3839;"""Urgent"", call ahead"
+2026-05-15;Paris;Monitor;7;349;2443;
+2026-01-22;Sydney;Laptop;4;349;1396;
+2026-05-10;Toronto;Keyboard;20;349;6980;
+2026-03-26;Madrid;Phone;17;29;493;
+2026-08-03;Paris;Tablet;9;349;3141;
+2026-01-18;Sydney;Phone;1;349;349;
+2026-07-27;Tokyo;Tablet;4;349;1396;
+2026-04-03;Tokyo;Router;19;199;3781;Repeat order
+2026-04-19;Toronto;Headphones;4;59;236;
+2026-06-28;Sydney;Laptop;8;349;2792;
+2026-04-20;Paris;Monitor;3;349;1047;
+2026-02-06;Sydney;Router;7;59;413;
+2026-07-26;Sydney;Mouse;1;19;19;"Pickup; pay by card"
+2026-02-18;Tokyo;Mouse;4;19;76;
+2026-06-03;Madrid;Keyboard;6;199;1194;
+2026-08-09;Sydney;Laptop;5;29;145;
+2026-06-03;Berlin;Keyboard;8;349;2792;
+2026-04-04;Berlin;Keyboard;20;19;380;
+2026-09-25;Sydney;Laptop;18;59;1062;
+2026-09-15;Paris;Monitor;10;19;190;
+2026-03-08;Tokyo;Monitor;13;1299;16887;
+2026-01-20;Sydney;Monitor;5;199;995;Repeat order
+2026-03-03;London;Router;8;349;2792;
+2026-06-27;Toronto;Router;1;1299;1299;"Pickup; pay by card"
+2026-02-26;Toronto;Laptop;15;59;885;
+2026-02-06;Tokyo;Monitor;1;59;59;
+2026-08-21;New York;Phone;1;1299;1299;
+2026-03-28;Toronto;Mouse;13;19;247;
+2026-09-24;Sydney;Keyboard;3;59;177;"""Urgent"", call ahead"
+2026-04-16;London;Phone;13;59;767;
+2026-09-18;Toronto;Mouse;10;19;190;
+2026-07-15;Tokyo;Keyboard;7;29;203;
+2026-01-08;Berlin;Router;5;799;3995;
+2026-08-17;Tokyo;Phone;12;799;9588;Repeat order
+2026-02-23;Toronto;Monitor;18;199;3582;"""Urgent"", call ahead"
+2026-05-23;Madrid;Headphones;3;199;597;
+2026-08-06;London;Phone;4;29;116;
+2026-01-24;Tokyo;Headphones;16;29;464;"""Urgent"", call ahead"
+2026-04-24;New York;Laptop;3;29;87;
+2026-07-28;Sydney;Laptop;16;199;3184;
+2026-07-15;London;Mouse;5;1299;6495;
+2026-06-04;Toronto;Tablet;6;1299;7794;"Pickup; pay by card"
+2026-01-21;Tokyo;Router;1;59;59;
+2026-07-23;New York;Headphones;11;1299;14289;
+2026-06-19;Madrid;Monitor;1;19;19;
+2026-07-28;New York;Headphones;16;799;12784;
+2026-07-08;Berlin;Phone;15;349;5235;
+2026-02-08;New York;Mouse;17;19;323;
+2026-09-02;Sydney;Mouse;11;59;649;
+2026-04-13;Berlin;Tablet;3;59;177;
+2026-09-11;London;Keyboard;6;1299;7794;
+2026-03-12;Paris;Monitor;15;19;285;
+2026-08-17;Tokyo;Monitor;5;199;995;
+2026-02-28;Paris;Headphones;13;19;247;
+2026-03-21;London;Keyboard;11;799;8789;
+2026-06-26;Paris;Monitor;7;59;413;
+2026-05-10;New York;Tablet;6;199;1194;"Pickup; pay by card"
+2026-05-11;Madrid;Monitor;15;59;885;
+2026-08-08;Madrid;Headphones;11;799;8789;"""Urgent"", call ahead"
+2026-02-16;London;Router;7;799;5593;"""Urgent"", call ahead"
+2026-01-11;New York;Headphones;6;59;354;
+2026-05-06;Madrid;Keyboard;1;29;29;
+2026-06-20;Paris;Headphones;5;59;295;
+2026-07-08;London;Headphones;11;199;2189;Courier delivery
+2026-03-17;New York;Router;19;1299;24681;
+2026-04-10;Sydney;Monitor;15;59;885;"""Urgent"", call ahead"
+2026-02-26;Berlin;Keyboard;1;19;19;
+2026-06-20;Sydney;Laptop;17;199;3383;
+2026-09-18;Tokyo;Headphones;13;29;377;
+2026-01-08;London;Keyboard;9;29;261;"""Urgent"", call ahead"
+2026-02-14;New York;Router;5;1299;6495;
+2026-04-03;Toronto;Headphones;14;799;11186;Repeat order
+2026-04-18;Madrid;Router;17;59;1003;
+2026-01-24;Madrid;Router;20;799;15980;
+2026-06-27;New York;Headphones;11;29;319;Courier delivery
+2026-06-20;London;Laptop;14;349;4886;
+2026-09-04;Tokyo;Router;19;349;6631;
+2026-09-09;Tokyo;Laptop;10;199;1990;
+2026-04-21;Toronto;Keyboard;12;199;2388;
+2026-06-03;New York;Laptop;8;199;1592;
+2026-05-22;Sydney;Phone;18;199;3582;
+2026-01-27;Sydney;Monitor;9;59;531;
+2026-06-12;London;Mouse;6;349;2094;
+2026-07-09;Toronto;Tablet;10;349;3490;
+2026-08-03;Toronto;Headphones;7;19;133;
+2026-02-12;London;Keyboard;14;19;266;
+2026-09-07;Madrid;Router;5;349;1745;"Pickup; pay by card"
+2026-06-19;Tokyo;Tablet;10;29;290;
+2026-04-12;Toronto;Keyboard;12;799;9588;
+2026-07-20;Toronto;Router;10;799;7990;"Pickup; pay by card"
+2026-01-14;Madrid;Router;15;19;285;
+2026-05-15;Toronto;Laptop;20;349;6980;
+2026-01-03;New York;Headphones;9;29;261;Courier delivery
+2026-06-01;New York;Mouse;12;199;2388;
+2026-05-24;Sydney;Mouse;10;349;3490;
+2026-06-25;Paris;Router;20;1299;25980;
+2026-04-05;London;Headphones;8;1299;10392;
+2026-03-17;Madrid;Monitor;15;59;885;
+2026-08-10;Paris;Laptop;14;799;11186;
+2026-04-24;Sydney;Laptop;16;19;304;Courier delivery
+2026-02-23;Madrid;Router;15;29;435;Courier delivery
+2026-05-04;New York;Headphones;14;59;826;
+2026-04-22;London;Tablet;19;59;1121;
+2026-02-16;Tokyo;Monitor;17;799;13583;
+2026-02-27;New York;Headphones;13;349;4537;
+2026-07-20;Berlin;Headphones;11;59;649;"""Urgent"", call ahead"
+2026-09-15;London;Keyboard;12;59;708;
+2026-06-27;London;Tablet;17;59;1003;"Pickup; pay by card"
+2026-09-05;New York;Monitor;7;59;413;"Pickup; pay by card"
+2026-09-20;London;Laptop;17;1299;22083;Repeat order
+2026-07-21;Toronto;Tablet;7;349;2443;
+2026-02-24;Sydney;Phone;8;799;6392;Repeat order
+2026-08-07;New York;Tablet;7;1299;9093;
+2026-06-11;London;Mouse;12;1299;15588;Courier delivery
+2026-05-19;Toronto;Tablet;17;799;13583;
+2026-09-22;Sydney;Keyboard;12;199;2388;Repeat order
+2026-08-23;Tokyo;Laptop;13;59;767;Repeat order
+2026-02-04;London;Tablet;3;199;597;
+2026-04-19;London;Router;16;59;944;"""Urgent"", call ahead"
+2026-09-27;Tokyo;Router;19;199;3781;
+2026-04-08;Sydney;Tablet;19;19;361;
+2026-06-17;Tokyo;Tablet;15;799;11985;
+2026-09-14;London;Monitor;7;29;203;
+2026-06-08;Sydney;Laptop;20;29;580;
+2026-04-23;New York;Tablet;2;59;118;
+2026-05-20;Toronto;Mouse;19;349;6631;Courier delivery
+2026-08-09;London;Mouse;16;1299;20784;Courier delivery
+2026-09-13;London;Monitor;2;29;58;
+2026-05-16;Paris;Keyboard;1;199;199;
+2026-06-15;Tokyo;Tablet;12;799;9588;Repeat order
+2026-07-15;London;Tablet;14;799;11186;
+2026-04-06;London;Headphones;5;19;95;
+2026-09-19;Tokyo;Monitor;5;799;3995;
+2026-05-20;Berlin;Laptop;18;799;14382;
+2026-09-07;Sydney;Laptop;20;59;1180;
+2026-08-03;Madrid;Phone;16;799;12784;
+2026-08-17;Paris;Tablet;10;1299;12990;
+2026-02-17;London;Mouse;4;29;116;
+2026-02-07;Paris;Keyboard;17;349;5933;
+2026-03-10;Tokyo;Keyboard;19;29;551;
+2026-04-24;Toronto;Router;15;59;885;Courier delivery
+2026-07-17;New York;Laptop;11;349;3839;"""Urgent"", call ahead"
+2026-07-26;London;Keyboard;12;799;9588;
+2026-06-09;London;Monitor;6;799;4794;
+2026-07-04;New York;Headphones;6;199;1194;
+2026-05-19;New York;Mouse;7;1299;9093;Repeat order
+2026-08-15;Berlin;Tablet;9;799;7191;
+2026-07-06;Sydney;Monitor;18;29;522;
+2026-05-23;Berlin;Mouse;17;349;5933;
+2026-01-19;Berlin;Mouse;8;199;1592;"Pickup; pay by card"
+2026-05-08;New York;Headphones;13;59;767;
+2026-06-17;Sydney;Phone;7;59;413;
+2026-04-24;Madrid;Phone;18;799;14382;
+2026-06-02;Tokyo;Monitor;7;59;413;"Pickup; pay by card"
+2026-02-04;Paris;Keyboard;9;1299;11691;Repeat order
+2026-04-24;New York;Headphones;20;59;1180;
+2026-01-13;Berlin;Laptop;10;1299;12990;"Pickup; pay by card"
+2026-08-12;Tokyo;Mouse;10;59;590;
+2026-08-12;Toronto;Phone;6;59;354;
+2026-06-06;New York;Phone;15;799;11985;"""Urgent"", call ahead"
+2026-07-18;London;Keyboard;16;799;12784;"""Urgent"", call ahead"
+2026-02-06;Tokyo;Mouse;20;199;3980;Courier delivery
+2026-03-25;Tokyo;Tablet;5;59;295;"""Urgent"", call ahead"
+2026-07-27;Toronto;Headphones;12;19;228;
+2026-05-24;London;Keyboard;2;199;398;Repeat order
+2026-03-20;Madrid;Phone;2;799;1598;
+2026-09-23;Paris;Tablet;10;19;190;
+2026-05-05;Paris;Laptop;3;799;2397;
+2026-08-18;London;Router;20;349;6980;
+2026-03-03;Sydney;Laptop;18;59;1062;"Pickup; pay by card"
+2026-05-21;Tokyo;Keyboard;19;1299;24681;"""Urgent"", call ahead"
+2026-03-08;Madrid;Phone;11;799;8789;
+2026-06-19;Madrid;Monitor;2;349;698;"Pickup; pay by card"
+2026-04-08;Tokyo;Mouse;14;799;11186;Repeat order
+2026-06-03;New York;Tablet;18;19;342;
+2026-04-10;Berlin;Phone;15;19;285;
+2026-03-19;Paris;Laptop;10;349;3490;
+2026-04-18;London;Router;4;199;796;
+2026-08-05;London;Headphones;5;799;3995;
+2026-01-02;Paris;Tablet;14;19;266;
+2026-01-20;London;Router;1;799;799;
+2026-04-22;Sydney;Laptop;15;349;5235;
+2026-02-16;New York;Keyboard;6;799;4794;
+2026-05-26;Madrid;Tablet;9;59;531;
+2026-09-27;New York;Phone;19;59;1121;Repeat order
+2026-09-20;Madrid;Headphones;16;199;3184;
+2026-07-07;Berlin;Router;3;799;2397;"Pickup; pay by card"
+2026-09-12;Madrid;Phone;9;349;3141;
+2026-06-18;Sydney;Keyboard;1;19;19;
+2026-04-21;London;Mouse;1;349;349;
+2026-01-28;Madrid;Mouse;10;349;3490;
+2026-04-06;Berlin;Tablet;4;349;1396;"Pickup; pay by card"
+2026-02-10;Paris;Phone;17;59;1003;Courier delivery
+2026-05-17;Madrid;Tablet;17;799;13583;
+2026-04-14;New York;Keyboard;13;799;10387;
+2026-02-17;London;Router;3;29;87;
+2026-08-02;Sydney;Monitor;16;19;304;
+2026-03-28;Sydney;Tablet;6;199;1194;
+2026-02-12;Toronto;Mouse;6;19;114;
+2026-08-12;Sydney;Monitor;18;1299;23382;
+2026-08-15;London;Phone;1;29;29;
+2026-09-28;London;Router;5;1299;6495;
+2026-05-25;Tokyo;Headphones;12;199;2388;
+2026-08-07;Madrid;Laptop;9;199;1791;
+2026-09-09;New York;Headphones;4;199;796;
+2026-08-09;London;Mouse;7;199;1393;"""Urgent"", call ahead"
+2026-01-17;London;Tablet;9;349;3141;
+2026-03-06;Paris;Laptop;5;59;295;
+2026-01-18;London;Tablet;19;199;3781;
+2026-01-28;New York;Tablet;19;799;15181;
+2026-08-03;Paris;Headphones;9;799;7191;Repeat order
+2026-05-16;Paris;Keyboard;16;199;3184;
+2026-02-19;Tokyo;Router;13;199;2587;
+2026-09-18;Sydney;Router;15;199;2985;
+2026-06-09;Paris;Tablet;12;199;2388;
+2026-08-01;Toronto;Keyboard;7;29;203;
+2026-01-01;London;Phone;10;19;190;
+2026-04-10;Tokyo;Phone;12;349;4188;"""Urgent"", call ahead"
+2026-03-17;Tokyo;Laptop;13;799;10387;
+2026-01-23;Madrid;Router;8;199;1592;"""Urgent"", call ahead"
+2026-07-18;Berlin;Laptop;10;19;190;
+2026-08-11;New York;Mouse;15;29;435;
+2026-06-26;Berlin;Phone;18;59;1062;
+2026-05-07;Paris;Headphones;8;19;152;
+2026-04-01;Sydney;Mouse;14;59;826;
+2026-03-14;Paris;Phone;6;349;2094;"Pickup; pay by card"
+2026-02-08;Tokyo;Mouse;18;59;1062;Courier delivery
+2026-03-02;Sydney;Mouse;3;1299;3897;
+2026-01-28;London;Mouse;8;59;472;
+2026-05-04;Sydney;Router;2;19;38;"Pickup; pay by card"
+2026-08-03;London;Tablet;1;59;59;
+2026-06-05;Paris;Headphones;1;59;59;Courier delivery
+2026-06-26;Toronto;Tablet;10;29;290;
+2026-02-05;Sydney;Monitor;17;199;3383;"Pickup; pay by card"
+2026-01-23;Berlin;Mouse;7;59;413;
+2026-02-19;Berlin;Keyboard;2;29;58;"""Urgent"", call ahead"
+2026-07-15;Sydney;Tablet;12;199;2388;
+2026-06-27;New York;Keyboard;10;19;190;
+2026-09-04;London;Headphones;14;1299;18186;
+2026-04-27;London;Laptop;13;59;767;Repeat order
+2026-05-27;Berlin;Monitor;1;29;29;
+2026-05-17;Sydney;Router;14;349;4886;
+2026-01-25;Madrid;Headphones;16;349;5584;
+2026-02-10;Sydney;Keyboard;6;19;114;
+2026-05-25;Berlin;Tablet;6;59;354;"""Urgent"", call ahead"
+2026-02-17;Madrid;Keyboard;18;199;3582;
+2026-01-12;Madrid;Mouse;11;799;8789;
+2026-03-04;Tokyo;Router;10;199;1990;
+2026-07-24;New York;Keyboard;5;799;3995;Courier delivery
+2026-02-01;London;Tablet;14;19;266;
+2026-07-14;Sydney;Monitor;7;19;133;"""Urgent"", call ahead"
+2026-05-05;Sydney;Headphones;4;19;76;Repeat order
+2026-06-06;New York;Laptop;19;29;551;
+2026-07-08;Toronto;Tablet;7;19;133;"""Urgent"", call ahead"
+2026-03-01;Madrid;Phone;19;19;361;
+2026-02-10;Sydney;Tablet;13;799;10387;
+2026-08-27;New York;Headphones;18;19;342;"Pickup; pay by card"
+2026-06-18;Toronto;Headphones;1;199;199;"""Urgent"", call ahead"
+2026-05-21;Tokyo;Mouse;18;199;3582;
+2026-09-19;Toronto;Keyboard;1;1299;1299;
+2026-07-26;New York;Headphones;10;29;290;
+2026-06-13;Tokyo;Tablet;1;799;799;Repeat order
+2026-07-15;Toronto;Phone;13;199;2587;
+2026-07-06;Madrid;Mouse;8;19;152;
+2026-08-04;London;Router;5;349;1745;"Pickup; pay by card"
+2026-05-21;Paris;Router;13;349;4537;
+2026-05-11;Berlin;Headphones;5;1299;6495;Repeat order
+2026-05-22;London;Mouse;5;19;95;"""Urgent"", call ahead"
+2026-06-25;Madrid;Mouse;11;1299;14289;
+2026-06-04;Berlin;Router;2;29;58;
+2026-07-13;Madrid;Mouse;16;1299;20784;
+2026-09-12;Paris;Tablet;5;1299;6495;
+2026-01-10;Tokyo;Keyboard;11;1299;14289;
+2026-05-28;Toronto;Tablet;6;19;114;
+2026-06-11;Sydney;Phone;8;29;232;Courier delivery
+2026-01-18;New York;Headphones;10;29;290;
+2026-05-23;Toronto;Mouse;10;19;190;
+2026-04-17;Paris;Headphones;14;799;11186;Repeat order
+2026-07-24;London;Mouse;17;349;5933;
+2026-06-20;Toronto;Mouse;19;59;1121;
+2026-01-12;London;Router;8;349;2792;
+2026-02-08;Madrid;Mouse;11;29;319;"Pickup; pay by card"
+2026-08-23;Madrid;Mouse;10;19;190;
+2026-03-19;London;Mouse;18;59;1062;
+2026-09-01;Sydney;Mouse;11;29;319;
+2026-01-20;Tokyo;Mouse;17;1299;22083;
+2026-01-01;Berlin;Headphones;3;799;2397;
+2026-07-25;Toronto;Monitor;10;1299;12990;
+2026-04-07;Paris;Router;11;799;8789;"""Urgent"", call ahead"
+2026-04-28;London;Keyboard;18;199;3582;Repeat order
+2026-08-12;Berlin;Monitor;15;19;285;
+2026-04-11;New York;Tablet;8;349;2792;
+2026-02-09;Madrid;Tablet;6;29;174;
+2026-09-14;Madrid;Headphones;13;349;4537;
+2026-02-14;Berlin;Router;12;1299;15588;
+2026-02-10;Tokyo;Monitor;15;59;885;Repeat order
+2026-06-11;New York;Mouse;7;59;413;
+2026-03-02;Toronto;Laptop;5;19;95;
+2026-09-02;Tokyo;Headphones;9;349;3141;
+2026-07-02;Madrid;Tablet;18;799;14382;"Pickup; pay by card"
+2026-02-10;Tokyo;Mouse;8;199;1592;Repeat order
+2026-01-05;London;Tablet;11;349;3839;"""Urgent"", call ahead"
+2026-03-28;Toronto;Router;3;199;597;
+2026-03-28;New York;Monitor;10;349;3490;
+2026-06-25;Sydney;Phone;11;59;649;"Pickup; pay by card"
+2026-08-27;Berlin;Laptop;8;1299;10392;"""Urgent"", call ahead"
+2026-06-13;New York;Mouse;13;29;377;Repeat order
+2026-02-28;New York;Mouse;15;199;2985;
+2026-05-21;Toronto;Tablet;6;59;354;
+2026-04-24;New York;Phone;19;199;3781;"""Urgent"", call ahead"
+2026-04-10;Paris;Mouse;1;19;19;
+2026-01-01;Toronto;Keyboard;12;19;228;
+2026-03-05;Berlin;Headphones;11;29;319;"""Urgent"", call ahead"
+2026-01-07;Tokyo;Keyboard;9;799;7191;
+2026-04-26;London;Keyboard;11;59;649;
+2026-01-17;Sydney;Mouse;14;799;11186;
+2026-07-25;Tokyo;Headphones;12;19;228;"""Urgent"", call ahead"
+2026-06-17;Madrid;Headphones;17;59;1003;
+2026-06-26;Paris;Tablet;3;19;57;
+2026-03-05;London;Headphones;20;19;380;
+2026-06-08;Paris;Laptop;8;799;6392;
+2026-06-18;Sydney;Monitor;19;799;15181;
+2026-02-17;New York;Headphones;14;1299;18186;
+2026-08-27;London;Tablet;17;29;493;Courier delivery
+2026-01-28;Sydney;Laptop;20;349;6980;
+2026-08-05;Madrid;Router;13;29;377;
+2026-02-28;Sydney;Keyboard;2;199;398;
+2026-05-12;Paris;Phone;14;59;826;
+2026-03-28;Madrid;Phone;2;59;118;
+2026-05-26;London;Monitor;13;59;767;
+2026-02-25;Toronto;Phone;14;199;2786;
+2026-07-13;Paris;Laptop;5;1299;6495;Repeat order
+2026-08-22;Toronto;Headphones;13;19;247;Courier delivery
+2026-08-20;London;Phone;7;1299;9093;
+2026-08-22;Paris;Router;16;59;944;"Pickup; pay by card"
+2026-03-21;Madrid;Tablet;7;59;413;
+2026-05-21;Sydney;Phone;17;349;5933;"Pickup; pay by card"
+2026-03-23;Sydney;Keyboard;1;59;59;
+2026-01-25;Paris;Phone;1;1299;1299;
+2026-09-18;Toronto;Headphones;4;799;3196;
+2026-03-11;New York;Tablet;4;199;796;"Pickup; pay by card"
+2026-06-08;New York;Phone;12;349;4188;
+2026-04-02;Paris;Laptop;8;799;6392;"""Urgent"", call ahead"
+2026-02-23;Toronto;Headphones;5;349;1745;
+2026-07-12;New York;Phone;18;59;1062;
+2026-06-01;Berlin;Laptop;14;1299;18186;
+2026-08-07;Tokyo;Monitor;15;29;435;
+2026-09-18;Tokyo;Router;17;799;13583;
+2026-04-23;Berlin;Headphones;13;59;767;
+2026-03-01;Berlin;Router;18;799;14382;
+2026-01-07;New York;Keyboard;2;29;58;Courier delivery
+2026-06-13;Madrid;Monitor;17;799;13583;Repeat order
+2026-06-14;Tokyo;Monitor;16;59;944;
+2026-02-16;Sydney;Mouse;17;59;1003;
+2026-09-10;London;Tablet;18;349;6282;Repeat order
+2026-07-27;Paris;Keyboard;17;799;13583;
+2026-03-11;Madrid;Mouse;18;199;3582;
+2026-09-07;Toronto;Monitor;11;1299;14289;"""Urgent"", call ahead"
+2026-09-25;Berlin;Phone;9;19;171;
+2026-06-20;Tokyo;Mouse;15;799;11985;"Pickup; pay by card"
+2026-09-22;Tokyo;Tablet;2;19;38;"""Urgent"", call ahead"
+2026-02-26;Tokyo;Laptop;18;349;6282;
+2026-05-21;Sydney;Keyboard;7;1299;9093;Repeat order
+2026-07-24;Madrid;Phone;1;19;19;
+2026-04-03;Toronto;Laptop;4;199;796;Courier delivery
+2026-02-21;Berlin;Router;9;199;1791;"""Urgent"", call ahead"
+2026-05-23;Toronto;Keyboard;16;349;5584;
+2026-03-18;Paris;Keyboard;7;349;2443;"""Urgent"", call ahead"
+2026-07-28;Sydney;Router;7;199;1393;
+2026-06-08;Berlin;Router;8;349;2792;
+2026-03-26;London;Headphones;20;349;6980;
+2026-04-01;Paris;Laptop;8;349;2792;
+2026-07-09;Toronto;Headphones;3;1299;3897;"Pickup; pay by card"
+2026-04-28;Sydney;Phone;20;1299;25980;
+2026-08-12;Toronto;Tablet;19;799;15181;
+2026-04-04;London;Keyboard;11;29;319;
+2026-03-10;New York;Headphones;15;19;285;"""Urgent"", call ahead"
+2026-09-22;Toronto;Laptop;20;29;580;
+2026-04-26;Toronto;Monitor;19;59;1121;
+2026-06-01;London;Phone;11;199;2189;
+2026-09-27;London;Keyboard;20;19;380;
+2026-09-25;Sydney;Keyboard;3;59;177;
+2026-09-08;Madrid;Tablet;17;799;13583;
+2026-01-10;Sydney;Monitor;8;29;232;
+2026-02-02;Toronto;Router;10;1299;12990;Courier delivery
+2026-06-26;London;Headphones;18;199;3582;Courier delivery
+2026-02-16;New York;Keyboard;4;1299;5196;"""Urgent"", call ahead"
+2026-01-10;Sydney;Router;12;799;9588;Repeat order
+2026-04-10;Sydney;Router;12;799;9588;
+2026-03-19;Berlin;Mouse;11;59;649;Repeat order
+2026-04-27;Toronto;Mouse;4;799;3196;
+2026-07-06;London;Router;18;799;14382;
+2026-01-26;Toronto;Monitor;1;199;199;
+2026-03-28;Berlin;Tablet;2;349;698;
+2026-09-13;Toronto;Router;18;199;3582;
+2026-08-24;Berlin;Router;20;19;380;Courier delivery
+2026-03-05;Sydney;Tablet;5;799;3995;
+2026-07-19;New York;Tablet;13;799;10387;
+2026-03-28;London;Tablet;19;349;6631;"Pickup; pay by card"
+2026-03-17;New York;Headphones;14;1299;18186;
+2026-06-28;New York;Mouse;10;799;7990;"""Urgent"", call ahead"
+2026-09-19;Tokyo;Monitor;8;19;152;
+2026-02-26;Sydney;Router;4;199;796;
+2026-02-28;Paris;Mouse;4;349;1396;
+2026-08-12;Berlin;Tablet;15;29;435;"""Urgent"", call ahead"
+2026-07-02;Toronto;Phone;7;19;133;
+2026-03-26;Madrid;Router;2;349;698;
+2026-04-10;Toronto;Tablet;2;59;118;
+2026-04-24;Toronto;Keyboard;4;59;236;
+2026-08-04;Tokyo;Laptop;12;799;9588;
+2026-08-04;Madrid;Headphones;10;59;590;
+2026-06-15;Tokyo;Tablet;16;799;12784;
+2026-03-15;Tokyo;Headphones;14;1299;18186;
+2026-07-23;London;Tablet;8;799;6392;
+2026-02-16;Berlin;Monitor;14;59;826;
+2026-08-02;Paris;Headphones;4;1299;5196;
+2026-05-10;Paris;Tablet;14;349;4886;
+2026-01-25;Toronto;Mouse;20;199;3980;
+2026-06-09;Sydney;Keyboard;8;199;1592;
+2026-04-15;Toronto;Keyboard;2;349;698;Repeat order
+2026-06-21;Tokyo;Mouse;6;1299;7794;
+2026-04-21;Berlin;Mouse;18;29;522;"""Urgent"", call ahead"
+2026-09-19;London;Laptop;6;59;354;
+2026-06-16;New York;Laptop;6;199;1194;
+2026-05-12;Sydney;Router;2;199;398;
+2026-09-01;New York;Keyboard;5;29;145;Courier delivery
+2026-05-01;Berlin;Monitor;13;799;10387;Courier delivery
+2026-05-02;Madrid;Mouse;17;799;13583;"Pickup; pay by card"
+2026-05-07;London;Tablet;9;1299;11691;
+2026-02-27;London;Headphones;9;199;1791;"""Urgent"", call ahead"
+2026-06-02;Berlin;Phone;8;199;1592;
+2026-03-12;Berlin;Monitor;19;199;3781;
+2026-05-14;New York;Keyboard;2;199;398;"Pickup; pay by card"
+2026-04-25;Berlin;Router;8;349;2792;
+2026-07-11;Berlin;Router;20;59;1180;Courier delivery
+2026-05-11;New York;Keyboard;16;59;944;
+2026-03-20;Tokyo;Router;10;19;190;
+2026-01-21;Madrid;Monitor;17;199;3383;
+2026-03-02;Tokyo;Router;18;349;6282;
+2026-01-03;Toronto;Tablet;18;199;3582;"Pickup; pay by card"
+2026-05-12;London;Tablet;15;799;11985;
+2026-06-04;Madrid;Router;7;349;2443;
+2026-07-20;Paris;Mouse;10;19;190;
+2026-03-28;Toronto;Headphones;13;799;10387;
+2026-04-13;London;Mouse;12;1299;15588;
+2026-06-28;New York;Laptop;10;29;290;
+2026-07-05;London;Headphones;13;199;2587;
+2026-09-28;Tokyo;Router;17;349;5933;
+2026-03-03;London;Mouse;3;59;177;
+2026-08-18;Berlin;Router;15;349;5235;
+2026-07-02;Madrid;Headphones;8;349;2792;
+2026-05-25;Toronto;Laptop;14;19;266;Repeat order
+2026-04-10;Madrid;Monitor;4;799;3196;
+2026-03-19;Toronto;Router;4;799;3196;
+2026-01-22;Berlin;Monitor;13;29;377;
+2026-09-24;New York;Keyboard;5;1299;6495;"Pickup; pay by card"
+2026-01-25;London;Laptop;18;199;3582;
+2026-07-09;Toronto;Headphones;9;59;531;
+2026-05-22;London;Headphones;7;59;413;"Pickup; pay by card"
+2026-03-18;Sydney;Headphones;19;59;1121;
+2026-08-05;Sydney;Tablet;19;799;15181;
+2026-01-15;Paris;Mouse;19;59;1121;
+2026-06-13;Sydney;Tablet;13;29;377;"""Urgent"", call ahead"
+2026-09-18;Toronto;Phone;5;59;295;
+2026-05-21;Berlin;Laptop;15;59;885;"Pickup; pay by card"
+2026-07-15;New York;Mouse;4;29;116;
+2026-05-05;Sydney;Headphones;9;19;171;
+2026-04-06;London;Headphones;6;799;4794;Courier delivery
+2026-03-24;Tokyo;Laptop;1;1299;1299;"""Urgent"", call ahead"
+2026-01-10;Sydney;Tablet;6;349;2094;"Pickup; pay by card"
+2026-09-27;Sydney;Tablet;10;799;7990;
+2026-04-15;New York;Keyboard;14;349;4886;
+2026-09-28;Tokyo;Phone;20;349;6980;
+2026-03-23;Sydney;Headphones;10;29;290;
+2026-09-12;Sydney;Mouse;9;29;261;"Pickup; pay by card"
+2026-03-17;Paris;Monitor;6;799;4794;
+2026-02-14;Toronto;Keyboard;19;799;15181;
+2026-07-26;Tokyo;Router;1;799;799;Repeat order
+2026-09-27;Toronto;Laptop;8;29;232;Courier delivery
+2026-05-10;New York;Router;19;799;15181;
+2026-06-04;Paris;Laptop;2;349;698;
+2026-06-09;Madrid;Tablet;19;349;6631;
+2026-05-25;Tokyo;Mouse;9;29;261;
+2026-01-15;New York;Mouse;4;1299;5196;
+2026-01-07;New York;Keyboard;12;29;348;
+2026-07-22;Berlin;Phone;5;59;295;
+2026-04-03;New York;Mouse;4;199;796;
+2026-03-15;London;Keyboard;20;349;6980;
+2026-05-15;Toronto;Monitor;9;349;3141;
+2026-02-28;New York;Router;14;1299;18186;
+2026-05-23;Madrid;Laptop;16;199;3184;"Pickup; pay by card"
+2026-07-10;Toronto;Mouse;8;19;152;"Pickup; pay by card"
+2026-02-22;New York;Monitor;17;199;3383;
+2026-08-16;New York;Laptop;17;1299;22083;
+2026-03-02;Paris;Router;18;59;1062;
+2026-08-15;London;Phone;6;199;1194;
+2026-09-17;Tokyo;Phone;11;349;3839;
+2026-01-24;Sydney;Laptop;8;199;1592;
+2026-07-18;Tokyo;Router;14;199;2786;
+2026-03-18;Toronto;Phone;10;29;290;
+2026-01-11;Berlin;Mouse;6;199;1194;
+2026-06-04;New York;Router;9;199;1791;Courier delivery
+2026-04-18;Berlin;Keyboard;14;349;4886;
+2026-03-22;Paris;Phone;15;799;11985;
+2026-09-18;Sydney;Tablet;4;29;116;
+2026-05-03;Madrid;Phone;9;19;171;Repeat order
+2026-02-05;Madrid;Headphones;9;799;7191;Courier delivery
+2026-03-01;Tokyo;Phone;13;1299;16887;
+2026-08-15;Madrid;Laptop;12;349;4188;
+2026-04-03;Madrid;Headphones;3;19;57;
+2026-07-28;Sydney;Phone;16;59;944;
+2026-08-02;Sydney;Laptop;16;1299;20784;
+2026-08-28;Berlin;Keyboard;10;19;190;
+2026-08-04;Madrid;Headphones;7;29;203;
+2026-01-18;New York;Mouse;9;199;1791;
+2026-03-09;Berlin;Router;13;199;2587;
+2026-03-23;Madrid;Keyboard;5;59;295;
+2026-06-10;Tokyo;Mouse;10;19;190;
+2026-06-03;Paris;Headphones;1;199;199;
+2026-08-23;Sydney;Laptop;13;799;10387;
+2026-04-06;Paris;Keyboard;19;19;361;
+2026-01-22;Sydney;Laptop;18;29;522;Courier delivery
+2026-05-22;Toronto;Monitor;14;199;2786;
+2026-09-12;Paris;Laptop;3;349;1047;
+2026-01-14;London;Phone;5;29;145;
+2026-04-28;Paris;Monitor;12;59;708;
+2026-09-23;Berlin;Keyboard;18;199;3582;
+2026-05-08;London;Mouse;10;799;7990;
+2026-05-20;Paris;Mouse;15;59;885;
+2026-02-02;London;Laptop;3;59;177;
+2026-02-01;Sydney;Router;8;349;2792;"""Urgent"", call ahead"
+2026-06-22;Toronto;Router;12;1299;15588;
+2026-09-11;Berlin;Monitor;13;199;2587;"""Urgent"", call ahead"
+2026-09-21;Berlin;Router;5;799;3995;
+2026-07-13;London;Mouse;9;19;171;
+2026-05-08;London;Laptop;15;19;285;
+2026-01-01;Toronto;Laptop;11;59;649;
+2026-05-08;New York;Laptop;18;59;1062;
+2026-03-04;New York;Headphones;7;799;5593;"Pickup; pay by card"
+2026-03-21;New York;Phone;2;19;38;Courier delivery
+2026-02-13;Madrid;Keyboard;20;19;380;
+2026-04-20;Toronto;Router;7;19;133;Courier delivery
+2026-05-15;Tokyo;Headphones;4;199;796;
+2026-09-10;Madrid;Phone;16;1299;20784;Courier delivery
+2026-09-28;Tokyo;Monitor;6;19;114;Courier delivery
+2026-05-07;Berlin;Mouse;18;59;1062;Repeat order
+2026-06-07;London;Keyboard;6;29;174;
+2026-03-26;New York;Router;14;19;266;Repeat order
+2026-02-24;Toronto;Phone;18;29;522;
+2026-05-06;Berlin;Router;13;1299;16887;
+2026-07-10;Berlin;Monitor;8;29;232;
+2026-07-27;Toronto;Monitor;19;1299;24681;
+2026-08-06;Madrid;Headphones;4;349;1396;
+2026-05-20;Paris;Headphones;4;1299;5196;Courier delivery
+2026-01-07;Berlin;Mouse;8;59;472;
+2026-07-14;Tokyo;Phone;1;1299;1299;
+2026-05-17;London;Headphones;2;349;698;Courier delivery
+2026-05-14;Madrid;Mouse;20;349;6980;Repeat order
+2026-07-03;Toronto;Phone;19;1299;24681;
+2026-01-19;Berlin;Tablet;2;1299;2598;
+2026-09-21;London;Headphones;11;29;319;
+2026-08-08;Madrid;Monitor;17;29;493;
+2026-03-09;Tokyo;Router;13;349;4537;
+2026-05-14;Tokyo;Tablet;20;1299;25980;"Pickup; pay by card"
+2026-05-09;New York;Mouse;17;799;13583;
+2026-07-04;Berlin;Monitor;19;1299;24681;
+2026-06-01;Madrid;Tablet;6;199;1194;
+2026-04-02;Toronto;Mouse;5;349;1745;
+2026-06-07;Paris;Headphones;8;199;1592;
+2026-03-13;Sydney;Mouse;16;19;304;
+2026-05-23;London;Monitor;10;19;190;
+2026-07-23;Paris;Tablet;20;799;15980;"Pickup; pay by card"
+2026-01-22;New York;Laptop;5;19;95;
+2026-06-01;Madrid;Phone;6;29;174;
+2026-09-21;Toronto;Keyboard;9;29;261;
+2026-07-08;London;Headphones;13;349;4537;
+2026-09-02;Tokyo;Keyboard;18;59;1062;"""Urgent"", call ahead"
+2026-04-05;London;Router;20;199;3980;
+2026-06-14;Berlin;Tablet;18;199;3582;
+2026-02-10;Tokyo;Laptop;8;19;152;
+2026-02-04;Toronto;Laptop;19;19;361;
+2026-06-05;Toronto;Monitor;5;59;295;
+2026-08-11;Sydney;Phone;14;29;406;
+2026-04-14;Madrid;Phone;17;799;13583;
+2026-08-11;Toronto;Tablet;16;1299;20784;
+2026-03-23;Sydney;Tablet;16;1299;20784;
+2026-04-18;New York;Headphones;4;199;796;
+2026-08-14;Tokyo;Headphones;17;349;5933;"""Urgent"", call ahead"
+2026-07-12;New York;Router;17;59;1003;
+2026-05-03;Tokyo;Router;15;799;11985;
+2026-09-27;London;Laptop;6;19;114;
+2026-04-17;London;Headphones;15;799;11985;"Pickup; pay by card"
+2026-08-09;Berlin;Keyboard;14;199;2786;
+2026-01-25;Madrid;Mouse;17;29;493;
+2026-08-25;Berlin;Router;8;59;472;
+2026-02-18;Madrid;Headphones;12;199;2388;
+2026-04-10;Toronto;Tablet;13;199;2587;"""Urgent"", call ahead"
+2026-05-20;Madrid;Tablet;20;29;580;Courier delivery
+2026-06-04;Tokyo;Headphones;13;59;767;
+2026-04-04;Madrid;Router;7;199;1393;
+2026-01-10;New York;Router;9;29;261;Repeat order
+2026-08-04;Sydney;Monitor;18;199;3582;
+2026-04-13;Berlin;Headphones;20;19;380;
+2026-08-13;Paris;Monitor;6;799;4794;
+2026-07-21;London;Tablet;14;349;4886;
+2026-01-10;Paris;Headphones;8;19;152;
+2026-03-24;Tokyo;Phone;3;59;177;
+2026-07-22;Berlin;Laptop;16;199;3184;
+2026-01-22;London;Laptop;13;19;247;
+2026-09-11;Tokyo;Laptop;15;1299;19485;
+2026-03-01;Tokyo;Mouse;14;19;266;Repeat order
+2026-08-01;Berlin;Tablet;15;799;11985;"""Urgent"", call ahead"
+2026-01-02;New York;Laptop;8;29;232;Repeat order
+2026-06-22;New York;Phone;17;799;13583;
+2026-03-04;Toronto;Keyboard;15;199;2985;
+2026-05-17;New York;Laptop;14;29;406;
+2026-06-27;Paris;Tablet;3;799;2397;
+2026-01-13;New York;Monitor;9;19;171;"""Urgent"", call ahead"
+2026-03-26;Tokyo;Headphones;6;349;2094;
+2026-07-28;Madrid;Phone;11;1299;14289;
+2026-01-15;Berlin;Router;16;1299;20784;
+2026-03-12;London;Headphones;5;29;145;
+2026-06-25;Toronto;Router;1;799;799;
+2026-09-16;Paris;Headphones;19;799;15181;
+2026-08-25;New York;Mouse;13;1299;16887;
+2026-07-24;Madrid;Laptop;14;199;2786;
+2026-04-25;Tokyo;Headphones;14;349;4886;
+2026-09-07;Sydney;Laptop;20;29;580;
+2026-08-26;Tokyo;Laptop;11;799;8789;
+2026-03-16;Tokyo;Phone;2;1299;2598;
+2026-05-04;Paris;Phone;11;199;2189;
+2026-07-08;Tokyo;Phone;2;59;118;Courier delivery
+2026-06-19;Berlin;Tablet;4;1299;5196;Courier delivery
+2026-02-11;Paris;Phone;1;1299;1299;
+2026-05-20;Toronto;Mouse;5;19;95;
+2026-01-10;Paris;Monitor;3;1299;3897;
+2026-02-23;Paris;Laptop;14;59;826;Repeat order
+2026-06-07;Toronto;Laptop;15;1299;19485;
+2026-08-26;Berlin;Phone;1;349;349;
+2026-01-17;Sydney;Phone;11;29;319;Repeat order
+2026-05-25;New York;Keyboard;3;59;177;
+2026-08-23;London;Phone;12;349;4188;
+2026-08-24;Tokyo;Laptop;16;19;304;
+2026-04-02;Tokyo;Laptop;13;19;247;
+2026-07-28;Sydney;Headphones;19;59;1121;
+2026-06-11;Sydney;Router;1;349;349;
+2026-01-07;Paris;Phone;1;799;799;"Pickup; pay by card"
+2026-01-16;London;Phone;6;349;2094;
+2026-04-18;New York;Keyboard;13;29;377;
+2026-01-05;New York;Router;10;1299;12990;
+2026-09-16;Toronto;Laptop;11;19;209;"Pickup; pay by card"
+2026-04-16;Paris;Keyboard;7;29;203;Repeat order
+2026-09-05;London;Keyboard;3;199;597;
+2026-05-08;New York;Tablet;14;199;2786;Courier delivery
+2026-02-17;Toronto;Mouse;20;1299;25980;"Pickup; pay by card"
+2026-04-01;Paris;Phone;2;349;698;
+2026-05-14;Toronto;Router;16;19;304;
+2026-09-04;Berlin;Tablet;15;199;2985;
+2026-03-26;New York;Phone;8;29;232;
+2026-07-21;London;Router;20;29;580;
+2026-07-11;Toronto;Headphones;10;799;7990;
+2026-02-01;Paris;Laptop;5;199;995;
+2026-09-05;Toronto;Phone;18;59;1062;"""Urgent"", call ahead"
+2026-03-12;Toronto;Router;4;199;796;
+2026-09-10;Tokyo;Router;17;1299;22083;
+2026-02-12;Paris;Phone;1;349;349;
+2026-05-22;Toronto;Router;8;29;232;Courier delivery
+2026-02-24;London;Keyboard;4;349;1396;"Pickup; pay by card"
+2026-04-16;London;Mouse;9;1299;11691;Repeat order
+2026-08-25;Toronto;Tablet;12;1299;15588;
+2026-07-21;New York;Phone;13;59;767;Repeat order
+2026-04-13;Toronto;Monitor;20;199;3980;
+2026-04-16;Sydney;Router;18;59;1062;
+2026-05-17;Sydney;Monitor;9;59;531;"Pickup; pay by card"
+2026-03-11;Tokyo;Laptop;20;199;3980;"Pickup; pay by card"
+2026-03-04;Madrid;Headphones;20;199;3980;
+2026-05-07;New York;Mouse;6;19;114;
+2026-03-08;Toronto;Headphones;12;29;348;
+2026-05-13;Toronto;Headphones;5;349;1745;
+2026-04-12;London;Phone;13;29;377;Repeat order
+2026-02-20;New York;Phone;1;349;349;
+2026-08-27;Berlin;Tablet;9;349;3141;
+2026-07-26;Madrid;Laptop;11;349;3839;
+2026-08-03;Tokyo;Headphones;17;1299;22083;
+2026-09-03;London;Phone;11;349;3839;
+2026-01-11;Tokyo;Keyboard;1;1299;1299;
+2026-08-18;Madrid;Monitor;3;349;1047;Repeat order
+2026-07-06;New York;Headphones;14;29;406;"Pickup; pay by card"
+2026-05-26;Toronto;Router;20;349;6980;
+2026-04-16;Toronto;Tablet;15;199;2985;Repeat order
+2026-06-14;New York;Monitor;2;199;398;Courier delivery
+2026-05-22;Tokyo;Monitor;19;1299;24681;
+2026-04-28;Sydney;Mouse;4;59;236;
+2026-07-21;Sydney;Phone;1;1299;1299;
+2026-05-04;Paris;Monitor;16;29;464;
+2026-05-09;Sydney;Headphones;17;1299;22083;
+2026-01-14;Toronto;Headphones;3;349;1047;
+2026-05-27;Sydney;Laptop;3;1299;3897;
+2026-09-02;New York;Laptop;16;29;464;
+2026-01-13;Madrid;Router;10;19;190;
+2026-06-25;Berlin;Headphones;10;19;190;
+2026-01-25;Toronto;Monitor;1;59;59;
+2026-05-11;London;Monitor;7;349;2443;"""Urgent"", call ahead"
+2026-07-10;New York;Headphones;3;1299;3897;
+2026-08-01;Paris;Headphones;7;199;1393;"Pickup; pay by card"
+2026-03-14;Paris;Headphones;18;19;342;
+2026-07-21;Toronto;Headphones;7;19;133;
+2026-02-21;Paris;Keyboard;12;59;708;
+2026-02-08;London;Tablet;2;1299;2598;
+2026-02-28;Toronto;Keyboard;14;349;4886;
+2026-04-18;Paris;Monitor;18;1299;23382;
+2026-04-20;Toronto;Headphones;12;19;228;
+2026-09-04;Berlin;Headphones;8;199;1592;
+2026-02-22;Berlin;Tablet;1;349;349;
+2026-08-27;Toronto;Laptop;4;59;236;Repeat order
+2026-09-24;Tokyo;Router;13;29;377;
+2026-02-06;Madrid;Keyboard;10;799;7990;Repeat order
+2026-03-14;London;Laptop;14;59;826;
+2026-08-16;London;Router;15;1299;19485;
+2026-08-06;Berlin;Keyboard;16;19;304;
+2026-03-03;Paris;Tablet;7;799;5593;"Pickup; pay by card"
+2026-06-15;Tokyo;Router;3;29;87;
+2026-09-17;Toronto;Mouse;2;19;38;Repeat order
+2026-06-08;London;Monitor;11;349;3839;"Pickup; pay by card"
+2026-07-07;Berlin;Router;17;29;493;
+2026-03-22;New York;Mouse;9;349;3141;
+2026-04-08;Tokyo;Monitor;19;349;6631;
+2026-02-23;London;Keyboard;1;199;199;
+2026-02-04;Tokyo;Headphones;15;199;2985;
+2026-08-15;Madrid;Laptop;1;19;19;Repeat order
+2026-09-12;Toronto;Monitor;19;349;6631;
+2026-09-28;Berlin;Tablet;8;349;2792;
+2026-07-20;New York;Laptop;18;59;1062;
+2026-09-19;Sydney;Tablet;19;19;361;
+2026-02-10;Berlin;Keyboard;17;19;323;
+2026-04-08;New York;Monitor;9;199;1791;
+2026-05-21;Madrid;Keyboard;3;349;1047;
+2026-08-02;Tokyo;Laptop;10;1299;12990;
+2026-07-18;New York;Phone;12;19;228;
+2026-01-23;Paris;Laptop;15;29;435;
+2026-03-25;Sydney;Phone;18;19;342;"Pickup; pay by card"
+2026-04-12;Toronto;Mouse;6;199;1194;
+2026-06-07;Madrid;Mouse;14;1299;18186;
+2026-06-14;Sydney;Tablet;6;799;4794;
+2026-05-11;Berlin;Tablet;12;59;708;
+2026-08-07;Toronto;Laptop;11;59;649;
+2026-08-28;Paris;Router;12;1299;15588;
+2026-07-12;Madrid;Headphones;2;799;1598;
+2026-05-25;Madrid;Tablet;18;199;3582;
+2026-03-17;Sydney;Mouse;14;59;826;
+2026-07-10;London;Monitor;15;1299;19485;"""Urgent"", call ahead"
+2026-02-08;Berlin;Mouse;15;799;11985;"Pickup; pay by card"
+2026-04-19;New York;Mouse;15;1299;19485;Courier delivery
+2026-01-19;Toronto;Router;16;349;5584;"Pickup; pay by card"
+2026-02-01;Toronto;Mouse;9;199;1791;
+2026-09-25;Sydney;Headphones;5;59;295;Courier delivery
+2026-06-21;London;Mouse;15;199;2985;
+2026-01-28;Berlin;Laptop;2;349;698;"""Urgent"", call ahead"
+2026-02-08;Paris;Mouse;17;199;3383;
+2026-05-27;Berlin;Keyboard;18;1299;23382;
+2026-06-11;London;Router;17;29;493;
+2026-02-01;Paris;Laptop;2;29;58;Repeat order
+2026-04-25;Paris;Mouse;20;199;3980;
+2026-05-08;Sydney;Phone;20;19;380;"""Urgent"", call ahead"
+2026-01-28;Paris;Mouse;3;19;57;Courier delivery
+2026-07-01;Paris;Monitor;10;19;190;
+2026-05-09;London;Headphones;15;1299;19485;
+2026-09-21;London;Mouse;8;199;1592;
+2026-09-08;New York;Keyboard;14;59;826;
+2026-09-09;Madrid;Headphones;7;799;5593;Repeat order
+2026-01-20;Berlin;Laptop;12;199;2388;
+2026-01-06;Paris;Mouse;18;29;522;"""Urgent"", call ahead"
+2026-01-02;London;Keyboard;14;799;11186;
+2026-03-24;Tokyo;Phone;12;59;708;
+2026-08-08;Sydney;Mouse;19;799;15181;
+2026-09-13;Berlin;Router;20;199;3980;
+2026-04-05;New York;Headphones;14;19;266;"""Urgent"", call ahead"
+2026-06-26;New York;Tablet;19;59;1121;
+2026-09-09;Madrid;Monitor;14;1299;18186;
+2026-05-04;Berlin;Monitor;2;349;698;
+2026-03-28;New York;Laptop;3;199;597;
+2026-01-22;Sydney;Router;9;19;171;
+2026-06-09;London;Keyboard;19;29;551;
+2026-09-23;Tokyo;Keyboard;13;349;4537;Courier delivery
+2026-01-18;Toronto;Router;18;1299;23382;
+2026-07-06;London;Mouse;19;59;1121;
+2026-01-10;London;Router;12;1299;15588;
+2026-04-10;New York;Phone;10;199;1990;
+2026-03-20;New York;Monitor;10;29;290;"""Urgent"", call ahead"
+2026-04-24;Paris;Monitor;10;199;1990;
+2026-06-20;New York;Mouse;16;199;3184;"Pickup; pay by card"
+2026-06-18;New York;Mouse;5;349;1745;"Pickup; pay by card"
+2026-07-03;Berlin;Phone;6;799;4794;Courier delivery
+2026-06-12;Paris;Keyboard;14;199;2786;
+2026-09-08;New York;Phone;2;29;58;Courier delivery
+2026-01-08;Tokyo;Mouse;20;19;380;
+2026-06-02;Paris;Tablet;7;349;2443;
+2026-06-08;Madrid;Monitor;3;199;597;
+2026-05-12;New York;Tablet;6;59;354;
+2026-01-16;Sydney;Monitor;3;29;87;
+2026-04-01;Toronto;Tablet;9;19;171;
+2026-01-15;Sydney;Tablet;15;1299;19485;
+2026-04-19;Toronto;Laptop;7;799;5593;
+2026-06-28;Madrid;Monitor;7;29;203;
+2026-09-24;Toronto;Router;8;19;152;
+2026-08-03;Toronto;Router;2;19;38;
+2026-07-23;London;Monitor;13;19;247;
+2026-06-20;Berlin;Mouse;18;199;3582;
+2026-06-07;Toronto;Keyboard;8;19;152;
+2026-08-12;Tokyo;Mouse;1;799;799;
+2026-01-21;London;Laptop;14;799;11186;
+2026-09-19;London;Tablet;6;349;2094;Repeat order
+2026-09-13;Berlin;Headphones;3;799;2397;Repeat order
+2026-08-07;Madrid;Mouse;7;1299;9093;
+2026-06-14;Tokyo;Laptop;3;19;57;"Pickup; pay by card"
+2026-09-05;Tokyo;Phone;10;19;190;
+2026-01-27;New York;Router;8;59;472;
+2026-04-07;London;Router;10;1299;12990;
+2026-03-24;Berlin;Headphones;18;29;522;
+2026-07-23;Madrid;Mouse;10;29;290;
+2026-02-18;Paris;Tablet;10;59;590;
+2026-03-13;Toronto;Tablet;6;29;174;"Pickup; pay by card"
+2026-05-07;Sydney;Tablet;19;19;361;
+2026-03-09;Toronto;Keyboard;11;799;8789;
+2026-01-26;Paris;Laptop;5;799;3995;
+2026-07-10;Berlin;Keyboard;15;29;435;
+2026-05-25;Madrid;Router;6;199;1194;
+2026-06-27;New York;Router;12;1299;15588;Courier delivery
+2026-06-14;Berlin;Tablet;2;799;1598;Repeat order
+2026-07-19;Tokyo;Phone;10;59;590;
+2026-01-13;London;Phone;5;59;295;Repeat order
+2026-01-27;Paris;Laptop;14;1299;18186;Courier delivery
+2026-04-26;London;Router;1;1299;1299;
+2026-04-13;Toronto;Monitor;17;29;493;"Pickup; pay by card"
+2026-09-19;London;Tablet;10;59;590;
+2026-03-10;Toronto;Headphones;12;59;708;
+2026-01-03;Madrid;Tablet;15;799;11985;
+2026-03-24;London;Phone;5;1299;6495;
+2026-02-22;Toronto;Laptop;14;1299;18186;
+2026-04-20;Sydney;Monitor;7;349;2443;"""Urgent"", call ahead"
+2026-06-08;Paris;Phone;2;1299;2598;Courier delivery
+2026-09-16;Madrid;Mouse;19;349;6631;Courier delivery
+2026-08-01;London;Mouse;17;19;323;
+2026-08-12;Sydney;Laptop;11;199;2189;
+2026-07-21;Berlin;Keyboard;9;199;1791;
+2026-02-06;London;Router;2;19;38;
+2026-08-21;Paris;Phone;13;29;377;"Pickup; pay by card"
+2026-09-22;Tokyo;Laptop;11;199;2189;Repeat order
+2026-03-15;Madrid;Tablet;10;59;590;
+2026-07-25;Toronto;Tablet;16;59;944;
+2026-01-14;Paris;Phone;14;19;266;
+2026-04-24;Sydney;Laptop;16;59;944;
+2026-07-28;Tokyo;Phone;4;19;76;
+2026-04-20;London;Phone;19;59;1121;Repeat order
+2026-04-14;Tokyo;Headphones;14;1299;18186;
+2026-07-12;Madrid;Monitor;11;59;649;
+2026-06-20;Tokyo;Monitor;3;199;597;
+2026-02-04;Tokyo;Phone;2;1299;2598;Repeat order
+2026-04-24;London;Keyboard;2;1299;2598;"""Urgent"", call ahead"
+2026-02-15;London;Mouse;18;19;342;
+2026-05-13;New York;Router;14;799;11186;Repeat order
+2026-05-06;Paris;Tablet;3;349;1047;
+2026-07-25;Sydney;Laptop;18;349;6282;
+2026-02-08;New York;Tablet;5;29;145;
+2026-09-06;Paris;Laptop;12;799;9588;
+2026-05-24;Berlin;Mouse;1;799;799;
+2026-02-10;New York;Phone;9;799;7191;
+2026-02-13;Sydney;Laptop;7;59;413;Courier delivery
+2026-09-05;Sydney;Phone;12;29;348;Repeat order
+2026-05-13;Paris;Keyboard;11;349;3839;
+2026-01-04;New York;Headphones;6;799;4794;
+2026-08-03;Madrid;Mouse;3;349;1047;
+2026-04-15;Madrid;Keyboard;3;799;2397;
+2026-08-16;Berlin;Phone;20;199;3980;"Pickup; pay by card"
+2026-07-18;Sydney;Laptop;20;799;15980;"Pickup; pay by card"
+2026-05-19;Paris;Keyboard;7;799;5593;
+2026-04-18;London;Headphones;15;19;285;
+2026-02-19;London;Phone;16;59;944;
+2026-04-03;Tokyo;Keyboard;9;1299;11691;"Pickup; pay by card"
+2026-09-28;Toronto;Mouse;13;29;377;
+2026-06-08;London;Keyboard;7;29;203;
+2026-04-16;Berlin;Headphones;19;349;6631;
+2026-08-26;Berlin;Headphones;8;19;152;
+2026-03-14;Paris;Keyboard;14;59;826;Repeat order
+2026-06-01;Madrid;Monitor;10;59;590;
+2026-03-26;Toronto;Tablet;9;799;7191;
+2026-02-01;Berlin;Laptop;3;1299;3897;
+2026-04-06;New York;Keyboard;6;799;4794;
+2026-06-21;Paris;Headphones;14;799;11186;
+2026-09-18;Toronto;Mouse;20;59;1180;
+2026-08-16;Madrid;Tablet;5;19;95;"Pickup; pay by card"
+2026-06-18;Toronto;Headphones;2;799;1598;
+2026-01-21;New York;Monitor;11;199;2189;"""Urgent"", call ahead"
+2026-07-23;Madrid;Mouse;6;19;114;
+2026-01-10;Paris;Phone;8;349;2792;
+2026-01-05;Paris;Router;20;349;6980;
+2026-07-27;Sydney;Keyboard;12;199;2388;
+2026-08-07;Berlin;Keyboard;2;29;58;Repeat order
+2026-03-01;Berlin;Headphones;19;349;6631;
+2026-04-20;New York;Phone;13;349;4537;Courier delivery
+2026-02-15;Tokyo;Headphones;1;349;349;
+2026-04-17;Paris;Headphones;13;349;4537;Repeat order
+2026-03-11;London;Keyboard;6;19;114;Courier delivery
+2026-04-13;Toronto;Monitor;10;1299;12990;
+2026-01-20;London;Router;11;59;649;"Pickup; pay by card"
+2026-07-12;Tokyo;Router;14;59;826;
+2026-02-05;New York;Keyboard;17;799;13583;"Pickup; pay by card"
+2026-09-13;Madrid;Tablet;12;59;708;
+2026-08-05;New York;Mouse;9;29;261;
+2026-02-17;Tokyo;Headphones;5;349;1745;
+2026-07-06;Toronto;Monitor;6;799;4794;
+2026-08-23;Tokyo;Monitor;20;59;1180;Repeat order
+2026-01-24;Toronto;Keyboard;2;29;58;
+2026-06-05;New York;Phone;10;19;190;"""Urgent"", call ahead"
+2026-07-02;Sydney;Headphones;4;19;76;
+2026-07-04;New York;Tablet;18;29;522;
+2026-06-10;London;Keyboard;19;799;15181;
+2026-08-01;Madrid;Laptop;14;1299;18186;
+2026-02-21;London;Router;13;199;2587;
+2026-05-07;Toronto;Phone;1;799;799;
+2026-08-12;Berlin;Phone;10;59;590;
+2026-06-20;New York;Router;15;19;285;"""Urgent"", call ahead"
+2026-05-25;Madrid;Headphones;12;1299;15588;Courier delivery
+2026-05-13;Toronto;Phone;12;199;2388;
+2026-05-10;Madrid;Phone;1;29;29;
+2026-01-03;New York;Tablet;4;799;3196;Courier delivery
+2026-05-01;Toronto;Mouse;4;59;236;
+2026-05-14;Sydney;Monitor;13;199;2587;
+2026-09-07;New York;Phone;3;349;1047;Repeat order
+2026-03-22;Madrid;Keyboard;5;799;3995;
+2026-04-20;Paris;Router;16;199;3184;"Pickup; pay by card"
+2026-04-25;New York;Monitor;12;19;228;
+2026-01-12;Tokyo;Keyboard;13;29;377;
+2026-05-04;Sydney;Laptop;14;29;406;"""Urgent"", call ahead"
+2026-08-17;Madrid;Mouse;20;19;380;
+2026-03-16;Sydney;Laptop;7;59;413;
+2026-07-02;Toronto;Phone;11;1299;14289;
+2026-02-27;Toronto;Mouse;17;59;1003;
+2026-08-04;Berlin;Tablet;1;59;59;
+2026-05-17;Tokyo;Headphones;1;1299;1299;
+2026-05-19;Toronto;Laptop;18;349;6282;"""Urgent"", call ahead"
+2026-05-22;Berlin;Headphones;19;19;361;
+2026-09-20;Toronto;Keyboard;13;799;10387;
+2026-06-08;Paris;Keyboard;17;59;1003;"""Urgent"", call ahead"
+2026-02-15;Madrid;Router;6;349;2094;
+2026-01-13;New York;Monitor;11;29;319;
+2026-05-11;Toronto;Headphones;3;1299;3897;
+2026-04-12;London;Headphones;14;199;2786;
+2026-05-11;New York;Keyboard;10;29;290;
+2026-05-10;London;Mouse;17;199;3383;Repeat order
+2026-06-26;Madrid;Tablet;3;1299;3897;Courier delivery
+2026-01-05;Madrid;Phone;4;29;116;Repeat order
+2026-06-26;Sydney;Router;3;59;177;Courier delivery
+2026-02-12;Paris;Monitor;4;199;796;
+2026-08-26;Paris;Mouse;13;199;2587;
+2026-05-24;Tokyo;Headphones;14;1299;18186;"""Urgent"", call ahead"
+2026-01-23;New York;Headphones;13;349;4537;"Pickup; pay by card"
+2026-09-20;Sydney;Keyboard;5;799;3995;Repeat order
+2026-03-24;Toronto;Laptop;11;29;319;"Pickup; pay by card"
+2026-07-17;Berlin;Headphones;8;19;152;
+2026-09-07;Paris;Keyboard;1;799;799;"""Urgent"", call ahead"
+2026-08-22;London;Router;5;1299;6495;
+2026-04-26;London;Mouse;20;1299;25980;
+2026-06-11;Sydney;Phone;3;29;87;
+2026-05-18;Berlin;Keyboard;2;1299;2598;Courier delivery
+2026-04-09;Toronto;Tablet;3;59;177;Repeat order
+2026-03-12;Paris;Tablet;15;199;2985;"""Urgent"", call ahead"
+2026-09-15;Madrid;Monitor;1;19;19;
+2026-07-04;Tokyo;Headphones;18;1299;23382;
+2026-05-19;Tokyo;Mouse;10;349;3490;
+2026-05-11;Berlin;Tablet;4;19;76;
+2026-07-17;Berlin;Keyboard;12;349;4188;
+2026-01-23;Madrid;Mouse;10;29;290;
+2026-05-02;Madrid;Laptop;2;349;698;
+2026-07-21;Berlin;Monitor;12;19;228;
+2026-07-20;Tokyo;Keyboard;9;1299;11691;
+2026-03-19;New York;Headphones;10;1299;12990;
+2026-06-22;Sydney;Laptop;9;59;531;
+2026-06-17;Berlin;Router;3;349;1047;
+2026-08-18;Sydney;Monitor;17;19;323;
+2026-01-26;Berlin;Mouse;16;29;464;
+2026-04-24;Toronto;Laptop;4;799;3196;
+2026-07-28;Berlin;Headphones;6;199;1194;
+2026-07-15;Toronto;Tablet;9;799;7191;
+2026-02-17;Toronto;Router;20;19;380;
+2026-09-26;New York;Phone;11;29;319;Courier delivery
+2026-08-06;Sydney;Monitor;8;199;1592;
+2026-01-03;Madrid;Headphones;14;799;11186;
+2026-04-26;Madrid;Headphones;12;29;348;
+2026-01-13;Sydney;Laptop;4;29;116;
+2026-03-12;New York;Keyboard;6;59;354;
+2026-07-05;Paris;Router;12;799;9588;
+2026-09-05;Sydney;Phone;7;19;133;Repeat order
+2026-03-05;Toronto;Laptop;7;59;413;
+2026-02-16;Toronto;Router;10;799;7990;Repeat order
+2026-09-27;Paris;Monitor;1;799;799;
+2026-03-14;London;Monitor;15;349;5235;
+2026-02-27;Toronto;Tablet;2;199;398;
+2026-05-17;Sydney;Mouse;6;349;2094;
+2026-03-23;Madrid;Phone;5;199;995;
+2026-04-25;Madrid;Headphones;17;799;13583;
+2026-02-05;Paris;Headphones;17;349;5933;Courier delivery
+2026-01-04;Tokyo;Laptop;18;199;3582;
+2026-06-18;Sydney;Mouse;1;349;349;
+2026-07-20;London;Headphones;20;199;3980;
+2026-04-21;London;Laptop;16;349;5584;"Pickup; pay by card"
+2026-05-06;Paris;Monitor;12;1299;15588;
+2026-06-13;Madrid;Tablet;12;59;708;
+2026-03-13;Paris;Laptop;20;799;15980;
+2026-01-15;Madrid;Phone;15;199;2985;
+2026-02-05;London;Headphones;1;29;29;
+2026-07-26;London;Router;15;349;5235;
+2026-08-13;Tokyo;Tablet;7;1299;9093;"Pickup; pay by card"
+2026-07-12;New York;Tablet;7;19;133;
+2026-09-20;New York;Mouse;19;29;551;
+2026-01-09;Madrid;Tablet;3;19;57;
+2026-08-25;Madrid;Tablet;4;199;796;
+2026-02-13;Berlin;Mouse;12;59;708;
+2026-01-23;New York;Laptop;4;199;796;
+2026-03-04;Berlin;Phone;5;799;3995;
+2026-07-10;Paris;Monitor;20;59;1180;
+2026-05-14;Paris;Router;3;19;57;
+2026-07-17;New York;Monitor;9;59;531;
+2026-07-17;New York;Laptop;9;1299;11691;"Pickup; pay by card"
+2026-05-04;Paris;Mouse;4;19;76;
+2026-09-05;New York;Tablet;3;59;177;"""Urgent"", call ahead"
+2026-07-06;Madrid;Router;9;29;261;"""Urgent"", call ahead"
+2026-05-19;Madrid;Tablet;17;59;1003;
+2026-03-10;Tokyo;Tablet;5;199;995;"""Urgent"", call ahead"
+2026-04-05;London;Monitor;18;29;522;
+2026-01-08;Paris;Tablet;17;1299;22083;
+2026-03-12;Sydney;Monitor;3;1299;3897;
+2026-07-11;London;Monitor;17;29;493;"""Urgent"", call ahead"
+2026-02-01;London;Router;16;799;12784;
+2026-02-27;New York;Monitor;15;59;885;Repeat order
+2026-01-06;Sydney;Tablet;13;19;247;
+2026-03-21;London;Monitor;10;199;1990;"""Urgent"", call ahead"
+2026-02-20;Berlin;Tablet;12;29;348;
+2026-05-05;Sydney;Tablet;4;199;796;
+2026-03-08;Paris;Keyboard;7;19;133;"""Urgent"", call ahead"
+2026-01-16;Paris;Headphones;8;1299;10392;
+2026-08-28;Berlin;Keyboard;13;1299;16887;
+2026-06-15;Paris;Keyboard;9;349;3141;
+2026-02-11;Paris;Monitor;12;1299;15588;
+2026-06-02;Berlin;Mouse;4;199;796;
+2026-04-11;Berlin;Monitor;11;799;8789;"Pickup; pay by card"
+2026-07-26;Sydney;Monitor;16;29;464;
+2026-04-08;Sydney;Phone;14;1299;18186;
+2026-09-04;Berlin;Keyboard;8;349;2792;"Pickup; pay by card"
+2026-09-13;Tokyo;Laptop;5;29;145;
+2026-02-19;Toronto;Keyboard;4;799;3196;
+2026-06-05;Madrid;Router;7;29;203;
+2026-05-24;London;Keyboard;15;29;435;
+2026-04-17;Tokyo;Headphones;2;1299;2598;Repeat order
+2026-07-03;New York;Router;4;29;116;
+2026-07-14;Sydney;Headphones;7;799;5593;Repeat order
+2026-03-27;Berlin;Laptop;20;29;580;
+2026-08-13;Berlin;Headphones;15;349;5235;"""Urgent"", call ahead"
+2026-04-20;Sydney;Phone;1;19;19;
+2026-02-13;Toronto;Router;16;19;304;
+2026-03-15;London;Mouse;10;799;7990;
+2026-09-17;Sydney;Monitor;16;59;944;
+2026-02-06;Tokyo;Phone;14;29;406;"""Urgent"", call ahead"
+2026-04-16;Tokyo;Monitor;7;29;203;"""Urgent"", call ahead"
+2026-04-22;Madrid;Mouse;17;19;323;"""Urgent"", call ahead"
+2026-02-17;London;Router;9;1299;11691;
+2026-06-16;Madrid;Phone;2;19;38;
+2026-01-06;Sydney;Laptop;16;1299;20784;
+2026-03-21;London;Monitor;14;799;11186;
+2026-03-25;London;Mouse;19;29;551;Repeat order
+2026-03-15;Berlin;Mouse;20;59;1180;
+2026-05-04;Paris;Tablet;3;1299;3897;"Pickup; pay by card"
+2026-04-07;Berlin;Phone;1;29;29;"""Urgent"", call ahead"
+2026-06-09;Berlin;Headphones;5;59;295;
+2026-02-13;Sydney;Tablet;18;19;342;Courier delivery
+2026-07-18;Toronto;Headphones;20;199;3980;
+2026-06-17;Berlin;Tablet;10;349;3490;"Pickup; pay by card"
+2026-07-09;New York;Phone;13;19;247;"""Urgent"", call ahead"
+2026-01-09;London;Router;17;19;323;"Pickup; pay by card"
+2026-03-13;Madrid;Monitor;19;349;6631;
+2026-03-18;Toronto;Router;14;349;4886;"Pickup; pay by card"
+2026-07-18;Madrid;Router;3;59;177;Courier delivery
+2026-09-28;Toronto;Monitor;12;59;708;Repeat order
+2026-01-24;Toronto;Headphones;15;1299;19485;Repeat order
+2026-06-09;Paris;Headphones;14;199;2786;
+2026-09-13;Tokyo;Tablet;17;29;493;Repeat order
+2026-01-23;London;Keyboard;5;19;95;Courier delivery
+2026-03-21;Madrid;Tablet;16;349;5584;
+2026-05-22;New York;Headphones;11;799;8789;
+2026-08-07;New York;Router;7;59;413;
+2026-05-13;Paris;Mouse;1;19;19;
+2026-07-21;New York;Mouse;17;59;1003;
+2026-02-08;Tokyo;Router;11;19;209;
+2026-03-01;London;Monitor;9;199;1791;
+2026-07-15;Sydney;Laptop;11;29;319;"Pickup; pay by card"
+2026-05-20;New York;Laptop;18;29;522;
+2026-04-15;Berlin;Mouse;6;29;174;
+2026-08-06;London;Router;3;799;2397;
+2026-05-14;New York;Router;13;199;2587;
+2026-08-24;New York;Phone;8;199;1592;
+2026-01-22;Madrid;Laptop;16;59;944;
+2026-07-05;New York;Router;18;199;3582;
+2026-08-12;Madrid;Headphones;9;1299;11691;Courier delivery
+2026-01-22;Berlin;Phone;6;59;354;
+2026-04-17;London;Monitor;6;1299;7794;
+2026-07-01;Toronto;Tablet;3;799;2397;
+2026-05-19;Sydney;Monitor;1;199;199;
+2026-09-08;New York;Mouse;12;19;228;
+2026-05-02;Tokyo;Laptop;12;1299;15588;
+2026-03-19;Toronto;Tablet;8;1299;10392;
+2026-08-19;Sydney;Mouse;14;19;266;
+2026-08-21;New York;Tablet;9;29;261;Courier delivery
+2026-02-08;Paris;Tablet;7;349;2443;
+2026-06-19;London;Mouse;12;799;9588;
+2026-08-22;Tokyo;Laptop;16;349;5584;
+2026-08-16;New York;Keyboard;20;349;6980;
+2026-09-12;Berlin;Mouse;20;199;3980;
+2026-06-16;Sydney;Router;17;29;493;"""Urgent"", call ahead"
+2026-07-12;Toronto;Phone;20;59;1180;"Pickup; pay by card"
+2026-06-13;Paris;Mouse;8;799;6392;
+2026-06-28;London;Monitor;19;19;361;
+2026-07-06;London;Phone;12;29;348;
+2026-02-07;Berlin;Keyboard;12;799;9588;"Pickup; pay by card"
+2026-04-22;Madrid;Monitor;4;799;3196;
+2026-04-13;Paris;Keyboard;13;799;10387;
+2026-09-18;Tokyo;Router;4;349;1396;
+2026-03-22;Paris;Phone;4;19;76;"Pickup; pay by card"
+2026-08-11;Toronto;Monitor;14;59;826;
+2026-09-07;Sydney;Keyboard;11;349;3839;
+2026-01-09;Sydney;Tablet;9;29;261;
+2026-09-17;Sydney;Tablet;16;349;5584;
+2026-03-06;Paris;Tablet;8;349;2792;
+2026-04-28;London;Mouse;20;1299;25980;
+2026-01-13;New York;Monitor;17;799;13583;
+2026-05-12;Paris;Headphones;14;799;11186;
+2026-08-01;Berlin;Router;12;1299;15588;Repeat order
+2026-05-02;Berlin;Router;11;1299;14289;
+2026-05-19;Sydney;Keyboard;13;29;377;
+2026-08-06;Berlin;Monitor;10;1299;12990;
+2026-08-06;Toronto;Mouse;9;29;261;"Pickup; pay by card"
+2026-08-18;Berlin;Tablet;8;19;152;
+2026-05-11;Sydney;Keyboard;9;349;3141;Repeat order
+2026-03-22;Sydney;Keyboard;6;199;1194;
+2026-09-05;Paris;Router;6;59;354;"""Urgent"", call ahead"
+2026-07-25;Tokyo;Phone;2;59;118;
+2026-02-05;Tokyo;Mouse;16;19;304;
+2026-02-27;London;Keyboard;13;29;377;Courier delivery
+2026-05-09;Berlin;Router;16;29;464;
+2026-01-05;Toronto;Tablet;17;59;1003;
+2026-08-09;Toronto;Mouse;18;799;14382;Repeat order
+2026-07-09;Toronto;Router;20;19;380;
+2026-02-27;Toronto;Monitor;20;799;15980;
+2026-05-12;Madrid;Monitor;18;799;14382;
+2026-06-03;Sydney;Router;6;19;114;
+2026-02-03;New York;Keyboard;2;799;1598;Courier delivery
+2026-02-25;Berlin;Keyboard;5;29;145;Repeat order
+2026-09-24;Tokyo;Laptop;1;349;349;Courier delivery
+2026-07-02;Madrid;Mouse;11;199;2189;Courier delivery
+2026-06-12;Madrid;Monitor;13;19;247;Courier delivery
+2026-02-07;London;Headphones;3;799;2397;
+2026-08-09;London;Tablet;6;1299;7794;
+2026-02-05;Madrid;Laptop;10;349;3490;
+2026-06-16;New York;Monitor;13;199;2587;
+2026-07-24;Toronto;Monitor;9;1299;11691;
+2026-09-18;Toronto;Mouse;17;1299;22083;
+2026-01-25;Paris;Keyboard;19;199;3781;
+2026-09-08;Madrid;Laptop;2;29;58;
+2026-05-25;New York;Monitor;20;199;3980;
+2026-04-02;Madrid;Laptop;12;199;2388;"Pickup; pay by card"
+2026-06-25;Tokyo;Keyboard;12;29;348;
+2026-05-10;Tokyo;Tablet;6;199;1194;"Pickup; pay by card"
+2026-08-06;Madrid;Monitor;1;799;799;Repeat order
+2026-02-05;Tokyo;Mouse;14;19;266;
+2026-09-23;Toronto;Laptop;1;799;799;
+2026-07-15;Berlin;Keyboard;12;19;228;
+2026-04-24;Tokyo;Laptop;16;199;3184;
+2026-06-08;Madrid;Headphones;6;799;4794;
+2026-02-26;Paris;Laptop;5;19;95;
+2026-04-25;Madrid;Laptop;16;199;3184;
+2026-01-21;Sydney;Tablet;11;19;209;
+2026-02-08;Berlin;Laptop;17;799;13583;Courier delivery
+2026-04-28;London;Monitor;7;199;1393;
+2026-06-28;Sydney;Router;15;349;5235;
+2026-04-14;Berlin;Monitor;1;799;799;
+2026-05-16;Madrid;Laptop;14;29;406;
+2026-03-06;Sydney;Mouse;13;199;2587;"""Urgent"", call ahead"
+2026-01-24;Madrid;Monitor;4;799;3196;"""Urgent"", call ahead"
+2026-06-27;Madrid;Mouse;12;799;9588;
+2026-06-11;Paris;Mouse;12;1299;15588;
+2026-02-27;London;Laptop;20;1299;25980;
+2026-07-12;Tokyo;Mouse;1;799;799;Repeat order
+2026-02-01;Berlin;Laptop;6;29;174;
+2026-08-24;Paris;Mouse;12;799;9588;"Pickup; pay by card"
+2026-08-14;New York;Laptop;13;199;2587;"Pickup; pay by card"
+2026-08-17;Sydney;Phone;10;799;7990;Repeat order
+2026-01-02;Toronto;Phone;14;59;826;
+2026-07-14;London;Router;19;199;3781;
+2026-03-19;Berlin;Mouse;15;29;435;"""Urgent"", call ahead"
+2026-09-22;Paris;Mouse;8;29;232;
+2026-03-01;Paris;Mouse;16;349;5584;
+2026-02-14;Berlin;Phone;3;1299;3897;Repeat order
+2026-02-20;New York;Keyboard;9;199;1791;
+2026-06-20;Tokyo;Keyboard;6;799;4794;"""Urgent"", call ahead"
+2026-09-21;Toronto;Keyboard;11;29;319;
+2026-03-09;Toronto;Keyboard;12;799;9588;Courier delivery
+2026-02-25;Sydney;Mouse;20;799;15980;
+2026-02-12;New York;Phone;18;199;3582;
+2026-03-19;Madrid;Laptop;12;349;4188;
+2026-04-17;Paris;Keyboard;15;59;885;"Pickup; pay by card"
+2026-07-06;Paris;Keyboard;6;19;114;
+2026-08-16;New York;Laptop;9;799;7191;"Pickup; pay by card"
+2026-08-22;New York;Keyboard;14;349;4886;Courier delivery
+2026-06-16;London;Mouse;19;199;3781;"Pickup; pay by card"
+2026-01-09;Sydney;Mouse;10;19;190;
+2026-07-13;Berlin;Mouse;10;19;190;"""Urgent"", call ahead"
+2026-06-21;Sydney;Monitor;20;799;15980;"""Urgent"", call ahead"
+2026-07-11;Berlin;Router;11;199;2189;Repeat order
+2026-09-13;Paris;Phone;9;199;1791;"""Urgent"", call ahead"
+2026-07-12;Tokyo;Headphones;8;59;472;
+2026-09-06;Toronto;Headphones;18;199;3582;
+2026-06-15;Toronto;Mouse;11;1299;14289;
+2026-05-17;Toronto;Tablet;2;19;38;Repeat order
+2026-07-21;Tokyo;Headphones;8;29;232;
+2026-03-05;Berlin;Monitor;1;59;59;
+2026-09-14;London;Router;6;199;1194;
+2026-03-06;Berlin;Mouse;13;349;4537;
+2026-05-15;London;Router;15;1299;19485;
+2026-02-15;Sydney;Monitor;4;59;236;
+2026-04-12;London;Monitor;8;59;472;
+2026-07-03;Madrid;Headphones;20;29;580;"""Urgent"", call ahead"
+2026-04-03;Tokyo;Router;9;199;1791;
+2026-03-26;London;Laptop;9;19;171;Courier delivery
+2026-03-09;Sydney;Mouse;14;349;4886;"""Urgent"", call ahead"
+2026-01-02;New York;Headphones;8;1299;10392;
+2026-02-22;Berlin;Laptop;12;19;228;
+2026-05-27;Madrid;Mouse;1;1299;1299;
+2026-09-14;Sydney;Tablet;10;349;3490;"Pickup; pay by card"
+2026-04-12;Berlin;Router;19;59;1121;
+2026-01-09;Tokyo;Phone;3;59;177;"""Urgent"", call ahead"
+2026-06-01;Tokyo;Phone;4;19;76;"Pickup; pay by card"
+2026-06-08;Paris;Headphones;3;349;1047;Repeat order
+2026-07-14;Toronto;Mouse;5;799;3995;
+2026-08-01;Sydney;Router;16;1299;20784;
+2026-05-17;New York;Keyboard;1;199;199;
+2026-04-16;New York;Tablet;13;1299;16887;
+2026-03-18;Paris;Tablet;8;199;1592;
+2026-08-05;Sydney;Headphones;19;799;15181;
+2026-05-14;Madrid;Headphones;9;199;1791;Courier delivery
+2026-01-25;Berlin;Laptop;3;19;57;
+2026-04-27;New York;Laptop;2;59;118;
+2026-05-07;New York;Tablet;3;199;597;
+2026-01-02;Toronto;Mouse;9;59;531;
+2026-07-08;Toronto;Phone;3;1299;3897;
+2026-09-15;Tokyo;Monitor;6;799;4794;Repeat order
+2026-03-28;London;Headphones;9;59;531;
+2026-03-01;Sydney;Tablet;6;799;4794;
+2026-04-22;New York;Laptop;6;19;114;
+2026-02-05;London;Keyboard;17;19;323;
+2026-08-16;Berlin;Phone;2;59;118;
+2026-06-16;Toronto;Mouse;7;349;2443;"""Urgent"", call ahead"
+2026-03-08;Toronto;Laptop;11;19;209;
+2026-05-26;Sydney;Tablet;17;59;1003;
+2026-04-16;Paris;Keyboard;19;59;1121;
+2026-04-26;London;Router;20;349;6980;
+2026-03-27;Berlin;Tablet;4;799;3196;
+2026-01-16;Paris;Router;17;19;323;
+2026-06-01;Sydney;Headphones;9;349;3141;
+2026-06-09;Tokyo;Router;5;799;3995;
+2026-02-08;London;Mouse;2;349;698;
+2026-01-01;Madrid;Tablet;12;1299;15588;Repeat order
+2026-05-11;Toronto;Router;8;199;1592;
+2026-03-16;Tokyo;Tablet;9;799;7191;"Pickup; pay by card"
+2026-04-24;Sydney;Keyboard;18;799;14382;
+2026-09-14;Madrid;Keyboard;4;19;76;
+2026-04-16;Paris;Tablet;6;1299;7794;
+2026-01-17;Sydney;Laptop;3;1299;3897;
+2026-01-08;Madrid;Phone;12;799;9588;"""Urgent"", call ahead"
+2026-01-13;Toronto;Phone;19;799;15181;Courier delivery
+2026-06-19;Toronto;Mouse;19;799;15181;
+2026-04-13;Madrid;Mouse;11;199;2189;
+2026-06-21;Sydney;Headphones;2;29;58;
+2026-03-13;Tokyo;Monitor;17;199;3383;
+2026-04-12;Tokyo;Monitor;17;1299;22083;
+2026-03-04;London;Laptop;18;1299;23382;
+2026-01-19;Tokyo;Router;19;199;3781;"Pickup; pay by card"
+2026-04-25;Tokyo;Tablet;7;19;133;Repeat order
+2026-08-28;Berlin;Headphones;10;349;3490;
+2026-08-13;Madrid;Tablet;18;199;3582;"""Urgent"", call ahead"
+2026-02-24;London;Phone;1;1299;1299;Repeat order
+2026-04-04;Toronto;Tablet;15;199;2985;
+2026-09-11;Tokyo;Router;12;19;228;
+2026-06-09;Madrid;Mouse;20;1299;25980;
+2026-05-10;Sydney;Monitor;19;199;3781;
+2026-07-18;Paris;Phone;2;19;38;
+2026-03-21;London;Tablet;2;1299;2598;
+2026-08-03;Paris;Laptop;13;1299;16887;
+2026-09-02;Berlin;Router;18;199;3582;Repeat order
+2026-04-17;Tokyo;Phone;8;59;472;
+2026-03-24;New York;Monitor;8;799;6392;
+2026-01-24;London;Mouse;10;199;1990;Courier delivery
+2026-06-19;London;Mouse;1;19;19;
+2026-07-06;New York;Headphones;19;29;551;
+2026-02-07;Madrid;Tablet;14;19;266;
+2026-01-05;New York;Router;3;349;1047;
+2026-05-11;Sydney;Laptop;14;29;406;
+2026-05-18;Paris;Router;3;799;2397;
+2026-06-28;Sydney;Headphones;15;199;2985;
+2026-05-21;Tokyo;Monitor;7;19;133;Courier delivery
+2026-03-04;Tokyo;Headphones;17;199;3383;
+2026-01-12;Toronto;Router;10;59;590;Courier delivery
+2026-03-17;Toronto;Monitor;19;1299;24681;
+2026-04-09;Berlin;Tablet;16;799;12784;
+2026-03-10;London;Phone;17;349;5933;
+2026-09-02;Tokyo;Monitor;2;19;38;
+2026-09-15;Tokyo;Tablet;2;59;118;Courier delivery
+2026-05-19;Sydney;Phone;11;59;649;Courier delivery
+2026-08-08;Tokyo;Keyboard;16;1299;20784;
+2026-07-24;Tokyo;Laptop;18;349;6282;"""Urgent"", call ahead"
+2026-03-26;Toronto;Monitor;14;59;826;
+2026-01-07;Madrid;Mouse;2;349;698;"""Urgent"", call ahead"
+2026-07-14;Madrid;Phone;14;799;11186;
+2026-01-02;Paris;Router;8;29;232;
+2026-03-26;Berlin;Mouse;8;199;1592;
+2026-06-14;Berlin;Phone;14;59;826;
+2026-04-15;Madrid;Keyboard;19;19;361;
+2026-06-14;Paris;Tablet;8;19;152;
+2026-03-20;New York;Tablet;14;349;4886;"""Urgent"", call ahead"
+2026-07-04;Berlin;Tablet;7;199;1393;"""Urgent"", call ahead"
+2026-06-13;Tokyo;Mouse;5;59;295;
+2026-07-25;Tokyo;Mouse;13;349;4537;
+2026-05-09;Toronto;Router;1;19;19;
+2026-02-13;Sydney;Mouse;5;1299;6495;"Pickup; pay by card"
+2026-08-10;Madrid;Monitor;15;19;285;"Pickup; pay by card"
+2026-01-08;New York;Headphones;3;199;597;
+2026-02-04;Berlin;Tablet;15;29;435;Courier delivery
+2026-02-14;Madrid;Headphones;12;199;2388;
+2026-07-03;London;Router;20;199;3980;"""Urgent"", call ahead"
+2026-05-09;Paris;Headphones;5;59;295;
+2026-03-11;Paris;Router;13;59;767;
+2026-08-15;New York;Keyboard;1;19;19;Courier delivery
+2026-04-13;Madrid;Keyboard;8;1299;10392;
+2026-03-12;Madrid;Phone;16;59;944;
+2026-09-20;Madrid;Mouse;17;59;1003;
+2026-04-21;Sydney;Laptop;10;349;3490;Repeat order
+2026-06-25;New York;Monitor;2;349;698;
+2026-01-15;New York;Tablet;2;29;58;
+2026-04-24;Berlin;Monitor;16;19;304;
+2026-03-25;Berlin;Router;16;1299;20784;Repeat order
+2026-08-19;Berlin;Mouse;12;59;708;
+2026-07-03;Madrid;Mouse;10;29;290;Repeat order
+2026-03-17;Sydney;Laptop;20;1299;25980;
+2026-03-08;Berlin;Laptop;1;19;19;
+2026-02-07;Berlin;Router;14;59;826;
+2026-09-13;London;Laptop;6;349;2094;"""Urgent"", call ahead"
+2026-05-09;Madrid;Headphones;1;19;19;
+2026-03-16;Berlin;Tablet;10;29;290;
+2026-01-06;London;Monitor;14;1299;18186;
+2026-01-21;Madrid;Phone;8;199;1592;
+2026-03-10;Paris;Keyboard;1;59;59;
+2026-08-12;Berlin;Mouse;13;199;2587;
+2026-09-12;London;Monitor;11;29;319;
+2026-08-01;Tokyo;Keyboard;11;1299;14289;
+2026-03-27;London;Router;19;799;15181;
+2026-06-24;Madrid;Router;1;19;19;
+2026-04-10;Tokyo;Headphones;4;29;116;
+2026-09-17;Sydney;Keyboard;17;59;1003;
+2026-01-03;Madrid;Router;8;1299;10392;
+2026-01-03;Berlin;Headphones;1;29;29;
+2026-02-21;Tokyo;Laptop;11;199;2189;
+2026-07-23;New York;Router;7;1299;9093;
+2026-08-12;Berlin;Phone;18;199;3582;"Pickup; pay by card"
+2026-03-05;Sydney;Phone;20;349;6980;
+2026-09-03;Berlin;Keyboard;5;1299;6495;Repeat order
+2026-07-14;Tokyo;Headphones;11;199;2189;
+2026-02-25;Madrid;Monitor;8;19;152;
+2026-06-28;Berlin;Mouse;16;19;304;
+2026-05-20;Tokyo;Mouse;12;59;708;
+2026-09-10;Toronto;Phone;11;1299;14289;
+2026-09-10;Sydney;Monitor;14;349;4886;
+2026-09-08;Madrid;Mouse;16;1299;20784;
+2026-01-21;Toronto;Tablet;11;19;209;
+2026-07-18;New York;Router;9;59;531;
+2026-08-08;Berlin;Router;9;1299;11691;"Pickup; pay by card"
+2026-03-12;Paris;Laptop;1;349;349;"Pickup; pay by card"
+2026-04-19;Berlin;Keyboard;17;199;3383;
+2026-08-23;Tokyo;Router;10;199;1990;Courier delivery
+2026-05-26;Tokyo;Laptop;8;799;6392;
+2026-09-12;Sydney;Phone;11;799;8789;
+2026-03-07;New York;Mouse;15;1299;19485;"""Urgent"", call ahead"
+2026-09-18;Paris;Phone;1;59;59;
+2026-09-03;Sydney;Headphones;10;19;190;
+2026-08-12;Toronto;Headphones;10;349;3490;
+2026-09-10;Sydney;Monitor;12;19;228;
+2026-04-18;Berlin;Tablet;18;29;522;
+2026-07-28;Sydney;Keyboard;13;199;2587;"Pickup; pay by card"
+2026-02-25;Tokyo;Mouse;5;799;3995;Courier delivery
+2026-08-20;Paris;Laptop;2;1299;2598;Repeat order
+2026-09-02;London;Laptop;5;29;145;
+2026-01-17;Berlin;Mouse;1;29;29;"Pickup; pay by card"
+2026-01-06;London;Tablet;20;349;6980;
+2026-04-08;New York;Mouse;1;59;59;
+2026-06-17;Toronto;Router;10;199;1990;"""Urgent"", call ahead"
+2026-09-01;Paris;Tablet;13;799;10387;
+2026-02-15;Berlin;Headphones;3;799;2397;
+2026-02-11;Madrid;Keyboard;7;799;5593;
+2026-05-25;Sydney;Tablet;11;29;319;
+2026-04-09;New York;Mouse;14;29;406;Courier delivery
+2026-08-01;Paris;Keyboard;15;199;2985;
+2026-09-01;New York;Tablet;7;29;203;
+2026-08-01;Toronto;Headphones;2;199;398;Courier delivery
+2026-05-02;Madrid;Router;10;799;7990;
+2026-02-11;Sydney;Keyboard;12;19;228;
+2026-07-13;Sydney;Headphones;5;19;95;
+2026-01-08;London;Headphones;18;29;522;"""Urgent"", call ahead"
+2026-07-16;London;Laptop;6;199;1194;"""Urgent"", call ahead"
+2026-04-07;Toronto;Tablet;8;349;2792;
+2026-03-27;London;Monitor;14;799;11186;
+2026-01-02;Toronto;Keyboard;15;59;885;
+2026-01-04;Madrid;Router;5;59;295;"""Urgent"", call ahead"
+2026-08-18;Tokyo;Router;5;349;1745;
+2026-02-24;Sydney;Router;16;799;12784;
+2026-09-01;Berlin;Headphones;17;799;13583;
+2026-09-08;Sydney;Laptop;6;1299;7794;
+2026-02-07;London;Laptop;10;349;3490;
+2026-04-20;Paris;Tablet;13;1299;16887;
+2026-03-05;Berlin;Mouse;4;59;236;
+2026-01-18;Madrid;Mouse;1;19;19;
+2026-09-06;New York;Tablet;16;19;304;
+2026-02-21;Madrid;Phone;18;799;14382;
+2026-03-16;Sydney;Mouse;8;349;2792;
+2026-06-23;Berlin;Phone;15;199;2985;
+2026-05-07;Madrid;Keyboard;11;59;649;
+2026-04-15;Berlin;Phone;16;349;5584;"""Urgent"", call ahead"
+2026-05-28;Paris;Headphones;11;199;2189;
+2026-05-03;Toronto;Tablet;15;19;285;Courier delivery
+2026-03-04;Sydney;Router;3;1299;3897;Repeat order
+2026-05-21;London;Router;18;799;14382;
+2026-06-04;London;Router;17;19;323;"Pickup; pay by card"
+2026-08-19;Madrid;Headphones;10;349;3490;"Pickup; pay by card"
+2026-08-26;Sydney;Headphones;7;59;413;"Pickup; pay by card"
+2026-08-01;London;Headphones;6;799;4794;Courier delivery
+2026-02-18;Sydney;Headphones;15;59;885;
+2026-06-07;Tokyo;Mouse;18;19;342;
+2026-06-20;Sydney;Laptop;6;199;1194;
+2026-01-03;Tokyo;Tablet;11;799;8789;
+2026-02-23;Paris;Mouse;15;29;435;
+2026-09-07;Madrid;Monitor;3;199;597;"""Urgent"", call ahead"
+2026-09-20;Berlin;Laptop;13;199;2587;
+2026-05-28;Toronto;Keyboard;6;349;2094;"""Urgent"", call ahead"
+2026-09-18;London;Tablet;17;199;3383;
+2026-06-15;Tokyo;Monitor;20;19;380;Repeat order
+2026-08-28;Madrid;Mouse;17;799;13583;Repeat order
+2026-08-13;New York;Tablet;20;1299;25980;
+2026-01-16;Berlin;Keyboard;20;349;6980;Repeat order
+2026-08-11;Madrid;Mouse;18;349;6282;
+2026-02-04;Tokyo;Tablet;14;29;406;Courier delivery
+2026-02-22;London;Tablet;1;349;349;"""Urgent"", call ahead"
+2026-04-12;Madrid;Mouse;1;29;29;Repeat order
+2026-05-25;Tokyo;Phone;12;29;348;Repeat order
+2026-01-12;Madrid;Headphones;11;799;8789;"Pickup; pay by card"
+2026-05-27;Madrid;Monitor;3;1299;3897;
+2026-06-27;Berlin;Mouse;12;19;228;"Pickup; pay by card"
+2026-07-11;Madrid;Monitor;20;29;580;Repeat order
+2026-05-17;Sydney;Router;1;199;199;
+2026-08-10;Toronto;Mouse;1;349;349;
+2026-09-08;Toronto;Keyboard;5;799;3995;Courier delivery
+2026-08-11;Paris;Headphones;12;59;708;
+2026-08-25;Berlin;Headphones;10;349;3490;
+2026-02-26;New York;Router;1;19;19;
+2026-03-05;Paris;Laptop;2;29;58;
+2026-08-02;Sydney;Tablet;11;799;8789;
+2026-08-11;Tokyo;Phone;2;29;58;
+2026-03-02;London;Tablet;1;19;19;"Pickup; pay by card"
+2026-07-17;Toronto;Keyboard;20;29;580;
+2026-04-16;Tokyo;Mouse;13;1299;16887;
+2026-03-10;London;Laptop;13;59;767;Courier delivery
+2026-07-12;Madrid;Monitor;6;1299;7794;
+2026-01-09;Paris;Phone;18;199;3582;
+2026-07-21;Berlin;Laptop;20;799;15980;
+2026-01-11;Sydney;Phone;19;59;1121;
+2026-06-28;London;Keyboard;1;1299;1299;
+2026-05-11;Berlin;Phone;16;799;12784;
+2026-04-24;Sydney;Router;9;349;3141;"""Urgent"", call ahead"
+2026-05-27;Madrid;Headphones;18;199;3582;
+2026-06-18;Berlin;Laptop;16;199;3184;
+2026-03-22;New York;Keyboard;11;799;8789;Courier delivery
+2026-04-06;Madrid;Tablet;3;1299;3897;"Pickup; pay by card"
+2026-03-05;Berlin;Keyboard;12;799;9588;Repeat order
+2026-03-19;London;Monitor;18;19;342;
+2026-07-27;Toronto;Mouse;16;1299;20784;
+2026-04-09;Madrid;Tablet;2;349;698;"""Urgent"", call ahead"
+2026-09-07;Tokyo;Tablet;1;59;59;
+2026-09-19;Toronto;Tablet;4;29;116;
+2026-04-03;Tokyo;Phone;12;19;228;
+2026-02-25;Paris;Phone;9;59;531;
+2026-09-24;Madrid;Headphones;8;349;2792;
+2026-08-03;New York;Keyboard;5;19;95;
+2026-01-21;Berlin;Headphones;7;59;413;
+2026-03-26;Madrid;Phone;3;1299;3897;Repeat order
+2026-07-04;Paris;Tablet;14;1299;18186;
+2026-09-03;Tokyo;Phone;15;1299;19485;
+2026-01-25;London;Monitor;15;19;285;Repeat order
+2026-03-01;Paris;Laptop;13;59;767;"""Urgent"", call ahead"
+2026-06-18;Berlin;Laptop;3;349;1047;"Pickup; pay by card"
+2026-09-22;Paris;Laptop;19;199;3781;
+2026-08-24;London;Router;2;799;1598;
+2026-06-12;Tokyo;Mouse;6;29;174;
+2026-01-27;Toronto;Tablet;20;19;380;
+2026-05-27;New York;Router;6;799;4794;"Pickup; pay by card"
+2026-01-02;Madrid;Tablet;15;1299;19485;
+2026-09-20;Toronto;Headphones;12;29;348;"""Urgent"", call ahead"
+2026-07-16;Tokyo;Router;15;29;435;
+2026-09-22;New York;Phone;18;1299;23382;
+2026-06-06;New York;Phone;3;59;177;Repeat order
+2026-03-18;Paris;Monitor;6;59;354;Repeat order
+2026-06-20;Madrid;Headphones;10;349;3490;
+2026-04-13;Madrid;Keyboard;11;199;2189;
+2026-09-17;New York;Headphones;13;799;10387;
+2026-01-12;New York;Tablet;14;349;4886;"Pickup; pay by card"
+2026-01-09;Sydney;Monitor;19;59;1121;
+2026-02-14;Berlin;Tablet;19;19;361;
+2026-03-04;London;Tablet;13;19;247;
+2026-01-22;New York;Phone;4;349;1396;
+2026-09-05;London;Laptop;11;1299;14289;"""Urgent"", call ahead"
+2026-03-03;Sydney;Mouse;11;799;8789;"Pickup; pay by card"
+2026-09-24;Paris;Keyboard;11;1299;14289;Repeat order
+2026-01-13;London;Keyboard;18;199;3582;
+2026-01-08;London;Laptop;11;19;209;
+2026-02-19;Tokyo;Router;9;19;171;
+2026-02-25;London;Monitor;9;799;7191;Courier delivery
+2026-06-17;Madrid;Router;15;59;885;Repeat order
+2026-06-07;Toronto;Keyboard;18;59;1062;
+2026-08-20;London;Mouse;1;29;29;
+2026-08-18;New York;Mouse;10;59;590;
+2026-09-09;Tokyo;Headphones;3;349;1047;Courier delivery
+2026-05-18;Berlin;Router;14;799;11186;
+2026-08-28;Tokyo;Laptop;12;29;348;
+2026-07-05;Berlin;Tablet;15;19;285;
+2026-03-02;Paris;Keyboard;18;1299;23382;"""Urgent"", call ahead"
+2026-07-10;Tokyo;Phone;6;799;4794;
+2026-05-18;New York;Mouse;15;199;2985;
+2026-03-03;Paris;Mouse;13;29;377;
+2026-02-05;New York;Headphones;6;199;1194;
+2026-01-24;Tokyo;Phone;1;59;59;
+2026-07-16;Paris;Phone;18;29;522;
+2026-08-21;Tokyo;Mouse;11;799;8789;
+2026-03-08;Paris;Monitor;16;59;944;
+2026-05-11;Paris;Keyboard;17;199;3383;
+2026-02-03;London;Laptop;18;199;3582;
+2026-04-06;Toronto;Mouse;17;199;3383;
+2026-09-02;Berlin;Keyboard;15;799;11985;"""Urgent"", call ahead"
+2026-06-06;London;Tablet;6;59;354;"""Urgent"", call ahead"
+2026-08-10;Berlin;Keyboard;10;1299;12990;Repeat order
+2026-09-04;Sydney;Keyboard;17;1299;22083;
+2026-08-02;London;Router;4;59;236;
+2026-04-19;Paris;Keyboard;4;19;76;
+2026-01-25;New York;Monitor;16;349;5584;
+2026-05-20;Tokyo;Laptop;6;349;2094;
+2026-05-13;Toronto;Phone;12;29;348;
+2026-06-24;Madrid;Phone;1;799;799;Repeat order
+2026-03-25;Madrid;Mouse;7;1299;9093;
+2026-06-10;Toronto;Headphones;8;1299;10392;
+2026-05-24;Tokyo;Headphones;2;1299;2598;
+2026-07-17;Berlin;Laptop;19;799;15181;Repeat order
+2026-05-05;Berlin;Tablet;11;349;3839;
+2026-09-12;Madrid;Keyboard;6;59;354;
+2026-08-07;Tokyo;Headphones;10;29;290;
+2026-03-20;Berlin;Mouse;7;29;203;
+2026-09-21;Berlin;Keyboard;17;19;323;"Pickup; pay by card"
+2026-08-10;Madrid;Headphones;7;19;133;
+2026-03-16;Madrid;Tablet;3;799;2397;
+2026-08-10;New York;Mouse;12;59;708;
+2026-04-16;London;Keyboard;19;799;15181;Courier delivery
+2026-04-27;Paris;Mouse;3;199;597;Repeat order
+2026-04-27;Tokyo;Mouse;10;29;290;
+2026-01-24;London;Tablet;14;1299;18186;
+2026-06-21;Paris;Headphones;4;349;1396;Courier delivery
+2026-03-09;Paris;Headphones;1;1299;1299;
+2026-03-06;Paris;Monitor;4;349;1396;
+2026-06-13;Berlin;Router;2;59;118;
+2026-09-04;New York;Tablet;11;199;2189;
+2026-03-24;Madrid;Headphones;17;1299;22083;
+2026-08-16;New York;Phone;15;19;285;"Pickup; pay by card"
+2026-04-24;Tokyo;Monitor;20;29;580;
+2026-06-02;Madrid;Phone;19;349;6631;
+2026-03-27;Berlin;Tablet;14;29;406;
+2026-07-09;London;Monitor;19;59;1121;
+2026-02-22;Toronto;Phone;2;199;398;
+2026-04-23;London;Router;13;29;377;
+2026-04-07;Tokyo;Monitor;18;199;3582;
+2026-09-20;Berlin;Monitor;10;59;590;
+2026-01-06;Berlin;Router;3;199;597;
+2026-05-10;Sydney;Mouse;8;59;472;
+2026-01-25;London;Monitor;15;199;2985;
+2026-09-03;London;Mouse;10;349;3490;
+2026-09-03;Berlin;Laptop;13;19;247;
+2026-03-21;Toronto;Monitor;18;29;522;Courier delivery
+2026-02-09;Berlin;Keyboard;7;1299;9093;"""Urgent"", call ahead"
+2026-09-18;Sydney;Tablet;4;799;3196;
+2026-05-16;New York;Laptop;3;349;1047;Repeat order
+2026-02-09;Tokyo;Monitor;13;799;10387;
+2026-06-19;Sydney;Mouse;19;799;15181;Courier delivery
+2026-08-03;London;Headphones;7;349;2443;Repeat order
+2026-07-03;Sydney;Headphones;9;199;1791;
+2026-01-20;Berlin;Mouse;6;19;114;
+2026-04-20;London;Tablet;12;349;4188;"Pickup; pay by card"
+2026-01-18;New York;Tablet;19;1299;24681;Repeat order
+2026-07-13;New York;Monitor;2;799;1598;"Pickup; pay by card"
+2026-06-16;Toronto;Headphones;18;19;342;
+2026-01-28;London;Headphones;5;199;995;
+2026-03-10;Madrid;Tablet;18;199;3582;
+2026-06-23;Paris;Mouse;2;59;118;
+2026-05-28;Madrid;Headphones;10;799;7990;
+2026-05-26;Madrid;Monitor;10;19;190;"Pickup; pay by card"
+2026-07-17;Tokyo;Keyboard;9;29;261;Repeat order
+2026-01-17;Paris;Monitor;10;29;290;"""Urgent"", call ahead"
+2026-09-20;Toronto;Tablet;10;19;190;
+2026-05-14;Madrid;Router;3;349;1047;
+2026-09-01;Tokyo;Tablet;3;1299;3897;
+2026-01-02;London;Laptop;20;349;6980;
+2026-03-13;Sydney;Monitor;16;799;12784;Repeat order
+2026-06-13;New York;Mouse;14;799;11186;
+2026-07-16;London;Mouse;15;199;2985;
+2026-08-09;London;Monitor;17;799;13583;Repeat order
+2026-02-05;Madrid;Keyboard;15;29;435;
+2026-01-02;London;Mouse;18;349;6282;
+2026-03-08;Paris;Tablet;3;59;177;"""Urgent"", call ahead"
+2026-06-01;London;Monitor;2;799;1598;
+2026-08-15;New York;Monitor;9;799;7191;
+2026-09-07;Paris;Keyboard;10;799;7990;
+2026-08-05;New York;Router;16;29;464;"Pickup; pay by card"
+2026-03-06;Paris;Headphones;4;799;3196;"Pickup; pay by card"
+2026-05-15;Sydney;Mouse;12;19;228;
+2026-07-17;Berlin;Tablet;15;59;885;"""Urgent"", call ahead"
+2026-01-19;New York;Laptop;12;29;348;
+2026-01-04;Madrid;Headphones;10;199;1990;Repeat order
+2026-04-16;New York;Router;18;29;522;
+2026-07-05;Paris;Mouse;3;199;597;
+2026-05-05;London;Mouse;5;199;995;
+2026-05-23;Tokyo;Router;14;799;11186;"Pickup; pay by card"
+2026-03-03;London;Tablet;5;349;1745;
+2026-01-02;Tokyo;Phone;2;59;118;"Pickup; pay by card"
+2026-01-26;New York;Laptop;13;349;4537;
+2026-04-16;Toronto;Headphones;3;59;177;
+2026-08-20;Tokyo;Phone;13;1299;16887;
+2026-02-12;Tokyo;Keyboard;3;1299;3897;
+2026-01-23;Sydney;Tablet;5;799;3995;
+2026-02-10;New York;Laptop;11;19;209;
+2026-01-05;Berlin;Headphones;19;29;551;"""Urgent"", call ahead"
+2026-08-14;London;Phone;11;59;649;
+2026-07-21;Paris;Router;5;799;3995;Courier delivery
+2026-02-05;Tokyo;Headphones;11;349;3839;
+2026-06-18;Toronto;Tablet;3;1299;3897;
+2026-09-25;Madrid;Monitor;7;1299;9093;
+2026-05-24;Tokyo;Tablet;16;799;12784;
+2026-05-27;Toronto;Headphones;18;29;522;
+2026-03-05;London;Laptop;19;59;1121;
+2026-06-21;Madrid;Router;17;799;13583;Repeat order
+2026-02-10;London;Keyboard;10;1299;12990;
+2026-08-16;Toronto;Mouse;20;59;1180;
+2026-05-15;Paris;Keyboard;16;349;5584;Courier delivery
+2026-06-24;Paris;Phone;15;1299;19485;Courier delivery
+2026-05-04;Toronto;Mouse;7;799;5593;
+2026-05-28;London;Keyboard;3;29;87;
+2026-04-23;Toronto;Laptop;18;199;3582;
+2026-08-17;Toronto;Keyboard;9;199;1791;
+2026-09-10;Toronto;Mouse;5;59;295;"Pickup; pay by card"
+2026-08-18;Tokyo;Laptop;13;29;377;"Pickup; pay by card"
+2026-07-05;London;Monitor;18;1299;23382;
+2026-04-01;Paris;Headphones;18;59;1062;"Pickup; pay by card"
+2026-02-15;Paris;Monitor;11;349;3839;
+2026-08-17;Madrid;Phone;14;199;2786;Repeat order
+2026-05-14;Berlin;Router;19;199;3781;
+2026-04-13;Madrid;Keyboard;19;799;15181;"Pickup; pay by card"
+2026-07-24;New York;Tablet;12;29;348;
+2026-07-09;Tokyo;Laptop;17;29;493;
+2026-05-23;Tokyo;Monitor;7;59;413;
+2026-07-17;Berlin;Mouse;2;19;38;
+2026-09-12;London;Phone;18;799;14382;Repeat order
+2026-07-03;Berlin;Mouse;15;59;885;
+2026-01-22;London;Laptop;20;59;1180;Courier delivery
+2026-08-22;Tokyo;Laptop;18;1299;23382;
+2026-05-22;Berlin;Laptop;13;59;767;"""Urgent"", call ahead"
+2026-06-13;Paris;Headphones;17;199;3383;Courier delivery
+2026-08-25;London;Mouse;17;19;323;
+2026-02-26;Toronto;Mouse;11;199;2189;
+2026-06-10;Sydney;Laptop;1;1299;1299;
+2026-08-28;Tokyo;Mouse;1;349;349;"""Urgent"", call ahead"
+2026-02-25;Toronto;Router;19;59;1121;"Pickup; pay by card"
+2026-06-27;Paris;Keyboard;11;19;209;
+2026-05-15;Paris;Laptop;3;1299;3897;
+2026-09-24;Madrid;Headphones;2;799;1598;
+2026-04-04;Tokyo;Keyboard;9;19;171;Courier delivery
+2026-03-13;Toronto;Tablet;11;59;649;
+2026-03-08;Sydney;Phone;11;19;209;
+2026-04-23;Berlin;Monitor;5;19;95;
+2026-04-10;Toronto;Phone;12;59;708;Courier delivery
+2026-07-26;London;Router;15;59;885;
+2026-03-24;Tokyo;Phone;1;59;59;"Pickup; pay by card"
+2026-06-06;New York;Router;1;799;799;
+2026-09-07;Paris;Keyboard;11;29;319;
+2026-03-15;Paris;Headphones;20;199;3980;Repeat order
+2026-09-05;Toronto;Phone;7;59;413;
+2026-05-23;Madrid;Tablet;17;29;493;
+2026-08-20;Paris;Mouse;6;59;354;
+2026-05-05;Madrid;Laptop;18;29;522;
+2026-02-12;Tokyo;Mouse;15;799;11985;"Pickup; pay by card"
+2026-01-05;Berlin;Phone;16;59;944;
+2026-08-18;New York;Laptop;7;199;1393;
+2026-08-19;Berlin;Router;7;349;2443;"Pickup; pay by card"
+2026-07-22;Paris;Phone;16;1299;20784;Courier delivery
+2026-06-23;Toronto;Tablet;16;199;3184;
+2026-06-27;New York;Router;11;1299;14289;
+2026-06-20;Paris;Router;10;59;590;
+2026-08-26;New York;Mouse;10;59;590;
+2026-09-20;Paris;Mouse;8;59;472;Repeat order
+2026-09-14;Toronto;Mouse;9;349;3141;
+2026-07-05;London;Monitor;11;199;2189;
+2026-05-08;Sydney;Keyboard;18;199;3582;
+2026-03-27;Tokyo;Phone;4;349;1396;"""Urgent"", call ahead"
+2026-05-03;Paris;Mouse;10;199;1990;Courier delivery
+2026-06-18;London;Monitor;6;349;2094;
+2026-07-15;New York;Router;2;19;38;"""Urgent"", call ahead"
+2026-02-02;London;Headphones;16;349;5584;"""Urgent"", call ahead"
+2026-08-16;Paris;Keyboard;8;199;1592;Repeat order
+2026-04-23;Madrid;Phone;3;59;177;
+2026-07-23;Sydney;Phone;1;1299;1299;
+2026-07-20;Tokyo;Router;18;59;1062;"""Urgent"", call ahead"
+2026-05-15;London;Monitor;15;199;2985;Repeat order
+2026-05-01;London;Tablet;10;29;290;
+2026-08-13;London;Laptop;3;199;597;
+2026-05-02;New York;Mouse;5;349;1745;

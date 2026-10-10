@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">DocxView</string>
+    <string name="search_hint">Search</string>
+    <string name="prev">Previous</string>
+    <string name="next">Next</string>
+    <string name="prev_symbol" translatable="false">↑</string>
+    <string name="next_symbol" translatable="false">↓</string>
+    <string name="xml_demo_block">Block %1$d of %2$d</string>
+    <string name="xml_demo_counter">%1$d/%2$d</string>
+    <string name="xml_demo_loading">Loading…</string>
+    <string name="xml_demo_ready">%1$s: %2$s</string>
+    <string name="xml_demo_error">Error: %1$s</string>
+    <string name="xml_demo_password">Password required</string>
+</resources>

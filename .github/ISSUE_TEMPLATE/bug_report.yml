@@ -1,0 +1,47 @@
+name: Bug report
+description: A document renders incorrectly, the viewer crashes or misbehaves.
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you expected and what you saw instead. Screenshots help a lot.
+    validations:
+      required: true
+  - type: dropdown
+    id: format
+    attributes:
+      label: Document format
+      options: [PDF, DOCX, DOC, CSV / TSV, TXT, Other]
+    validations:
+      required: true
+  - type: textarea
+    id: file
+    attributes:
+      label: Document
+      description: Attach a file that reproduces the problem. Remove personal data first.
+  - type: input
+    id: version
+    attributes:
+      label: Library version
+      placeholder: 1.0.0
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Device and Android version
+      placeholder: Pixel 8, Android 15
+    validations:
+      required: true
+  - type: dropdown
+    id: api
+    attributes:
+      label: Integration
+      options: [Compose (DocumentViewer), XML (DocumentView), docviewer-core only]
+  - type: textarea
+    id: logs
+    attributes:
+      label: Stack trace or logs
+      render: text

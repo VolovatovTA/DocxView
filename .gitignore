@@ -1,0 +1,26 @@
+.gradle/
+build/
+local.properties
+.idea/
+*.iml
+.DS_Store
+.kotlin/
+captures/
+
+# Secrets: signing keys, keystores and credentials never belong in the repo.
+*.jks
+*.keystore
+*.gpg
+*.asc
+*.p12
+*.pem
+secring.*
+signing.properties
+keystore.properties
+.env
+
+# Third-party PDF corpus, fetched by tools/fetch-test-pdfs.sh
+docviewer/src/androidTest/assets/corpus/
+
+# Maintainer-only notes, kept locally
+RELEASING.md

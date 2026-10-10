@@ -1,0 +1,7 @@
+DocxView 1.0 release notes
+
+• PDF: tiled rendering, search (Android 15+), night mode.
+• DOCX/DOC: styles, lists, tables, footnotes, images.
+• CSV: delimiter and encoding detection.
+
+A plain text file opens too.
