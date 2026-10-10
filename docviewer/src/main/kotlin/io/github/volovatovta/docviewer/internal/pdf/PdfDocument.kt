@@ -25,7 +25,7 @@ import java.util.concurrent.Executors
 
 internal class PdfPageSize(val width: Float, val height: Float)
 
-// Every PdfRenderer call of every document runs on one shared thread: before Android 8 pdfium had no global lock.
+// Every PdfRenderer call of every document runs on one shared thread, so platform pdfium is never used concurrently.
 internal class PdfDocument private constructor(
     private val descriptor: ParcelFileDescriptor,
     private val renderer: PdfRenderer,
@@ -96,6 +96,7 @@ internal class PdfDocument private constructor(
         private const val OPEN_FAILED = "Cannot open PDF"
         private const val READ_FAILED = "Cannot read PDF pages"
         private const val NO_PAGES = "PDF has no pages"
+        private const val INCOMPLETE = "PDF is truncated or not a PDF"
 
         // Blocks the caller until the shared PDF thread has opened the document.
         fun open(file: File, password: String?): PdfDocument = try {
@@ -105,11 +106,17 @@ internal class PdfDocument private constructor(
         }
 
         private fun openOnPdfThread(file: File, password: String?): PdfDocument {
+            if (PdfPreflight.isNeeded) preflight(file)
             val descriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
             val renderer = descriptor.closeOnFailure { openRenderer(descriptor, password) }
             return descriptor.closeOnFailure {
                 renderer.closeOnFailure { PdfDocument(descriptor, renderer, readPageSizes(renderer)) }
             }
+        }
+
+        private fun preflight(file: File) {
+            if (!PdfPreflight.looksComplete(file)) throw CorruptedDocumentException(INCOMPLETE)
+            if (PdfPreflight.isEncrypted(file)) throw PasswordUnsupportedException(isPdf = true)
         }
 
         private fun openRenderer(descriptor: ParcelFileDescriptor, password: String?): PdfRenderer =

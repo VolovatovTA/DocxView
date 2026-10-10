@@ -30,6 +30,8 @@ class PdfEngineStressTest(private val pdf: TestPdf) {
         // Real-world files that are broken on purpose: failing cleanly is as good as rendering.
         private val MayFail = setOf("helloworld-bad", "bad-PageLabels")
 
+        private val EncryptedWithoutPassword = setOf("encrypted-attachment")
+
         // Platform pdfium of Android 11-14 draws nothing for this shading; 9-10 and 15+ render it.
         private val BlankOnPlatform = mapOf("axial_shading_many_inputs" to 30..34)
 
@@ -73,7 +75,12 @@ class PdfEngineStressTest(private val pdf: TestPdf) {
     } catch (e: PasswordProtectedException) {
         fail("${pdf.name} unexpectedly asks for a password", e)
     } catch (e: PasswordUnsupportedException) {
-        fail("${pdf.name} unexpectedly asks for a password", e)
+        // Before Android 9 every encrypted file is refused up front, even one without a user password.
+        if (pdf.name in EncryptedWithoutPassword && Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+            null
+        } else {
+            fail("${pdf.name} unexpectedly asks for a password", e)
+        }
     }
 
     private fun renderPages(document: PdfDocument): RenderStats {
