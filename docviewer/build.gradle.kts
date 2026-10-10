@@ -1,9 +1,11 @@
 import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
 import com.vanniktech.maven.publish.JavadocJar
+import kotlinx.validation.KotlinApiBuildTask
+import kotlinx.validation.KotlinApiCompareTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.maven.publish)
     alias(libs.plugins.dokka)
@@ -45,6 +47,7 @@ android {
 
 kotlin {
     explicitApi()
+
     compilerOptions { jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17) }
 }
 
@@ -79,3 +82,21 @@ mavenPublishing {
     // Maven Central requires signed artifacts; local publishing works without a key.
     if (providers.gradleProperty("signingInMemoryKey").isPresent) signAllPublications()
 }
+
+// AGP 9 compiles Kotlin itself, which the binary-compatibility-validator plugin cannot see yet,
+// so its tasks are wired to the release classes by hand. Names match the plugin's: apiCheck, apiDump.
+val apiBuild = tasks.register<KotlinApiBuildTask>("apiBuild") {
+    inputClassesDirs.from(tasks.named<KotlinJvmCompile>("compileReleaseKotlin").flatMap { it.destinationDirectory })
+    outputApiFile.set(layout.buildDirectory.file("api/${project.name}.api"))
+}
+val apiCheck = tasks.register<KotlinApiCompareTask>("apiCheck") {
+    group = "verification"
+    projectApiFile.set(layout.projectDirectory.file("api/${project.name}.api"))
+    generatedApiFile.set(apiBuild.flatMap { it.outputApiFile })
+}
+tasks.register<Copy>("apiDump") {
+    group = "other"
+    from(apiBuild.flatMap { it.outputApiFile })
+    into(layout.projectDirectory.dir("api"))
+}
+tasks.named("check") { dependsOn(apiCheck) }

@@ -317,6 +317,7 @@ public final class io/github/volovatovta/docviewer/DocumentViewerColors {
 
 public final class io/github/volovatovta/docviewer/DocumentViewerConfig {
 	public static final field $stable I
+	public fun <init> ()V
 	public synthetic fun <init> (FFFJFZZZZLio/github/volovatovta/docviewer/core/CsvOptions;ZLjava/lang/Long;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun <init> (FFFJFZZZZLio/github/volovatovta/docviewer/core/CsvOptions;ZLjava/lang/Long;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()F

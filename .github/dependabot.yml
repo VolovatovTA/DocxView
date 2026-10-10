@@ -5,9 +5,20 @@ updates:
     schedule:
       interval: monthly
     groups:
-      gradle:
+      # Minor and patch updates arrive as one pull request; each major update gets its own,
+      # since a new major of AGP, Gradle or Kotlin usually needs build changes by hand.
+      gradle-minor:
         patterns: ['*']
+        update-types: [minor, patch]
+    ignore:
+      # Newer androidx.core raises the compileSdk every app using the library must have (1.16 needs 35).
+      - dependency-name: 'androidx.core:*'
+        update-types: [version-update:semver-minor]
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: monthly
+    groups:
+      actions-minor:
+        patterns: ['*']
+        update-types: [minor, patch]
