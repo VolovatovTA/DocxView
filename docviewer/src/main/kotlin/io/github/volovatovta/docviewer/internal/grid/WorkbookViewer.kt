@@ -14,7 +14,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -49,12 +51,15 @@ internal fun WorkbookViewer(
     colors: DocumentViewerColors,
     modifier: Modifier = Modifier,
 ) {
-    val controller = remember(workbook) { WorkbookController(workbook) }
+    val selectedSheet = rememberSaveable { mutableIntStateOf(0) }
+    val controller = remember(workbook) { WorkbookController(workbook, selectedSheet) }
     BindController(state, controller)
     Column(modifier.fillMaxSize()) {
         Box(Modifier.weight(1f)) {
-            key(controller.sheet) {
-                SheetGrid(workbook.sheets[controller.sheet].table, controller.sheet, controller, state, config, colors)
+            // A file replaced on disk may have fewer sheets than the one the saved index came from.
+            val sheet = controller.sheet.coerceIn(workbook.sheets.indices)
+            key(sheet) {
+                SheetGrid(workbook.sheets[sheet].table, sheet, controller, state, config, colors)
             }
         }
         if (workbook.sheets.size > 1) {

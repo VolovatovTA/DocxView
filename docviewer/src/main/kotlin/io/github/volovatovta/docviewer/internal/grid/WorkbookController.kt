@@ -1,8 +1,8 @@
 package io.github.volovatovta.docviewer.internal.grid
 
+import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import io.github.volovatovta.docviewer.core.model.Workbook
 import io.github.volovatovta.docviewer.internal.ViewerController
@@ -16,9 +16,10 @@ import kotlinx.coroutines.flow.flowOn
 
 /** Search covers every sheet of the workbook; navigation goes to the sheet on screen, switching to it first. */
 @Stable
-internal class WorkbookController(private val workbook: Workbook) : ViewerController {
+internal class WorkbookController(private val workbook: Workbook, selectedSheet: MutableIntState) : ViewerController {
 
-    var sheet by mutableIntStateOf(0)
+    /** Saved by the caller, so the sheet on screen survives rotation and process death. */
+    var sheet by selectedSheet
 
     private val shown = MutableStateFlow<ShownSheet?>(null)
 

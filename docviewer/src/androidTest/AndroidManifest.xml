@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+        <!-- Sets its own content like a real app, so recreate() reproduces a rotation. -->
+        <activity
+            android:name="io.github.volovatovta.docviewer.ViewerTestActivity"
+            android:exported="false" />
+    </application>
+</manifest>
