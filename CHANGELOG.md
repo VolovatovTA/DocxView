@@ -5,6 +5,9 @@ uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+- PDF no longer crashes when memory runs out while rendering a page (seen on Android 6–7,
+  where bitmaps share the app heap): the page cache is trimmed and the page is retried, or
+  left blank until it can be drawn.
 - Built with Android Gradle Plugin 9.4, Gradle 9.8 and Kotlin 2.4. Apps still need
   `compileSdk 35` or newer, as with 1.0.0.
 - `DocumentViewerConfig` gains a no-argument JVM constructor (Kotlin 2.4 generates it for
