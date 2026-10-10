@@ -13,6 +13,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
+import java.io.File
 import kotlin.math.sqrt
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -48,8 +49,10 @@ class PdfEngineStressTest(private val pdf: TestPdf) {
 
     @Test
     fun opensRendersAndSearches() {
+        // Generated files are written on first use; that must not count as opening time.
+        val file = pdf.file()
         val started = SystemClock.elapsedRealtime()
-        val document = openOrNull()
+        val document = openOrNull(file)
         val openMs = SystemClock.elapsedRealtime() - started
         if (document == null) return log("result=failed-cleanly|openMs=$openMs")
         try {
@@ -68,8 +71,8 @@ class PdfEngineStressTest(private val pdf: TestPdf) {
         }
     }
 
-    private fun openOrNull(): PdfDocument? = try {
-        PdfDocument.open(pdf.file(), password = null)
+    private fun openOrNull(file: File): PdfDocument? = try {
+        PdfDocument.open(file, password = null)
     } catch (e: CorruptedDocumentException) {
         if (pdf.name in MayFail) null else throw e
     } catch (e: PasswordProtectedException) {
@@ -94,7 +97,7 @@ class PdfEngineStressTest(private val pdf: TestPdf) {
         var worst = 0L
         var nonBlank = 0
         for (page in pages) {
-            val size = document.pageSizes[page]
+            val size = assertNotNull(runBlocking { document.measurePages(page..page) }).single()
             // Same budget as the viewer: fit the screen width, at most ~2.5 MP per page.
             val cappedWidth = sqrt(BASE_BITMAP_PIXELS * size.width / size.height)
             val width = minOf(SCREEN_WIDTH.toFloat(), cappedWidth).toInt().coerceAtLeast(1)
@@ -113,7 +116,7 @@ class PdfEngineStressTest(private val pdf: TestPdf) {
 
     // A tile of the first page at 4x, as the viewer renders for crisp text when zoomed in.
     private fun renderZoomedTile(document: PdfDocument) {
-        val first = document.pageSizes[0]
+        val first = document.firstPageSize
         val pageWidth = SCREEN_WIDTH * ZOOM
         val pageHeight = (pageWidth * first.height / first.width).toInt().coerceAtLeast(1)
         val top = (pageHeight / 3).coerceAtMost(pageHeight - 1)

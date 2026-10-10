@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.github.volovatovta.docviewer.core.CsvParser
-import io.github.volovatovta.docviewer.core.model.TableDocument
+import io.github.volovatovta.docviewer.core.model.TableSource
 
 internal object GridMetrics {
     val CellHorizontalPadding = 12.dp
@@ -55,7 +55,7 @@ internal class GridLayout(
 
 @Composable
 internal fun rememberGridLayout(
-    document: TableDocument,
+    document: TableSource,
     cellStyle: TextStyle,
     headerStyle: TextStyle,
     showRowNumbers: Boolean,
@@ -69,15 +69,23 @@ internal fun rememberGridLayout(
 
 private class GridStyles(val measurer: TextMeasurer, val cell: TextStyle, val header: TextStyle)
 
-private fun Density.measureGrid(document: TableDocument, styles: GridStyles, showRowNumbers: Boolean): GridLayout {
+private fun Density.measureGrid(document: TableSource, styles: GridStyles, showRowNumbers: Boolean): GridLayout {
     val columns = document.columnCount.coerceAtLeast(1)
-    val sample = document.rows.take(ColumnSampling.SAMPLED_ROWS)
+    val sample = sampleRows(document)
     val widths = FloatArray(columns) { column -> columnWidth(column, document.header, sample, styles) }
     val numeric = BooleanArray(columns) { column -> sample.isNumericColumn(column) }
     val columnX = FloatArray(columns + 1)
     widths.forEachIndexed { index, width -> columnX[index + 1] = columnX[index] + width }
-    val rowNumberWidth = if (showRowNumbers) rowNumberWidth(document.rows.size, styles) else 0f
+    val rowNumberWidth = if (showRowNumbers) rowNumberWidth(document.rowCount, styles) else 0f
     return GridLayout(widths, columnX, numeric, rowNumberWidth)
+}
+
+// Rows from both ends: ids and counters are often widest at the end of a table.
+private fun sampleRows(document: TableSource): List<List<String>> {
+    val half = ColumnSampling.SAMPLED_ROWS / 2
+    val head = 0 until minOf(document.rowCount, half)
+    val tail = maxOf(head.last + 1, document.rowCount - half) until document.rowCount
+    return (head + tail).map(document::row)
 }
 
 private fun Density.columnWidth(

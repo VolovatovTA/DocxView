@@ -21,9 +21,7 @@ public object CsvParser {
         charsetName: String? = null,
         tsvHint: Boolean = false,
     ): TableDocument {
-        val delimiter = options.delimiter
-            ?: detectDelimiter(text)
-            ?: if (tsvHint) TAB else DEFAULT_DELIMITER
+        val delimiter = options.delimiter ?: detectDelimiter(text) ?: fallbackDelimiter(tsvHint)
         // One row more than header + maxRows tells whether the file was cut.
         val rows = CsvReader(text, delimiter).rows().take(options.maxRows + 2).toMutableList()
         val overflow = rows.size > options.maxRows + 1
@@ -45,6 +43,8 @@ public object CsvParser {
             charsetName = charsetName,
         )
     }
+
+    internal fun fallbackDelimiter(tsvHint: Boolean): Char = if (tsvHint) TAB else DEFAULT_DELIMITER
 
     // Picks the candidate that splits sample lines into the same, non-trivial number of fields most consistently.
     public fun detectDelimiter(text: String): Char? {

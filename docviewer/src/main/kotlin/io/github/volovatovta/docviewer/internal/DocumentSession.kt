@@ -5,7 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import io.github.volovatovta.docviewer.DocumentSource
-import io.github.volovatovta.docviewer.core.CsvOptions
+import io.github.volovatovta.docviewer.DocumentViewerConfig
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.currentCoroutineContext
@@ -25,10 +25,10 @@ internal class DocumentSession(private val context: Context, private val source:
     suspend fun resolve(onProgress: (Float?) -> Unit): ResolvedFile =
         resolved ?: DocumentLoader.resolve(context, source, onProgress).also { resolved = it }
 
-    suspend fun open(file: ResolvedFile, password: String?, csvOptions: CsvOptions): LoadedDocument {
+    suspend fun open(file: ResolvedFile, password: String?, config: DocumentViewerConfig): LoadedDocument {
         closeDocument()
         // Opening cannot be interrupted midway, so a result that arrives after cancellation is closed, not leaked.
-        val loaded = withContext(NonCancellable) { DocumentLoader.open(file, source, password, csvOptions) }
+        val loaded = withContext(NonCancellable) { DocumentLoader.open(file, source, password, config) }
         if (!currentCoroutineContext().isActive) {
             loaded.close()
             throw CancellationException("Document load was cancelled")

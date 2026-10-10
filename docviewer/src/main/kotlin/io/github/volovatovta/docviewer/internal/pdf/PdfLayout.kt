@@ -7,7 +7,7 @@ import kotlin.math.sqrt
 private val ConstraintsLimits = listOf(8_190 to 262_142, 32_766 to 65_534, 65_534 to 32_766, 262_142 to 8_190)
 
 // Geometry at zoom 1, with pages fitted to the viewport width; list item i is the gap above page i plus the page.
-internal class PdfLayout(pageSizes: List<PdfPageSize>, viewportWidth: Float, val spacing: Float) {
+internal class PdfLayout(val pageSizes: List<PdfPageSize>, viewportWidth: Float, val spacing: Float) {
 
     val pageCount = pageSizes.size
 

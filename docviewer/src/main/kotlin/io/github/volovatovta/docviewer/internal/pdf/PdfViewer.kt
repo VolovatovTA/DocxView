@@ -22,7 +22,6 @@ import io.github.volovatovta.docviewer.DocumentViewerState
 import io.github.volovatovta.docviewer.internal.ui.FastScrollbar
 import io.github.volovatovta.docviewer.internal.ui.ScrollIndicator
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlin.math.roundToInt
 
 private val PageIndicatorTopPadding = 12.dp
 
@@ -39,11 +38,12 @@ internal fun PdfViewer(
     BoxWithConstraints(modifier.fillMaxSize().background(colors.background).clipToBounds()) {
         val viewport = rememberPdfViewport(
             document = document,
+            pageSizes = rememberPageSizes(document),
             config = config,
             width = constraints.maxWidth.toFloat(),
             height = constraints.maxHeight.toFloat(),
         )
-        val images = remember(viewport) { PdfPageImages(document, viewport.layout, cache) }
+        val images = remember(viewport, viewport.layout) { PdfPageImages(document, viewport.layout, cache) }
         SyncWithState(document, viewport, state)
         PdfPageList(
             viewport = viewport,
@@ -71,6 +71,7 @@ internal fun PdfViewer(
 @Composable
 private fun rememberPdfViewport(
     document: PdfDocument,
+    pageSizes: List<PdfPageSize>,
     config: DocumentViewerConfig,
     width: Float,
     height: Float,
@@ -78,12 +79,12 @@ private fun rememberPdfViewport(
     val spacing = with(LocalDensity.current) { config.pageSpacing.toPx() }
     val listState = rememberLazyListState()
     val viewport = remember(document, width, spacing, config.maxZoom) {
-        val layout = PdfLayout(document.pageSizes, width, spacing)
-        // Extremely tall pages would overflow Compose constraints before reaching the configured zoom.
-        val maxZoom = minOf(config.maxZoom, layout.maxRepresentableScale(width.roundToInt())).coerceAtLeast(1f)
-        PdfViewport(layout, listState, width, height, maxZoom)
+        PdfViewport(PdfLayout(pageSizes, width, spacing), listState, width, height, config.maxZoom)
     }
     SideEffect { viewport.height = height }
+    LaunchedEffect(viewport, pageSizes) {
+        if (viewport.layout.pageSizes !== pageSizes) viewport.replaceLayout(PdfLayout(pageSizes, width, spacing))
+    }
     return viewport
 }
 

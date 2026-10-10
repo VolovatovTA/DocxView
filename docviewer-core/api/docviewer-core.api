@@ -45,6 +45,12 @@ public class io/github/volovatovta/docviewer/core/DocumentException : java/lang/
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 
+public final class io/github/volovatovta/docviewer/core/DocumentTooLargeException : io/github/volovatovta/docviewer/core/DocumentException {
+	public fun <init> (JJ)V
+	public final fun getLimitBytes ()J
+	public final fun getSizeBytes ()J
+}
+
 public final class io/github/volovatovta/docviewer/core/FlowMatch {
 	public fun <init> (ILio/github/volovatovta/docviewer/core/model/Paragraph;II)V
 	public final fun getBlockIndex ()I
@@ -67,6 +73,12 @@ public final class io/github/volovatovta/docviewer/core/FormatDetector {
 	public static synthetic fun detect$default (Lio/github/volovatovta/docviewer/core/FormatDetector;Ljava/io/File;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/github/volovatovta/docviewer/core/model/DocumentFormat;
 }
 
+public final class io/github/volovatovta/docviewer/core/ParsingCost {
+	public static final field INSTANCE Lio/github/volovatovta/docviewer/core/ParsingCost;
+	public final fun bytesToParse (Ljava/io/File;Lio/github/volovatovta/docviewer/core/model/DocumentFormat;)J
+	public final fun peakMemoryPerByte (Lio/github/volovatovta/docviewer/core/model/DocumentFormat;)I
+}
+
 public final class io/github/volovatovta/docviewer/core/PasswordProtectedException : io/github/volovatovta/docviewer/core/DocumentException {
 	public fun <init> ()V
 	public fun <init> (Z)V
@@ -76,6 +88,7 @@ public final class io/github/volovatovta/docviewer/core/PasswordProtectedExcepti
 
 public final class io/github/volovatovta/docviewer/core/PlainTextParser {
 	public static final field INSTANCE Lio/github/volovatovta/docviewer/core/PlainTextParser;
+	public final fun isCode (Ljava/lang/String;)Z
 	public final fun parse (Ljava/io/File;)Lio/github/volovatovta/docviewer/core/model/FlowDocument;
 	public final fun parse (Ljava/lang/String;ZLjava/lang/String;)Lio/github/volovatovta/docviewer/core/model/FlowDocument;
 	public static synthetic fun parse$default (Lio/github/volovatovta/docviewer/core/PlainTextParser;Ljava/lang/String;ZLjava/lang/String;ILjava/lang/Object;)Lio/github/volovatovta/docviewer/core/model/FlowDocument;
@@ -281,15 +294,19 @@ public final class io/github/volovatovta/docviewer/core/model/TableCell {
 	public final fun getMergedWithAbove ()Z
 }
 
-public final class io/github/volovatovta/docviewer/core/model/TableDocument {
+public final class io/github/volovatovta/docviewer/core/model/TableDocument : io/github/volovatovta/docviewer/core/model/TableSource {
 	public fun <init> (Ljava/util/List;Ljava/util/List;CIZLjava/lang/String;)V
 	public synthetic fun <init> (Ljava/util/List;Ljava/util/List;CIZLjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun close ()V
+	public fun forEachRow (Lkotlin/jvm/functions/Function2;)V
 	public final fun getCharsetName ()Ljava/lang/String;
-	public final fun getColumnCount ()I
-	public final fun getDelimiter ()C
-	public final fun getHeader ()Ljava/util/List;
+	public fun getColumnCount ()I
+	public fun getDelimiter ()C
+	public fun getHeader ()Ljava/util/List;
+	public fun getRowCount ()I
 	public final fun getRows ()Ljava/util/List;
 	public final fun getTruncated ()Z
+	public fun row (I)Ljava/util/List;
 }
 
 public final class io/github/volovatovta/docviewer/core/model/TableRow {
@@ -297,6 +314,21 @@ public final class io/github/volovatovta/docviewer/core/model/TableRow {
 	public synthetic fun <init> (Ljava/util/List;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getCells ()Ljava/util/List;
 	public final fun isHeader ()Z
+}
+
+public abstract interface class io/github/volovatovta/docviewer/core/model/TableSource : java/io/Closeable {
+	public fun close ()V
+	public fun forEachRow (Lkotlin/jvm/functions/Function2;)V
+	public abstract fun getColumnCount ()I
+	public abstract fun getDelimiter ()C
+	public abstract fun getHeader ()Ljava/util/List;
+	public abstract fun getRowCount ()I
+	public abstract fun row (I)Ljava/util/List;
+}
+
+public final class io/github/volovatovta/docviewer/core/model/TableSource$DefaultImpls {
+	public static fun close (Lio/github/volovatovta/docviewer/core/model/TableSource;)V
+	public static fun forEachRow (Lio/github/volovatovta/docviewer/core/model/TableSource;Lkotlin/jvm/functions/Function2;)V
 }
 
 public final class io/github/volovatovta/docviewer/core/model/TextAlignment : java/lang/Enum {
@@ -325,5 +357,45 @@ public final class io/github/volovatovta/docviewer/core/model/VerticalAlign : ja
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/github/volovatovta/docviewer/core/model/VerticalAlign;
 	public static fun values ()[Lio/github/volovatovta/docviewer/core/model/VerticalAlign;
+}
+
+public final class io/github/volovatovta/docviewer/core/stream/CsvFile : io/github/volovatovta/docviewer/core/model/TableSource {
+	public static final field Companion Lio/github/volovatovta/docviewer/core/stream/CsvFile$Companion;
+	public synthetic fun <init> (Lio/github/volovatovta/docviewer/core/stream/RecordFile;Ljava/util/List;ICLjava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun close ()V
+	public fun forEachRow (Lkotlin/jvm/functions/Function2;)V
+	public final fun getCharsetName ()Ljava/lang/String;
+	public fun getColumnCount ()I
+	public fun getDelimiter ()C
+	public fun getHeader ()Ljava/util/List;
+	public fun getRowCount ()I
+	public fun row (I)Ljava/util/List;
+}
+
+public final class io/github/volovatovta/docviewer/core/stream/CsvFile$Companion {
+	public final fun open (Ljava/io/File;Lio/github/volovatovta/docviewer/core/CsvOptions;)Lio/github/volovatovta/docviewer/core/stream/CsvFile;
+	public static synthetic fun open$default (Lio/github/volovatovta/docviewer/core/stream/CsvFile$Companion;Ljava/io/File;Lio/github/volovatovta/docviewer/core/CsvOptions;ILjava/lang/Object;)Lio/github/volovatovta/docviewer/core/stream/CsvFile;
+}
+
+public final class io/github/volovatovta/docviewer/core/stream/StreamedText {
+	public static final field INSTANCE Lio/github/volovatovta/docviewer/core/stream/StreamedText;
+	public final fun document (Lio/github/volovatovta/docviewer/core/stream/TextFile;ZLjava/lang/String;)Lio/github/volovatovta/docviewer/core/model/FlowDocument;
+	public static synthetic fun document$default (Lio/github/volovatovta/docviewer/core/stream/StreamedText;Lio/github/volovatovta/docviewer/core/stream/TextFile;ZLjava/lang/String;ILjava/lang/Object;)Lio/github/volovatovta/docviewer/core/model/FlowDocument;
+}
+
+public final class io/github/volovatovta/docviewer/core/stream/TextFile : java/io/Closeable {
+	public static final field Companion Lio/github/volovatovta/docviewer/core/stream/TextFile$Companion;
+	public static final field MAX_LINE_BYTES I
+	public synthetic fun <init> (Lio/github/volovatovta/docviewer/core/stream/RecordFile;Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun close ()V
+	public final fun endsLine (I)Z
+	public final fun forEachLine (Lkotlin/jvm/functions/Function2;)V
+	public final fun getCharsetName ()Ljava/lang/String;
+	public final fun getLineCount ()I
+	public final fun line (I)Ljava/lang/String;
+}
+
+public final class io/github/volovatovta/docviewer/core/stream/TextFile$Companion {
+	public final fun open (Ljava/io/File;)Lio/github/volovatovta/docviewer/core/stream/TextFile;
 }
 

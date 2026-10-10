@@ -37,6 +37,7 @@ import io.github.volovatovta.docviewer.core.FlowMatch
 import io.github.volovatovta.docviewer.core.FlowSearch
 import io.github.volovatovta.docviewer.core.model.FlowDocument
 import io.github.volovatovta.docviewer.core.model.Table
+import io.github.volovatovta.docviewer.core.stream.TextFile
 import java.util.IdentityHashMap
 import kotlin.math.abs
 import kotlin.math.roundToInt
@@ -61,13 +62,14 @@ private object ImageCacheSize {
 @Composable
 internal fun FlowViewer(
     document: FlowDocument,
+    lines: TextFile?,
     state: DocumentViewerState,
     config: DocumentViewerConfig,
     colors: DocumentViewerColors,
     onLink: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val plan = remember(document) { FlowPlan.of(document) }
+    val plan = remember(document) { if (lines != null) FlowPlan.ofLines(document, lines) else FlowPlan.of(document) }
     val initialItem = remember { plan.itemOf(state.consumeInitialPage()) }
     val listState = rememberLazyListState(initialFirstVisibleItemIndex = initialItem)
     var scale by remember(document) { mutableFloatStateOf(TextScale.clamp(state.zoom)) }

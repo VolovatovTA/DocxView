@@ -317,11 +317,12 @@ public final class io/github/volovatovta/docviewer/DocumentViewerColors {
 
 public final class io/github/volovatovta/docviewer/DocumentViewerConfig {
 	public static final field $stable I
-	public synthetic fun <init> (FFFJFZZZZLio/github/volovatovta/docviewer/core/CsvOptions;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public synthetic fun <init> (FFFJFZZZZLio/github/volovatovta/docviewer/core/CsvOptions;ZLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (FFFJFZZZZLio/github/volovatovta/docviewer/core/CsvOptions;ZLjava/lang/Long;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (FFFJFZZZZLio/github/volovatovta/docviewer/core/CsvOptions;ZLjava/lang/Long;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()F
 	public final fun component10 ()Lio/github/volovatovta/docviewer/core/CsvOptions;
 	public final fun component11 ()Z
+	public final fun component12 ()Ljava/lang/Long;
 	public final fun component2 ()F
 	public final fun component3-D9Ej5fM ()F
 	public final fun component4-XSAIIZE ()J
@@ -330,12 +331,13 @@ public final class io/github/volovatovta/docviewer/DocumentViewerConfig {
 	public final fun component7 ()Z
 	public final fun component8 ()Z
 	public final fun component9 ()Z
-	public final fun copy-7wu-nFo (FFFJFZZZZLio/github/volovatovta/docviewer/core/CsvOptions;Z)Lio/github/volovatovta/docviewer/DocumentViewerConfig;
-	public static synthetic fun copy-7wu-nFo$default (Lio/github/volovatovta/docviewer/DocumentViewerConfig;FFFJFZZZZLio/github/volovatovta/docviewer/core/CsvOptions;ZILjava/lang/Object;)Lio/github/volovatovta/docviewer/DocumentViewerConfig;
+	public final fun copy-y0YtesM (FFFJFZZZZLio/github/volovatovta/docviewer/core/CsvOptions;ZLjava/lang/Long;)Lio/github/volovatovta/docviewer/DocumentViewerConfig;
+	public static synthetic fun copy-y0YtesM$default (Lio/github/volovatovta/docviewer/DocumentViewerConfig;FFFJFZZZZLio/github/volovatovta/docviewer/core/CsvOptions;ZLjava/lang/Long;ILjava/lang/Object;)Lio/github/volovatovta/docviewer/DocumentViewerConfig;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCsvOptions ()Lio/github/volovatovta/docviewer/core/CsvOptions;
 	public final fun getDoubleTapZoom ()F
 	public final fun getMaxContentWidth-D9Ej5fM ()F
+	public final fun getMaxDocumentSizeBytes ()Ljava/lang/Long;
 	public final fun getMaxZoom ()F
 	public final fun getPageSpacing-D9Ej5fM ()F
 	public final fun getPdfNightMode ()Z

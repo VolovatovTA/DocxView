@@ -23,12 +23,19 @@ import kotlin.math.roundToInt
 // Zoom is laid out for real (pages stay virtualized); a pinch only scales the layer until the zoom is committed.
 @Stable
 internal class PdfViewport(
-    val layout: PdfLayout,
+    layout: PdfLayout,
     val listState: LazyListState,
     val width: Float,
     height: Float,
-    val maxZoom: Float,
+    private val configuredMaxZoom: Float,
 ) {
+    // Replaced when real page sizes arrive in the background; see replaceLayout.
+    var layout by mutableStateOf(layout)
+        private set
+
+    var maxZoom by mutableFloatStateOf(zoomLimit(layout))
+        private set
+
     // Height changes with the keyboard or split-screen; it must not reset zoom or position.
     var height by mutableFloatStateOf(height)
 
@@ -63,6 +70,20 @@ internal class PdfViewport(
     val isSettled: Boolean get() = gestureZoom == 1f && !isInteracting
 
     val isScrolling: Boolean get() = isInteracting || listState.isScrollInProgress
+
+    // Swaps in real page sizes while keeping the same spot of the same page on screen.
+    fun replaceLayout(next: PdfLayout) {
+        val item = listState.firstVisibleItemIndex
+        val within = listState.firstVisibleItemScrollOffset.toFloat() / layout.itemHeight(item, scale).coerceAtLeast(1)
+        layout = next
+        maxZoom = zoomLimit(next)
+        if (scale > maxZoom) commitZoom(maxZoom, Offset(width / 2, height / 2))
+        listState.requestScrollToItem(item, (within * next.itemHeight(item, scale)).roundToInt())
+    }
+
+    // Extremely tall pages would overflow Compose constraints before reaching the configured zoom.
+    private fun zoomLimit(layout: PdfLayout): Float =
+        minOf(configuredMaxZoom, layout.maxRepresentableScale(width.roundToInt())).coerceAtLeast(1f)
 
     fun scrollBy(dx: Float, dy: Float) {
         horizontalOffset = (horizontalOffset + dx).coerceIn(0f, maxHorizontalOffset)

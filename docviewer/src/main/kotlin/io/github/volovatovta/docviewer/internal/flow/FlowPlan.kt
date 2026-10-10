@@ -9,6 +9,7 @@ import io.github.volovatovta.docviewer.core.model.Inline
 import io.github.volovatovta.docviewer.core.model.Paragraph
 import io.github.volovatovta.docviewer.core.model.Table
 import io.github.volovatovta.docviewer.core.model.TextRun
+import io.github.volovatovta.docviewer.core.stream.TextFile
 
 // One entry of the lazy list; the document is flattened so that no single entry grows with the document.
 internal sealed interface FlowItem {
@@ -37,15 +38,68 @@ internal class ParagraphPiece(
     }
 }
 
-internal class FlowPlan private constructor(val items: List<FlowItem>, private val firstItemOfBlock: IntArray) {
+// Maps the document's top-level blocks to entries of the lazy list and back.
+internal sealed interface FlowPlan {
+    val items: List<FlowItem>
 
-    fun itemOf(blockIndex: Int): Int =
-        if (firstItemOfBlock.isEmpty()) 0 else firstItemOfBlock[blockIndex.coerceIn(0, firstItemOfBlock.lastIndex)]
+    fun itemOf(blockIndex: Int): Int
 
-    fun blockOf(itemIndex: Int): Int = items.getOrNull(itemIndex)?.blockIndex ?: 0
+    fun blockOf(itemIndex: Int): Int
 
     // The exact part of a long paragraph or the table row that holds a search match.
-    fun itemOf(match: FlowMatch): Int {
+    fun itemOf(match: FlowMatch): Int
+
+    companion object {
+        fun of(document: FlowDocument): FlowPlan = StructuredPlan.of(document)
+
+        fun ofLines(document: FlowDocument, lines: TextFile): FlowPlan = LinePlan(document, lines)
+    }
+}
+
+// Text streamed from disk: every line is already short, so it is exactly one entry, built when it is shown.
+private class LinePlan(private val document: FlowDocument, private val lines: TextFile) : FlowPlan {
+
+    override val items: List<FlowItem> = object : AbstractList<FlowItem>() {
+        override val size: Int get() = lines.lineCount
+
+        override fun get(index: Int): FlowItem = synchronized(recent) { recent.getOrPut(index) { lineItem(index) } }
+    }
+
+    // Keeps entries stable while they are on screen, so composition does not rebuild their text.
+    private val recent = object : LinkedHashMap<Int, FlowItem>(RECENT_CAPACITY, LOAD_FACTOR, true) {
+        override fun removeEldestEntry(eldest: MutableMap.MutableEntry<Int, FlowItem>) = size > RECENT_ITEMS
+    }
+
+    override fun itemOf(blockIndex: Int): Int = blockIndex.coerceIn(0, (lines.lineCount - 1).coerceAtLeast(0))
+
+    override fun blockOf(itemIndex: Int): Int = itemIndex
+
+    override fun itemOf(match: FlowMatch): Int = match.blockIndex
+
+    // A line cut for length continues without paragraph spacing, so a long paragraph still reads as one.
+    private fun lineItem(index: Int): FlowItem {
+        val paragraph = document.blocks[index] as Paragraph
+        val continues = index > 0 && !lines.endsLine(index - 1)
+        val piece =
+            ParagraphPiece(paragraph, paragraph.inlines, 0, isFirst = !continues, isLast = lines.endsLine(index))
+        return FlowItem.ParagraphPart(index, piece)
+    }
+
+    private companion object {
+        const val RECENT_ITEMS = 256
+        const val RECENT_CAPACITY = 512
+        const val LOAD_FACTOR = 0.75f
+    }
+}
+
+private class StructuredPlan(override val items: List<FlowItem>, private val firstItemOfBlock: IntArray) : FlowPlan {
+
+    override fun itemOf(blockIndex: Int): Int =
+        if (firstItemOfBlock.isEmpty()) 0 else firstItemOfBlock[blockIndex.coerceIn(0, firstItemOfBlock.lastIndex)]
+
+    override fun blockOf(itemIndex: Int): Int = items.getOrNull(itemIndex)?.blockIndex ?: 0
+
+    override fun itemOf(match: FlowMatch): Int {
         val first = itemOf(match.blockIndex)
         val last = (first until items.size).lastOrNull { items[it].blockIndex == match.blockIndex } ?: first
         return (first..last).firstOrNull { items[it].holds(match) } ?: first
@@ -76,7 +130,7 @@ internal class FlowPlan private constructor(val items: List<FlowItem>, private v
                 firstItems[index] = items.size
                 items += itemsFor(index, block)
             }
-            return FlowPlan(items, firstItems)
+            return StructuredPlan(items, firstItems)
         }
 
         private fun itemsFor(index: Int, block: Block): List<FlowItem> = when (block) {

@@ -3,7 +3,7 @@ package io.github.volovatovta.docviewer.internal.grid
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.lazy.LazyListState
-import io.github.volovatovta.docviewer.core.model.TableDocument
+import io.github.volovatovta.docviewer.core.model.TableSource
 import io.github.volovatovta.docviewer.internal.ViewerController
 import io.github.volovatovta.docviewer.internal.flow.goToItem
 import io.github.volovatovta.docviewer.internal.flow.showContextAbove
@@ -24,7 +24,7 @@ private object GridNavigation {
 }
 
 internal class GridController(
-    private val document: TableDocument,
+    private val document: TableSource,
     private val listState: LazyListState,
     private val scroll: GridScroll,
     private val grid: GridLayout,
@@ -33,8 +33,11 @@ internal class GridController(
 ) : ViewerController {
 
     override fun search(query: String): Flow<List<Any>> = flow {
-        val hits = document.rows.flatMapIndexed { row, cells ->
-            cells.indices.filter { cells[it].contains(query, ignoreCase = true) }.map { GridHit(row, it) }
+        val hits = ArrayList<GridHit>()
+        document.forEachRow { row, cells ->
+            cells.forEachIndexed { column, cell ->
+                if (cell.contains(query, ignoreCase = true)) hits += GridHit(row, column)
+            }
         }
         emit(hits)
     }.flowOn(Dispatchers.Default)

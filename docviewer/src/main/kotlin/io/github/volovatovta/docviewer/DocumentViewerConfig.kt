@@ -23,4 +23,6 @@ public data class DocumentViewerConfig(
     val pdfNightMode: Boolean = false,
     val csvOptions: CsvOptions = CsvOptions(),
     val showCsvRowNumbers: Boolean = true,
+    // Most bytes to parse (unpacked XML for DOCX) before refusing a file; null derives a safe limit from the heap.
+    val maxDocumentSizeBytes: Long? = null,
 )

@@ -23,19 +23,19 @@ import java.util.concurrent.ExecutionException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-internal class PdfPageSize(val width: Float, val height: Float)
+internal data class PdfPageSize(val width: Float, val height: Float)
 
 // Every PdfRenderer call of every document runs on one shared thread, so platform pdfium is never used concurrently.
 internal class PdfDocument private constructor(
     private val descriptor: ParcelFileDescriptor,
     private val renderer: PdfRenderer,
-    val pageSizes: List<PdfPageSize>,
+    val pageCount: Int,
+    // Opening reads only the first page: measuring thousands of pages up front took up to 25 s.
+    val firstPageSize: PdfPageSize,
 ) : Closeable {
 
     @Volatile
     private var closed = false
-
-    val pageCount: Int get() = pageSizes.size
 
     @get:ChecksSdkIntAtLeast(api = Build.VERSION_CODES.VANILLA_ICE_CREAM)
     val isSearchSupported: Boolean get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM
@@ -61,6 +61,11 @@ internal class PdfDocument private constructor(
             page.render(bitmap, null, matrix, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
         }
         bitmap
+    }
+
+    // Real sizes of the given pages; a page pdfium cannot measure keeps the first page's size.
+    suspend fun measurePages(pages: IntRange): List<PdfPageSize>? = onPdfThread {
+        pages.map { index -> renderer.pageSizeOrNull(index) ?: firstPageSize }
     }
 
     // Match rectangles in PDF points; empty below Android 15.
@@ -110,7 +115,14 @@ internal class PdfDocument private constructor(
             val descriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
             val renderer = descriptor.closeOnFailure { openRenderer(descriptor, password) }
             return descriptor.closeOnFailure {
-                renderer.closeOnFailure { PdfDocument(descriptor, renderer, readPageSizes(renderer)) }
+                renderer.closeOnFailure {
+                    PdfDocument(
+                        descriptor,
+                        renderer,
+                        renderer.pageCount,
+                        readFirstPage(renderer)
+                    )
+                }
             }
         }
 
@@ -143,17 +155,19 @@ internal class PdfDocument private constructor(
                 PasswordUnsupportedException(isPdf = true)
             }
 
-        private fun readPageSizes(renderer: PdfRenderer): List<PdfPageSize> {
+        private fun readFirstPage(renderer: PdfRenderer): PdfPageSize {
             if (renderer.pageCount == 0) throw CorruptedDocumentException(NO_PAGES)
-            return runCatching { List(renderer.pageCount) { index -> renderer.pageSize(index) } }
-                .getOrElse { error -> throw readError(error) }
+            return renderer.pageSizeOrNull(0) ?: throw CorruptedDocumentException(READ_FAILED)
         }
 
-        private fun readError(error: Throwable): Throwable =
-            if (error is RuntimeException) CorruptedDocumentException(READ_FAILED, error) else error
-
-        private fun PdfRenderer.pageSize(index: Int): PdfPageSize = openPage(index).use { page ->
-            PdfPageSize(page.width.toFloat().coerceAtLeast(1f), page.height.toFloat().coerceAtLeast(1f))
+        private fun PdfRenderer.pageSizeOrNull(index: Int): PdfPageSize? = try {
+            openPage(index).use { page ->
+                PdfPageSize(page.width.toFloat().coerceAtLeast(1f), page.height.toFloat().coerceAtLeast(1f))
+            }
+        } catch (expected: IllegalStateException) {
+            null
+        } catch (expected: IllegalArgumentException) {
+            null
         }
 
         private inline fun <R> AutoCloseable.closeOnFailure(block: () -> R): R {

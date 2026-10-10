@@ -99,7 +99,7 @@ private fun DocumentContent(
 ) {
     when (document) {
         is LoadedDocument.Pdf -> PdfViewer(document.document, state, config, colors)
-        is LoadedDocument.Flow -> FlowViewer(document.document, state, config, colors, onLink)
+        is LoadedDocument.Flow -> FlowViewer(document.document, document.lines, state, config, colors, onLink)
         is LoadedDocument.Grid -> GridViewer(document.document, state, config, colors)
     }
 }
@@ -115,7 +115,7 @@ private fun rememberDocumentSession(
     val scope = rememberCoroutineScope()
     SideEffect { state.scope = scope }
     val session = remember(source) { source?.let { DocumentSession(context, it) } }
-    val csvOptions by rememberUpdatedState(config.csvOptions)
+    val currentConfig by rememberUpdatedState(config)
     DisposableEffect(session) {
         onDispose {
             session?.close()
@@ -134,7 +134,7 @@ private fun rememberDocumentSession(
             // Progress is posted through the effect, so a cancelled load can never overwrite a newer status.
             val file = session.resolve { progress -> effect.launch { state.status = DocumentStatus.Loading(progress) } }
             state.status = DocumentStatus.Loading()
-            DocumentStatus.Ready(session.open(file, state.password, csvOptions).info)
+            DocumentStatus.Ready(session.open(file, state.password, currentConfig).info)
         }
     }
     return session

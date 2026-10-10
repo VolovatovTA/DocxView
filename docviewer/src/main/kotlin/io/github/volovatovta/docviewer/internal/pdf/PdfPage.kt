@@ -74,7 +74,7 @@ internal class PdfPageImages(
         return bitmap?.asImageBitmap()
     }
 
-    private fun key(page: Int) = "$page@${layout.pageWidth(baseScale)}"
+    private fun key(page: Int) = "$page@${layout.pageWidth(baseScale)}x${layout.pageHeight(page, baseScale)}"
 }
 
 private fun DrawScope.drawBase(image: ImageBitmap, filter: ColorFilter?) {

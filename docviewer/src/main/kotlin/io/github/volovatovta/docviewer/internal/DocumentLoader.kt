@@ -3,22 +3,25 @@ package io.github.volovatovta.docviewer.internal
 import android.content.Context
 import io.github.volovatovta.docviewer.DocumentInfo
 import io.github.volovatovta.docviewer.DocumentSource
-import io.github.volovatovta.docviewer.core.CsvOptions
+import io.github.volovatovta.docviewer.DocumentViewerConfig
 import io.github.volovatovta.docviewer.core.CsvParser
 import io.github.volovatovta.docviewer.core.FormatDetector
 import io.github.volovatovta.docviewer.core.PasswordProtectedException
 import io.github.volovatovta.docviewer.core.PlainTextParser
+import io.github.volovatovta.docviewer.core.TextDecoding
 import io.github.volovatovta.docviewer.core.UnsupportedFormatException
 import io.github.volovatovta.docviewer.core.doc.DocParser
 import io.github.volovatovta.docviewer.core.docx.DocxParser
 import io.github.volovatovta.docviewer.core.model.DocumentFormat
 import io.github.volovatovta.docviewer.core.model.FlowDocument
+import io.github.volovatovta.docviewer.core.stream.CsvFile
+import io.github.volovatovta.docviewer.core.stream.StreamedText
+import io.github.volovatovta.docviewer.core.stream.TextFile
 import io.github.volovatovta.docviewer.internal.pdf.PdfDocument
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
-import java.io.File
 import java.io.IOException
 
 // Two steps: get the bytes into a local file, then open that file with the parser its content calls for.
@@ -49,14 +52,15 @@ internal object DocumentLoader {
         resolved: ResolvedFile,
         source: DocumentSource,
         password: String?,
-        csvOptions: CsvOptions,
+        config: DocumentViewerConfig,
     ): LoadedDocument = withContext(Dispatchers.IO) {
         val format = detectFormat(resolved, source)
         currentCoroutineContext().ensureActive()
         when (format) {
             DocumentFormat.PDF -> openPdf(resolved, password)
-            DocumentFormat.DOCX, DocumentFormat.DOC, DocumentFormat.TXT -> openFlow(resolved, format)
-            DocumentFormat.CSV -> openGrid(resolved, csvOptions)
+            DocumentFormat.TXT -> openText(resolved, config)
+            DocumentFormat.DOCX, DocumentFormat.DOC -> openFlow(resolved, format, config)
+            DocumentFormat.CSV -> openGrid(resolved, config)
         }
     }
 
@@ -73,27 +77,44 @@ internal object DocumentLoader {
         return LoadedDocument.Pdf(pdf, resolved.info(DocumentFormat.PDF, pdf.pageCount, pdf.isSearchSupported))
     }
 
-    private fun openFlow(resolved: ResolvedFile, format: DocumentFormat): LoadedDocument {
-        val document = parseFlow(resolved.file, format)
+    // Text is read from disk line by line; only UTF-16, which cannot be split byte-wise, is parsed in memory.
+    private fun openText(resolved: ResolvedFile, config: DocumentViewerConfig): LoadedDocument {
+        val monospace = PlainTextParser.isCode(resolved.fileName ?: resolved.file.name)
+        val lines = TextFile.open(resolved.file) ?: return openFlow(resolved, DocumentFormat.TXT, config)
+        val document = StreamedText.document(lines, monospace)
+        return LoadedDocument.Flow(document, resolved.info(DocumentFormat.TXT, lines.lineCount), lines)
+    }
+
+    private fun openFlow(resolved: ResolvedFile, format: DocumentFormat, config: DocumentViewerConfig): LoadedDocument {
+        DocumentSizeLimit.check(resolved.file, format, config.maxDocumentSizeBytes)
+        val document = parseFlow(resolved, format)
         return LoadedDocument.Flow(document, resolved.info(format, document.blocks.size, title = document.title))
     }
 
-    private fun parseFlow(file: File, format: DocumentFormat): FlowDocument = try {
+    private fun parseFlow(resolved: ResolvedFile, format: DocumentFormat): FlowDocument = try {
         when (format) {
-            DocumentFormat.DOCX -> DocxParser.parse(file)
-            DocumentFormat.DOC -> DocParser.parse(file)
-            else -> PlainTextParser.parse(file)
+            DocumentFormat.DOCX -> DocxParser.parse(resolved.file)
+            DocumentFormat.DOC -> DocParser.parse(resolved.file)
+            else -> PlainTextParser.parse(
+                TextDecoding.decode(resolved.file.readBytes()).text,
+                monospace = PlainTextParser.isCode(resolved.fileName ?: resolved.file.name),
+            )
         }
     } catch (e: PasswordProtectedException) {
         // Encrypted OOXML arrives as an OLE container; decryption is out of scope.
         throw PasswordUnsupportedException(isPdf = false, cause = e)
     }
 
-    private fun openGrid(resolved: ResolvedFile, csvOptions: CsvOptions): LoadedDocument {
+    // Rows are read from disk on demand; files that cannot be streamed are parsed in memory within the size limit.
+    private fun openGrid(resolved: ResolvedFile, config: DocumentViewerConfig): LoadedDocument {
+        val csvOptions = config.csvOptions
         val isTsv = resolved.fileName?.endsWith(TSV_EXTENSION, ignoreCase = true) == true
         val options = if (isTsv && csvOptions.delimiter == null) csvOptions.copy(delimiter = TAB) else csvOptions
-        val table = CsvParser.parse(resolved.file, options)
-        return LoadedDocument.Grid(table, resolved.info(DocumentFormat.CSV, table.rows.size))
+        val table = CsvFile.open(resolved.file, options) ?: run {
+            DocumentSizeLimit.check(resolved.file, DocumentFormat.CSV, config.maxDocumentSizeBytes)
+            CsvParser.parse(resolved.file, options)
+        }
+        return LoadedDocument.Grid(table, resolved.info(DocumentFormat.CSV, table.rowCount))
     }
 
     private fun ResolvedFile.info(

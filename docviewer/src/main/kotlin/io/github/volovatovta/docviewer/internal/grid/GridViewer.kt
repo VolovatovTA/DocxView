@@ -31,6 +31,7 @@ import io.github.volovatovta.docviewer.DocumentViewerConfig
 import io.github.volovatovta.docviewer.DocumentViewerState
 import io.github.volovatovta.docviewer.R
 import io.github.volovatovta.docviewer.core.model.TableDocument
+import io.github.volovatovta.docviewer.core.model.TableSource
 import io.github.volovatovta.docviewer.internal.flow.BindController
 import io.github.volovatovta.docviewer.internal.flow.ListFastScrollbar
 import io.github.volovatovta.docviewer.internal.flow.TrackCurrentItem
@@ -70,7 +71,7 @@ private class GridTheme(val colors: DocumentViewerColors, val cell: TextStyle, v
 
 @Composable
 internal fun GridViewer(
-    document: TableDocument,
+    document: TableSource,
     state: DocumentViewerState,
     config: DocumentViewerConfig,
     colors: DocumentViewerColors,
@@ -79,7 +80,7 @@ internal fun GridViewer(
     val cellStyle = TextStyle(color = colors.text, fontSize = GridMetrics.CellTextSize)
     val theme = GridTheme(colors, cellStyle, cellStyle.copy(fontWeight = FontWeight.SemiBold))
     val grid = rememberGridLayout(document, theme.cell, theme.header, config.showCsvRowNumbers)
-    val initialRow = remember { state.consumeInitialPage() }.coerceIn(0, document.rows.lastIndex.coerceAtLeast(0))
+    val initialRow = remember { state.consumeInitialPage() }.coerceIn(0, (document.rowCount - 1).coerceAtLeast(0))
     val listState = rememberLazyListState(initialFirstVisibleItemIndex = initialRow)
     val scroll = remember(document) { GridScroll() }
     val hits = remember(state.searchHits) { state.searchHits.filterIsInstance<GridHit>() }
@@ -101,7 +102,7 @@ internal fun GridViewer(
 
         GridTable(document, listState, grid, scroll, theme, search, onCellClick = { openedCell = it })
         ScrollIndicator(
-            text = "${state.currentPage + 1} / ${document.rows.size}",
+            text = "${state.currentPage + 1} / ${document.rowCount}",
             visibleKey = state.currentPage,
             isScrolling = listState.isScrollInProgress,
             colors = colors,
@@ -110,7 +111,7 @@ internal fun GridViewer(
                 .padding(bottom = GridViewerSpec.IndicatorBottomPadding),
         )
         if (config.showScrollbar) {
-            val lastRow = document.rows.lastIndex
+            val lastRow = (document.rowCount - 1)
             ListFastScrollbar(
                 listState = listState,
                 colors = colors,
@@ -124,7 +125,7 @@ internal fun GridViewer(
 
 @Composable
 private fun GridTable(
-    document: TableDocument,
+    document: TableSource,
     listState: LazyListState,
     grid: GridLayout,
     scroll: GridScroll,
@@ -150,8 +151,8 @@ private fun GridTable(
             )
         }
         GridRows(document, listState, grid, scroll, theme, search, onCellClick, Modifier.weight(1f))
-        if (document.truncated) {
-            val shownRows = GridViewerSpec.ROW_COUNT_FORMAT.format(document.rows.size)
+        if (document is TableDocument && document.truncated) {
+            val shownRows = GridViewerSpec.ROW_COUNT_FORMAT.format(document.rowCount)
             Banner(stringResource(R.string.dv_csv_truncated, shownRows), theme.colors)
         }
     }
@@ -159,7 +160,7 @@ private fun GridTable(
 
 @Composable
 private fun GridRows(
-    document: TableDocument,
+    document: TableSource,
     listState: LazyListState,
     grid: GridLayout,
     scroll: GridScroll,
@@ -169,9 +170,9 @@ private fun GridRows(
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(state = listState, modifier = modifier) {
-        items(document.rows.size, contentType = { 0 }) { index ->
+        items(document.rowCount, contentType = { 0 }) { index ->
             GridRow(
-                cells = document.rows[index],
+                cells = document.row(index),
                 rowLabel = (index + 1).toString(),
                 grid = grid,
                 scroll = scroll,
@@ -190,13 +191,13 @@ private fun GridRows(
 
 @Composable
 private fun OpenedCellDialog(
-    document: TableDocument,
+    document: TableSource,
     cell: GridHit,
     colors: DocumentViewerColors,
     onDismiss: () -> Unit,
 ) {
     val columnName = document.header?.getOrNull(cell.column)?.takeIf { it.isNotBlank() }
     val title = columnName ?: "${cell.row + 1}:${cell.column + 1}"
-    val value = document.rows[cell.row].getOrNull(cell.column).orEmpty()
+    val value = document.row(cell.row).getOrNull(cell.column).orEmpty()
     CellDialog(title, value, colors, onDismiss)
 }

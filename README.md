@@ -182,8 +182,29 @@ sample           demo app: a Compose screen for every format and an XML screen
   and floating shapes are not reproduced; EMF/WMF images are shown as placeholders.
   Password-protected Word documents are not supported and fail with a clear message.
 - Word 6.0/95 documents open as plain text.
-- CSV is limited to 500,000 rows (configurable via `CsvOptions.maxRows`); the rest is cut off
-  with a notice.
+- UTF-16 CSV/TXT files cannot be streamed; they are parsed in memory, and such CSV is limited
+  to 500,000 rows (`CsvOptions.maxRows`).
+- Plain text lines longer than 800 bytes are shown wrapped into several list items; search
+  does not find a phrase that spans such a cut.
+
+## Size limits
+
+How much memory a document needs depends on its format:
+
+| Format | How it is read | Peak heap while opening |
+|---|---|---|
+| PDF | page by page from disk by the platform renderer | does not grow with the file |
+| TXT, CSV/TSV (UTF-8, Windows-125x) | streamed from disk: one indexing pass, rows and lines read on demand | ~5 MB for a 23 MB file |
+| DOCX | parsed in memory | ~7× the unpacked `word/document.xml` |
+| DOC | parsed in memory | ~8× the file |
+| TXT, CSV in UTF-16 | parsed in memory | ~5× (TXT), ~9× (CSV) the file |
+
+Before parsing in memory, the viewer compares that estimate with the heap the app has left
+(at most half of the maximum heap) and shows a clear error instead of running out of memory.
+DOCX is measured by its unpacked XML, so a small archive that inflates to a huge document is
+refused as well. On a typical 256 MB heap that allows Word documents of roughly 15–20 MB of
+text. Override the automatic limit with `DocumentViewerConfig(maxDocumentSizeBytes = ...)`;
+the refusal arrives as `DocumentTooLargeException` with both sizes.
 
 ## Performance
 
@@ -195,7 +216,10 @@ Measured on a Redmi Note 8 Pro (Android 11, 60 Hz), release build with R8, serie
 | CSV, 2,000 rows | 955 | 0.1% | 10 ms | 12 ms |
 | DOCX (warm) | 456 | 0.7% | 6 ms | 9 ms |
 
-A PDF opens in under 0.6 s. No thread or memory leaks over 35 open/close cycles (memory
+A PDF opens in under 0.6 s regardless of its length: only the first page is measured up
+front, the other page sizes are read in the background (a 2,000-page PDF: 0.04–0.3 s instead
+of 2–10 s on emulators). A 28 MB TXT or CSV with 600,000 lines opens, scrolls to the end and
+is searched with under 6 MB of heap growth. No thread or memory leaks over 35 open/close cycles (memory
 reaches a plateau). The library ships a Baseline Profile for its own code.
 
 The very first DOCX scroll right after the app is installed stutters (~9% janky frames) until
