@@ -18,11 +18,7 @@ public object FlowSearch {
 
     public fun search(document: FlowDocument, query: String): List<FlowMatch> {
         if (query.isBlank()) return emptyList()
-        val result = ArrayList<FlowMatch>()
-        document.blocks.forEachIndexed { index, block ->
-            forEachParagraph(block) { paragraph -> findAll(paragraph.plainText, query) { s, e -> result += FlowMatch(index, paragraph, s, e) } }
-        }
-        return result
+        return document.blocks.flatMapIndexed { index, block -> matchesIn(block, index, query) }
     }
 
     // Groups matches by paragraph identity so renderers can highlight them cheaply.
@@ -35,19 +31,26 @@ public object FlowSearch {
     public fun forEachParagraph(block: Block, action: (Paragraph) -> Unit) {
         when (block) {
             is Paragraph -> action(block)
-            is Table -> block.rows.forEach { row -> row.cells.forEach { cell -> cell.blocks.forEach { forEachParagraph(it, action) } } }
+            is Table -> block.nestedBlocks().forEach { forEachParagraph(it, action) }
             else -> Unit
         }
     }
 
     public inline fun findAll(text: String, query: String, onMatch: (start: Int, end: Int) -> Unit) {
         if (query.isEmpty() || text.length < query.length) return
-        var from = 0
-        while (true) {
-            val at = text.indexOf(query, from, ignoreCase = true)
-            if (at < 0) return
+        var at = text.indexOf(query, 0, ignoreCase = true)
+        while (at >= 0) {
             onMatch(at, at + query.length)
-            from = at + query.length
+            at = text.indexOf(query, at + query.length, ignoreCase = true)
         }
     }
+
+    private fun matchesIn(block: Block, blockIndex: Int, query: String): List<FlowMatch> = buildList {
+        forEachParagraph(block) { paragraph ->
+            findAll(paragraph.plainText, query) { start, end -> add(FlowMatch(blockIndex, paragraph, start, end)) }
+        }
+    }
+
+    private fun Table.nestedBlocks(): Sequence<Block> =
+        rows.asSequence().flatMap { it.cells }.flatMap { it.blocks }
 }

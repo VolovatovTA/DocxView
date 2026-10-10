@@ -1,6 +1,7 @@
 package io.github.volovatovta.docviewer.core
 
 import io.github.volovatovta.docviewer.core.model.DocumentFormat
+import io.github.volovatovta.docviewer.core.model.Paragraph
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -48,7 +49,8 @@ class CsvAndTextTest {
     @Test
     fun `decodes utf8, utf8 bom, cp1251 and latin1`() {
         assertEquals("Привет", TextDecoding.decode("Привет".toByteArray()).text)
-        assertEquals("Привет", TextDecoding.decode(byteArrayOf(0xEF.toByte(), 0xBB.toByte(), 0xBF.toByte()) + "Привет".toByteArray()).text)
+        val utf8ByteOrderMark = byteArrayOf(0xEF.toByte(), 0xBB.toByte(), 0xBF.toByte())
+        assertEquals("Привет", TextDecoding.decode(utf8ByteOrderMark + "Привет".toByteArray()).text)
         val cp1251 = TextDecoding.decode("Цена;Товар\n100;Хлеб".toByteArray(charset("windows-1251")))
         assertEquals("windows-1251", cp1251.charsetName)
         assertEquals("Цена;Товар\n100;Хлеб", cp1251.text)
@@ -74,7 +76,7 @@ class CsvAndTextTest {
     @Test
     fun `plain text becomes paragraphs and is searchable`() {
         val doc = PlainTextParser.parse("first line\r\n\r\nsecond Line\n\n")
-        assertEquals(listOf("first line", "", "second Line"), doc.blocks.map { (it as io.github.volovatovta.docviewer.core.model.Paragraph).plainText })
+        assertEquals(listOf("first line", "", "second Line"), doc.blocks.map { (it as Paragraph).plainText })
         val matches = FlowSearch.search(doc, "LINE")
         assertEquals(2, matches.size)
         assertEquals(7, matches[1].start)

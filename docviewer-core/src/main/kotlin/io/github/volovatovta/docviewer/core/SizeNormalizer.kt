@@ -1,54 +1,62 @@
 package io.github.volovatovta.docviewer.core
 
 import io.github.volovatovta.docviewer.core.model.Block
+import io.github.volovatovta.docviewer.core.model.Inline
 import io.github.volovatovta.docviewer.core.model.Paragraph
 import io.github.volovatovta.docviewer.core.model.Table
 import io.github.volovatovta.docviewer.core.model.TableCell
 import io.github.volovatovta.docviewer.core.model.TableRow
 import io.github.volovatovta.docviewer.core.model.TextRun
+import kotlin.math.abs
 
 // Rescales run sizes so the size most of the text is set in becomes 1.0, i.e. the viewer's body text size.
 internal object SizeNormalizer {
 
+    private const val NORMAL_SIZE = 1f
+    private const val SIZE_TOLERANCE = 0.05f
+    private val plausibleBodySizes = 0.6f..1.6f
+
     fun normalize(blocks: List<Block>): List<Block> {
-        val weights = HashMap<Float, Int>()
-        blocks.forEach { collect(it, weights) }
-        val total = weights.values.sum()
-        val (dominant, weight) = weights.maxByOrNull { it.value }?.toPair() ?: return blocks
-        // Only a clear majority in a plausible body-text range counts; tiny or heading-heavy docs stay as they are.
-        if (weight * 2 < total || dominant !in 0.6f..1.6f || kotlin.math.abs(dominant - 1f) < 0.05f) return blocks
-        return blocks.map { rescale(it, dominant) }
+        val base = dominantBodySize(blocks) ?: return blocks
+        return blocks.map { it.rescaled(base) }
     }
 
-    private fun collect(block: Block, weights: HashMap<Float, Int>) {
-        when (block) {
-            is Paragraph -> if (block.style.headingLevel == 0) block.inlines.forEach { inline ->
-                if (inline is TextRun && inline.text.isNotBlank()) {
-                    val size = inline.style.relativeSize ?: 1f
-                    weights[size] = (weights[size] ?: 0) + inline.text.length
-                }
-            }
-            is Table -> block.rows.forEach { row -> row.cells.forEach { cell -> cell.blocks.forEach { collect(it, weights) } } }
-            else -> Unit
-        }
+    // Only a clear majority in a plausible body-text range counts; tiny or heading-heavy docs stay as they are.
+    private fun dominantBodySize(blocks: List<Block>): Float? {
+        val weights = blocks.asSequence()
+            .flatMap(::bodyRuns)
+            .filter { it.text.isNotBlank() }
+            .groupingBy { it.style.relativeSize ?: NORMAL_SIZE }
+            .fold(0) { total, run -> total + run.text.length }
+        val (size, weight) = weights.maxByOrNull { it.value }?.toPair() ?: return null
+        val isMajority = weight * 2 >= weights.values.sum()
+        return size.takeIf { isMajority && it in plausibleBodySizes && !it.isNormal() }
     }
 
-    private fun rescale(block: Block, base: Float): Block = when (block) {
-        is Paragraph -> Paragraph(
-            block.inlines.map { inline ->
-                if (inline !is TextRun) inline else {
-                    val size = (inline.style.relativeSize ?: 1f) / base
-                    TextRun(inline.text, inline.style.copy(relativeSize = size.takeIf { kotlin.math.abs(it - 1f) > 0.05f }), inline.link)
-                }
-            },
-            block.style,
-        )
-        is Table -> Table(
-            block.rows.map { row ->
-                TableRow(row.cells.map { cell -> TableCell(cell.blocks.map { rescale(it, base) }, cell.colSpan, cell.mergedWithAbove, cell.background) }, row.isHeader)
-            },
-            block.columnWidths,
-        )
-        else -> block
+    private fun bodyRuns(block: Block): Sequence<TextRun> = when (block) {
+        is Paragraph -> if (block.style.headingLevel == 0) block.textRuns() else emptySequence()
+        is Table -> block.rows.asSequence().flatMap { it.cells }.flatMap { it.blocks }.flatMap(::bodyRuns)
+        else -> emptySequence()
     }
+
+    private fun Paragraph.textRuns(): Sequence<TextRun> = inlines.asSequence().filterIsInstance<TextRun>()
+
+    private fun Block.rescaled(base: Float): Block = when (this) {
+        is Paragraph -> Paragraph(inlines.map { it.rescaled(base) }, style)
+        is Table -> Table(rows.map { it.rescaled(base) }, columnWidths)
+        else -> this
+    }
+
+    private fun TableRow.rescaled(base: Float) = TableRow(cells.map { it.rescaled(base) }, isHeader)
+
+    private fun TableCell.rescaled(base: Float) =
+        TableCell(blocks.map { it.rescaled(base) }, colSpan, mergedWithAbove, background)
+
+    private fun Inline.rescaled(base: Float): Inline {
+        if (this !is TextRun) return this
+        val size = (style.relativeSize ?: NORMAL_SIZE) / base
+        return TextRun(text, style.copy(relativeSize = size.takeUnless { it.isNormal() }), link)
+    }
+
+    private fun Float.isNormal() = abs(this - NORMAL_SIZE) <= SIZE_TOLERANCE
 }

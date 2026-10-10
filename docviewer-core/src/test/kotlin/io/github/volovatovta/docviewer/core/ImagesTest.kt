@@ -14,11 +14,15 @@ import kotlin.test.assertTrue
 class ImagesTest {
 
     private fun check(doc: FlowDocument) {
-        val image = doc.blocks.filterIsInstance<Paragraph>().flatMap { it.inlines }.filterIsInstance<ImageRun>().single()
+        val image = doc.blocks.filterIsInstance<Paragraph>()
+            .flatMap { it.inlines }
+            .filterIsInstance<ImageRun>()
+            .single()
         val bytes = assertNotNull(doc.images.open(image.imageId))
-        assertTrue(bytes.size > 100 && bytes[1] == 'P'.code.toByte() && bytes[2] == 'N'.code.toByte(), "PNG payload expected")
-        assertEquals(360f, image.widthPt!!, 2f)
-        assertEquals(180f, image.heightPt!!, 2f)
+        val pngSignature = "PNG".toByteArray()
+        assertTrue(bytes.size > 100 && bytes.copyOfRange(1, 4).contentEquals(pngSignature), "PNG payload expected")
+        assertEquals(360f, assertNotNull(image.widthPt), 2f)
+        assertEquals(180f, assertNotNull(image.heightPt), 2f)
     }
 
     @Test

@@ -14,7 +14,12 @@ concurrency:
 
 jobs:
   build:
+    name: Build, static analysis and unit tests
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write          # test result annotations
+      pull-requests: write   # coverage comment
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
@@ -23,4 +28,92 @@ jobs:
           java-version: 17
       # Also validates the checksum of gradle-wrapper.jar.
       - uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
-      - run: ./gradlew build publishToMavenLocal
+
+      # `build` runs unit tests, lint, detekt, Konsist and the public API check (apiCheck).
+      - run: ./gradlew build assertModuleGraph buildHealth koverXmlReport koverVerify publishToMavenLocal
+
+      - name: Unit test results
+        if: always()
+        uses: mikepenz/action-junit-report@6ef3fdcfcd5f0b5d14df3e659ef19b8c6820f93d # v6.6.1
+        with:
+          report_paths: '**/build/test-results/**/TEST-*.xml'
+          check_name: Unit test results
+
+      - name: Coverage summary on the pull request
+        if: github.event_name == 'pull_request'
+        uses: madrapps/jacoco-report@e51ce1f46f7f8b5331593f935e59cbaf44b84920 # v1.8.0
+        with:
+          paths: build/reports/kover/report.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: Unit test coverage
+          update-comment: true
+          min-coverage-changed-files: 60
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: reports
+          path: |
+            **/build/reports/detekt/
+            **/build/reports/lint-results-*.html
+            **/build/reports/tests/
+            build/reports/kover/
+            build/reports/dependency-analysis/
+
+      - name: Upload the sample app
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: sample-debug-apk
+          path: sample/build/outputs/apk/debug/*.apk
+
+  instrumented:
+    name: PDF stress tests on API ${{ matrix.api-level }}
+    # Oldest and newest PdfRenderer generations: search and passwords exist only on Android 15+.
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: read
+      checks: write
+    strategy:
+      fail-fast: false
+      matrix:
+        api-level: [30, 35]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
+      - name: Enable KVM for the emulator
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - run: tools/fetch-test-pdfs.sh
+      - uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2.38.0
+        with:
+          api-level: ${{ matrix.api-level }}
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -camera-back none
+          disable-animations: true
+          script: ./gradlew :docviewer:connectedDebugAndroidTest
+
+      - name: Instrumented test results
+        if: always()
+        uses: mikepenz/action-junit-report@6ef3fdcfcd5f0b5d14df3e659ef19b8c6820f93d # v6.6.1
+        with:
+          report_paths: 'docviewer/build/outputs/androidTest-results/connected/**/TEST-*.xml'
+          check_name: Instrumented test results (API ${{ matrix.api-level }})
+
+      - name: Upload the instrumented test report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: instrumented-report-api-${{ matrix.api-level }}
+          path: |
+            docviewer/build/reports/androidTests/connected/
+            docviewer/build/outputs/androidTest-results/connected/

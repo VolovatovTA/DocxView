@@ -27,6 +27,15 @@ android {
         compose = true
     }
 
+    lint {
+        abortOnError = true
+        warningsAsErrors = true
+        sarifReport = true
+        htmlReport = true
+        // Dependabot owns version bumps; lint should judge the code, not the calendar.
+        disable += setOf("GradleDependency", "NewerVersionAvailable", "AndroidGradlePluginVersion", "OldTargetApi")
+    }
+
     // The instrumentation APK otherwise targets minSdk, which Android 14+ refuses to install.
     testOptions {
         targetSdk = 36
@@ -44,6 +53,9 @@ dependencies {
     implementation(libs.compose.foundation)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.androidx.core.ktx)
+
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlin.test)
 
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.androidx.test.ext.junit)

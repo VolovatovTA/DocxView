@@ -14,18 +14,16 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.UriHandler
 import io.github.volovatovta.docviewer.core.PasswordProtectedException
-import io.github.volovatovta.docviewer.internal.DocumentLoader
+import io.github.volovatovta.docviewer.internal.DocumentSession
 import io.github.volovatovta.docviewer.internal.LoadedDocument
-import io.github.volovatovta.docviewer.internal.ResolvedFile
 import io.github.volovatovta.docviewer.internal.flow.FlowViewer
 import io.github.volovatovta.docviewer.internal.grid.GridViewer
 import io.github.volovatovta.docviewer.internal.pdf.PdfViewer
@@ -33,10 +31,7 @@ import io.github.volovatovta.docviewer.internal.ui.ErrorView
 import io.github.volovatovta.docviewer.internal.ui.LoadingView
 import io.github.volovatovta.docviewer.internal.ui.PasswordView
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.NonCancellable
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 /** Shows a PDF, DOCX, DOC, CSV/TSV or plain-text document; a remembered [state] drives search, navigation and zoom. */
 @Composable
@@ -50,95 +45,130 @@ public fun DocumentViewer(
     onLinkClick: ((String) -> Boolean)? = null,
     loading: @Composable (progress: Float?) -> Unit = { LoadingView(it, colors) },
     error: @Composable (error: Throwable, retry: () -> Unit) -> Unit = { e, retry -> ErrorView(e, retry, colors) },
-    passwordPrompt: @Composable (wrongPassword: Boolean, submit: (String) -> Unit) -> Unit = { wrong, submit -> PasswordView(wrong, submit, colors) },
+    passwordPrompt: @Composable (wrongPassword: Boolean, submit: (String) -> Unit) -> Unit = { wrong, submit ->
+        PasswordView(wrong, submit, colors)
+    },
 ) {
+    val session = rememberDocumentSession(source, state, config)
+    val openLink = rememberLinkOpener(onLinkClick)
+    Box(modifier.background(colors.background)) {
+        AnimatedContent(
+            targetState = state.status.pane,
+            transitionSpec = { StatusTransition.FadeIn togetherWith StatusTransition.FadeOut },
+            label = "documentStatus",
+            modifier = Modifier.fillMaxSize(),
+        ) { pane ->
+            val status = state.status
+            when (pane) {
+                Pane.Loading -> if (source != null) loading((status as? DocumentStatus.Loading)?.progress)
+                Pane.Document -> session?.document?.let { DocumentContent(it, state, config, colors, openLink) }
+                Pane.Password -> {
+                    val wrongPassword = (status as? DocumentStatus.PasswordRequired)?.wrongPassword == true
+                    passwordPrompt(wrongPassword, state::submitPassword)
+                }
+                Pane.Error -> (status as? DocumentStatus.Failed)?.let { error(it.error, state::retry) }
+            }
+        }
+    }
+}
+
+private enum class Pane { Loading, Document, Password, Error }
+
+private val DocumentStatus.pane: Pane
+    get() = when (this) {
+        DocumentStatus.Idle, is DocumentStatus.Loading -> Pane.Loading
+        is DocumentStatus.Ready -> Pane.Document
+        is DocumentStatus.PasswordRequired -> Pane.Password
+        is DocumentStatus.Failed -> Pane.Error
+    }
+
+private object StatusTransition {
+    private const val FADE_IN_MILLIS = 220
+    private const val FADE_OUT_MILLIS = 120
+    val FadeIn = fadeIn(tween(FADE_IN_MILLIS))
+    val FadeOut = fadeOut(tween(FADE_OUT_MILLIS))
+}
+
+@Composable
+private fun DocumentContent(
+    document: LoadedDocument,
+    state: DocumentViewerState,
+    config: DocumentViewerConfig,
+    colors: DocumentViewerColors,
+    onLink: (String) -> Unit,
+) {
+    when (document) {
+        is LoadedDocument.Pdf -> PdfViewer(document.document, state, config, colors)
+        is LoadedDocument.Flow -> FlowViewer(document.document, state, config, colors, onLink)
+        is LoadedDocument.Grid -> GridViewer(document.document, state, config, colors)
+    }
+}
+
+// Loads the source whenever it changes or the state asks for a reload (retry, password).
+@Composable
+private fun rememberDocumentSession(
+    source: DocumentSource?,
+    state: DocumentViewerState,
+    config: DocumentViewerConfig,
+): DocumentSession? {
     val context = LocalContext.current.applicationContext
     val scope = rememberCoroutineScope()
     SideEffect { state.scope = scope }
-
-    var resolved by remember(source) { mutableStateOf<ResolvedFile?>(null) }
-    var document by remember(source) { mutableStateOf<LoadedDocument?>(null) }
-    val currentConfig by rememberUpdatedState(config)
-
-    DisposableEffect(source) {
+    val session = remember(source) { source?.let { DocumentSession(context, it) } }
+    val csvOptions by rememberUpdatedState(config.csvOptions)
+    DisposableEffect(session) {
         onDispose {
-            document?.close()
-            resolved?.release()
+            session?.close()
             state.resetForNewDocument()
         }
     }
-
-    LaunchedEffect(source, state.reloadToken) {
-        if (source == null) {
+    LaunchedEffect(session, state.reloadToken) {
+        if (source == null || session == null) {
             state.status = DocumentStatus.Idle
             return@LaunchedEffect
         }
-        document?.close()
-        document = null
-        state.resetForNewDocument()
-        state.onSourceChanged(source)
-        state.status = DocumentStatus.Loading()
-        val effectScope = this
-        try {
-            // Progress is posted through the effect scope so a cancelled load can never overwrite a newer status.
-            // Downloads stay cancellable; a copy orphaned by a late cancellation is swept from the cache within a day.
-            val file = resolved ?: DocumentLoader.resolve(context, source) { progress ->
-                effectScope.launch { state.status = DocumentStatus.Loading(progress) }
-            }.also { resolved = it }
+        session.closeDocument()
+        state.beginLoading(source)
+        val effect = this
+        state.status = statusOfLoading {
+            // Progress is posted through the effect, so a cancelled load can never overwrite a newer status.
+            val file = session.resolve { progress -> effect.launch { state.status = DocumentStatus.Loading(progress) } }
             state.status = DocumentStatus.Loading()
-            // Opening is not cancellable midway, so a result that arrives after cancellation is closed here instead of leaking.
-            val loaded = withContext(NonCancellable) { DocumentLoader.open(file, source, state.password, currentConfig.csvOptions) }
-            if (!isActive) {
-                loaded.close()
-                throw CancellationException()
-            }
-            document = loaded
-            state.status = DocumentStatus.Ready(loaded.info)
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: PasswordProtectedException) {
-            state.status = DocumentStatus.PasswordRequired(e.wrongPassword)
-        } catch (e: Throwable) {
-            state.status = DocumentStatus.Failed(e)
+            DocumentStatus.Ready(session.open(file, state.password, csvOptions).info)
         }
     }
+    return session
+}
 
+// Untrusted files can break a parser in unforeseeable ways; that must end on the error screen, never in a crash.
+@Suppress("TooGenericExceptionCaught")
+private suspend fun statusOfLoading(load: suspend () -> DocumentStatus): DocumentStatus = try {
+    load()
+} catch (e: CancellationException) {
+    throw e
+} catch (e: PasswordProtectedException) {
+    DocumentStatus.PasswordRequired(e.wrongPassword)
+} catch (e: Throwable) {
+    DocumentStatus.Failed(e)
+}
+
+@Composable
+private fun rememberLinkOpener(onLinkClick: ((String) -> Boolean)?): (String) -> Unit {
     val uriHandler = LocalUriHandler.current
-    val openLink: (String) -> Unit = { url ->
-        if (onLinkClick?.invoke(url) != true) {
-            try {
-                uriHandler.openUri(url)
-            } catch (_: ActivityNotFoundException) {
-            } catch (_: IllegalArgumentException) {
-            }
+    val currentOnLinkClick by rememberUpdatedState(onLinkClick)
+    return remember(uriHandler) {
+        {
+                url ->
+            if (currentOnLinkClick?.invoke(url) != true) uriHandler.openSafely(url)
         }
     }
+}
 
-    Box(modifier.background(colors.background)) {
-        val status = state.status
-        val key = when (status) {
-            is DocumentStatus.Loading, DocumentStatus.Idle -> 0
-            is DocumentStatus.Ready -> 1
-            is DocumentStatus.PasswordRequired -> 2
-            is DocumentStatus.Failed -> 3
-        }
-        AnimatedContent(
-            targetState = key,
-            transitionSpec = { fadeIn(tween(220)) togetherWith fadeOut(tween(120)) },
-            label = "documentStatus",
-            modifier = Modifier.fillMaxSize(),
-        ) { target ->
-            when (target) {
-                0 -> if (source != null) loading((state.status as? DocumentStatus.Loading)?.progress)
-                1 -> when (val doc = document) {
-                    is LoadedDocument.Pdf -> PdfViewer(doc.document, state, config, colors)
-                    is LoadedDocument.Flow -> FlowViewer(doc.document, state, config, colors, openLink)
-                    is LoadedDocument.Grid -> GridViewer(doc.document, state, config, colors)
-                    null -> Unit
-                }
-                2 -> passwordPrompt((state.status as? DocumentStatus.PasswordRequired)?.wrongPassword == true) { state.submitPassword(it) }
-                else -> (state.status as? DocumentStatus.Failed)?.let { error(it.error) { state.retry() } }
-            }
-        }
+// No app for the link or a malformed URI is not worth crashing the viewer over.
+private fun UriHandler.openSafely(url: String) {
+    try {
+        openUri(url)
+    } catch (_: ActivityNotFoundException) {
+    } catch (_: IllegalArgumentException) {
     }
 }

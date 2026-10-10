@@ -32,6 +32,15 @@ android {
     buildFeatures {
         compose = true
     }
+
+    lint {
+        abortOnError = true
+        warningsAsErrors = true
+        sarifReport = true
+        htmlReport = true
+        // Dependabot owns version bumps; lint should judge the code, not the calendar.
+        disable += setOf("GradleDependency", "NewerVersionAvailable", "AndroidGradlePluginVersion", "OldTargetApi")
+    }
 }
 
 kotlin {

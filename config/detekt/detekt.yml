@@ -23,6 +23,8 @@ style:
     ignoreHashCodeFunction: true
     ignorePropertyDeclaration: true
     ignoreCompanionObjectPropertyDeclaration: true
+    # Enum entries such as `PlcfBteChpx(12)` already name their numbers.
+    ignoreEnums: true
   ReturnCount:
     max: 3
     excludeGuardClauses: true
@@ -34,7 +36,7 @@ naming:
     ignoreAnnotated: ['Composable']
     excludes: ['**/test/**', '**/androidTest/**']
   TopLevelPropertyNaming:
-    constantPattern: '[A-Z][A-Za-z0-9]*'
+    constantPattern: '[A-Z][A-Za-z0-9_]*'
 
 formatting:
   android: false

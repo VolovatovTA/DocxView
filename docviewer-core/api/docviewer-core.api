@@ -1,0 +1,329 @@
+public final class io/github/volovatovta/docviewer/core/CorruptedDocumentException : io/github/volovatovta/docviewer/core/DocumentException {
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class io/github/volovatovta/docviewer/core/CsvHeaderMode : java/lang/Enum {
+	public static final field Auto Lio/github/volovatovta/docviewer/core/CsvHeaderMode;
+	public static final field FirstRow Lio/github/volovatovta/docviewer/core/CsvHeaderMode;
+	public static final field None Lio/github/volovatovta/docviewer/core/CsvHeaderMode;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/volovatovta/docviewer/core/CsvHeaderMode;
+	public static fun values ()[Lio/github/volovatovta/docviewer/core/CsvHeaderMode;
+}
+
+public final class io/github/volovatovta/docviewer/core/CsvOptions {
+	public static final field DEFAULT_MAX_ROWS I
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/Character;Lio/github/volovatovta/docviewer/core/CsvHeaderMode;I)V
+	public synthetic fun <init> (Ljava/lang/Character;Lio/github/volovatovta/docviewer/core/CsvHeaderMode;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/Character;
+	public final fun component2 ()Lio/github/volovatovta/docviewer/core/CsvHeaderMode;
+	public final fun component3 ()I
+	public final fun copy (Ljava/lang/Character;Lio/github/volovatovta/docviewer/core/CsvHeaderMode;I)Lio/github/volovatovta/docviewer/core/CsvOptions;
+	public static synthetic fun copy$default (Lio/github/volovatovta/docviewer/core/CsvOptions;Ljava/lang/Character;Lio/github/volovatovta/docviewer/core/CsvHeaderMode;IILjava/lang/Object;)Lio/github/volovatovta/docviewer/core/CsvOptions;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDelimiter ()Ljava/lang/Character;
+	public final fun getHeader ()Lio/github/volovatovta/docviewer/core/CsvHeaderMode;
+	public final fun getMaxRows ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/volovatovta/docviewer/core/CsvParser {
+	public static final field INSTANCE Lio/github/volovatovta/docviewer/core/CsvParser;
+	public final fun detectDelimiter (Ljava/lang/String;)Ljava/lang/Character;
+	public final fun isNumeric (Ljava/lang/String;)Z
+	public final fun parse (Ljava/io/File;Lio/github/volovatovta/docviewer/core/CsvOptions;)Lio/github/volovatovta/docviewer/core/model/TableDocument;
+	public final fun parse (Ljava/lang/String;Lio/github/volovatovta/docviewer/core/CsvOptions;Ljava/lang/String;Z)Lio/github/volovatovta/docviewer/core/model/TableDocument;
+	public static synthetic fun parse$default (Lio/github/volovatovta/docviewer/core/CsvParser;Ljava/io/File;Lio/github/volovatovta/docviewer/core/CsvOptions;ILjava/lang/Object;)Lio/github/volovatovta/docviewer/core/model/TableDocument;
+	public static synthetic fun parse$default (Lio/github/volovatovta/docviewer/core/CsvParser;Ljava/lang/String;Lio/github/volovatovta/docviewer/core/CsvOptions;Ljava/lang/String;ZILjava/lang/Object;)Lio/github/volovatovta/docviewer/core/model/TableDocument;
+}
+
+public class io/github/volovatovta/docviewer/core/DocumentException : java/lang/Exception {
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class io/github/volovatovta/docviewer/core/FlowMatch {
+	public fun <init> (ILio/github/volovatovta/docviewer/core/model/Paragraph;II)V
+	public final fun getBlockIndex ()I
+	public final fun getEnd ()I
+	public final fun getParagraph ()Lio/github/volovatovta/docviewer/core/model/Paragraph;
+	public final fun getStart ()I
+}
+
+public final class io/github/volovatovta/docviewer/core/FlowSearch {
+	public static final field INSTANCE Lio/github/volovatovta/docviewer/core/FlowSearch;
+	public final fun byParagraph (Ljava/util/List;)Ljava/util/Map;
+	public final fun findAll (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function2;)V
+	public final fun forEachParagraph (Lio/github/volovatovta/docviewer/core/model/Block;Lkotlin/jvm/functions/Function1;)V
+	public final fun search (Lio/github/volovatovta/docviewer/core/model/FlowDocument;Ljava/lang/String;)Ljava/util/List;
+}
+
+public final class io/github/volovatovta/docviewer/core/FormatDetector {
+	public static final field INSTANCE Lio/github/volovatovta/docviewer/core/FormatDetector;
+	public final fun detect (Ljava/io/File;Ljava/lang/String;Ljava/lang/String;)Lio/github/volovatovta/docviewer/core/model/DocumentFormat;
+	public static synthetic fun detect$default (Lio/github/volovatovta/docviewer/core/FormatDetector;Ljava/io/File;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/github/volovatovta/docviewer/core/model/DocumentFormat;
+}
+
+public final class io/github/volovatovta/docviewer/core/PasswordProtectedException : io/github/volovatovta/docviewer/core/DocumentException {
+	public fun <init> ()V
+	public fun <init> (Z)V
+	public synthetic fun <init> (ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getWrongPassword ()Z
+}
+
+public final class io/github/volovatovta/docviewer/core/PlainTextParser {
+	public static final field INSTANCE Lio/github/volovatovta/docviewer/core/PlainTextParser;
+	public final fun parse (Ljava/io/File;)Lio/github/volovatovta/docviewer/core/model/FlowDocument;
+	public final fun parse (Ljava/lang/String;ZLjava/lang/String;)Lio/github/volovatovta/docviewer/core/model/FlowDocument;
+	public static synthetic fun parse$default (Lio/github/volovatovta/docviewer/core/PlainTextParser;Ljava/lang/String;ZLjava/lang/String;ILjava/lang/Object;)Lio/github/volovatovta/docviewer/core/model/FlowDocument;
+}
+
+public final class io/github/volovatovta/docviewer/core/TextDecoding {
+	public static final field INSTANCE Lio/github/volovatovta/docviewer/core/TextDecoding;
+	public final fun decode ([BI)Lio/github/volovatovta/docviewer/core/TextDecoding$Decoded;
+	public static synthetic fun decode$default (Lio/github/volovatovta/docviewer/core/TextDecoding;[BIILjava/lang/Object;)Lio/github/volovatovta/docviewer/core/TextDecoding$Decoded;
+}
+
+public final class io/github/volovatovta/docviewer/core/TextDecoding$Decoded {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun getCharsetName ()Ljava/lang/String;
+	public final fun getText ()Ljava/lang/String;
+}
+
+public class io/github/volovatovta/docviewer/core/UnsupportedFormatException : io/github/volovatovta/docviewer/core/DocumentException {
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public final class io/github/volovatovta/docviewer/core/doc/DocParser {
+	public static final field INSTANCE Lio/github/volovatovta/docviewer/core/doc/DocParser;
+	public final fun parse (Ljava/io/File;)Lio/github/volovatovta/docviewer/core/model/FlowDocument;
+}
+
+public final class io/github/volovatovta/docviewer/core/docx/DocxParser {
+	public static final field INSTANCE Lio/github/volovatovta/docviewer/core/docx/DocxParser;
+	public final fun parse (Ljava/io/File;)Lio/github/volovatovta/docviewer/core/model/FlowDocument;
+}
+
+public abstract interface class io/github/volovatovta/docviewer/core/model/Block {
+}
+
+public final class io/github/volovatovta/docviewer/core/model/Divider : io/github/volovatovta/docviewer/core/model/Block {
+	public static final field INSTANCE Lio/github/volovatovta/docviewer/core/model/Divider;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/volovatovta/docviewer/core/model/DocumentFormat : java/lang/Enum {
+	public static final field CSV Lio/github/volovatovta/docviewer/core/model/DocumentFormat;
+	public static final field Companion Lio/github/volovatovta/docviewer/core/model/DocumentFormat$Companion;
+	public static final field DOC Lio/github/volovatovta/docviewer/core/model/DocumentFormat;
+	public static final field DOCX Lio/github/volovatovta/docviewer/core/model/DocumentFormat;
+	public static final field PDF Lio/github/volovatovta/docviewer/core/model/DocumentFormat;
+	public static final field TXT Lio/github/volovatovta/docviewer/core/model/DocumentFormat;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getExtensions ()Ljava/util/Set;
+	public final fun getMimeTypes ()Ljava/util/Set;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/volovatovta/docviewer/core/model/DocumentFormat;
+	public static fun values ()[Lio/github/volovatovta/docviewer/core/model/DocumentFormat;
+}
+
+public final class io/github/volovatovta/docviewer/core/model/DocumentFormat$Companion {
+	public final fun fromExtension (Ljava/lang/String;)Lio/github/volovatovta/docviewer/core/model/DocumentFormat;
+	public final fun fromMimeType (Ljava/lang/String;)Lio/github/volovatovta/docviewer/core/model/DocumentFormat;
+}
+
+public final class io/github/volovatovta/docviewer/core/model/FlowDocument : java/io/Closeable {
+	public fun <init> (Ljava/util/List;Ljava/lang/String;Lio/github/volovatovta/docviewer/core/model/ImageStore;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/util/List;Ljava/lang/String;Lio/github/volovatovta/docviewer/core/model/ImageStore;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun close ()V
+	public final fun getBlocks ()Ljava/util/List;
+	public final fun getImages ()Lio/github/volovatovta/docviewer/core/model/ImageStore;
+	public final fun getTitle ()Ljava/lang/String;
+	public final fun getWarnings ()Ljava/util/List;
+}
+
+public final class io/github/volovatovta/docviewer/core/model/ImageRun : io/github/volovatovta/docviewer/core/model/Inline {
+	public fun <init> (Ljava/lang/String;Ljava/lang/Float;Ljava/lang/Float;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Float;Ljava/lang/Float;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getDescription ()Ljava/lang/String;
+	public final fun getHeightPt ()Ljava/lang/Float;
+	public final fun getImageId ()Ljava/lang/String;
+	public final fun getWidthPt ()Ljava/lang/Float;
+}
+
+public abstract interface class io/github/volovatovta/docviewer/core/model/ImageStore : java/io/Closeable {
+	public fun close ()V
+	public abstract fun open (Ljava/lang/String;)[B
+}
+
+public final class io/github/volovatovta/docviewer/core/model/ImageStore$DefaultImpls {
+	public static fun close (Lio/github/volovatovta/docviewer/core/model/ImageStore;)V
+}
+
+public final class io/github/volovatovta/docviewer/core/model/ImageStore$Empty : io/github/volovatovta/docviewer/core/model/ImageStore {
+	public static final field INSTANCE Lio/github/volovatovta/docviewer/core/model/ImageStore$Empty;
+	public fun close ()V
+	public fun open (Ljava/lang/String;)[B
+}
+
+public abstract interface class io/github/volovatovta/docviewer/core/model/Inline {
+}
+
+public final class io/github/volovatovta/docviewer/core/model/PageBreak : io/github/volovatovta/docviewer/core/model/Block {
+	public static final field INSTANCE Lio/github/volovatovta/docviewer/core/model/PageBreak;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/volovatovta/docviewer/core/model/Paragraph : io/github/volovatovta/docviewer/core/model/Block {
+	public fun <init> (Ljava/util/List;Lio/github/volovatovta/docviewer/core/model/ParagraphStyle;)V
+	public synthetic fun <init> (Ljava/util/List;Lio/github/volovatovta/docviewer/core/model/ParagraphStyle;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getInlines ()Ljava/util/List;
+	public final fun getPlainText ()Ljava/lang/String;
+	public final fun getStyle ()Lio/github/volovatovta/docviewer/core/model/ParagraphStyle;
+	public final fun isBlank ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/volovatovta/docviewer/core/model/ParagraphStyle {
+	public static final field Companion Lio/github/volovatovta/docviewer/core/model/ParagraphStyle$Companion;
+	public static final field TITLE_LEVEL I
+	public fun <init> ()V
+	public fun <init> (Lio/github/volovatovta/docviewer/core/model/TextAlignment;IFFLjava/lang/Float;Ljava/lang/Float;Ljava/lang/String;ILjava/lang/Integer;)V
+	public synthetic fun <init> (Lio/github/volovatovta/docviewer/core/model/TextAlignment;IFFLjava/lang/Float;Ljava/lang/Float;Ljava/lang/String;ILjava/lang/Integer;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/github/volovatovta/docviewer/core/model/TextAlignment;
+	public final fun component2 ()I
+	public final fun component3 ()F
+	public final fun component4 ()F
+	public final fun component5 ()Ljava/lang/Float;
+	public final fun component6 ()Ljava/lang/Float;
+	public final fun component7 ()Ljava/lang/String;
+	public final fun component8 ()I
+	public final fun component9 ()Ljava/lang/Integer;
+	public final fun copy (Lio/github/volovatovta/docviewer/core/model/TextAlignment;IFFLjava/lang/Float;Ljava/lang/Float;Ljava/lang/String;ILjava/lang/Integer;)Lio/github/volovatovta/docviewer/core/model/ParagraphStyle;
+	public static synthetic fun copy$default (Lio/github/volovatovta/docviewer/core/model/ParagraphStyle;Lio/github/volovatovta/docviewer/core/model/TextAlignment;IFFLjava/lang/Float;Ljava/lang/Float;Ljava/lang/String;ILjava/lang/Integer;ILjava/lang/Object;)Lio/github/volovatovta/docviewer/core/model/ParagraphStyle;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAlignment ()Lio/github/volovatovta/docviewer/core/model/TextAlignment;
+	public final fun getBackground ()Ljava/lang/Integer;
+	public final fun getFirstLineIndentPt ()F
+	public final fun getHeadingLevel ()I
+	public final fun getIndentStartPt ()F
+	public final fun getListLevel ()I
+	public final fun getListMarker ()Ljava/lang/String;
+	public final fun getSpaceAfterPt ()Ljava/lang/Float;
+	public final fun getSpaceBeforePt ()Ljava/lang/Float;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/volovatovta/docviewer/core/model/ParagraphStyle$Companion {
+	public final fun getDefault ()Lio/github/volovatovta/docviewer/core/model/ParagraphStyle;
+}
+
+public final class io/github/volovatovta/docviewer/core/model/RunStyle {
+	public static final field Companion Lio/github/volovatovta/docviewer/core/model/RunStyle$Companion;
+	public fun <init> ()V
+	public fun <init> (ZZZZLjava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Float;Lio/github/volovatovta/docviewer/core/model/VerticalAlign;ZZZ)V
+	public synthetic fun <init> (ZZZZLjava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Float;Lio/github/volovatovta/docviewer/core/model/VerticalAlign;ZZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Z
+	public final fun component10 ()Z
+	public final fun component11 ()Z
+	public final fun component2 ()Z
+	public final fun component3 ()Z
+	public final fun component4 ()Z
+	public final fun component5 ()Ljava/lang/Integer;
+	public final fun component6 ()Ljava/lang/Integer;
+	public final fun component7 ()Ljava/lang/Float;
+	public final fun component8 ()Lio/github/volovatovta/docviewer/core/model/VerticalAlign;
+	public final fun component9 ()Z
+	public final fun copy (ZZZZLjava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Float;Lio/github/volovatovta/docviewer/core/model/VerticalAlign;ZZZ)Lio/github/volovatovta/docviewer/core/model/RunStyle;
+	public static synthetic fun copy$default (Lio/github/volovatovta/docviewer/core/model/RunStyle;ZZZZLjava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Float;Lio/github/volovatovta/docviewer/core/model/VerticalAlign;ZZZILjava/lang/Object;)Lio/github/volovatovta/docviewer/core/model/RunStyle;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAllCaps ()Z
+	public final fun getBackground ()Ljava/lang/Integer;
+	public final fun getBold ()Z
+	public final fun getColor ()Ljava/lang/Integer;
+	public final fun getItalic ()Z
+	public final fun getMonospace ()Z
+	public final fun getRelativeSize ()Ljava/lang/Float;
+	public final fun getSmallCaps ()Z
+	public final fun getStrikethrough ()Z
+	public final fun getUnderline ()Z
+	public final fun getVerticalAlign ()Lio/github/volovatovta/docviewer/core/model/VerticalAlign;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/volovatovta/docviewer/core/model/RunStyle$Companion {
+	public final fun getDefault ()Lio/github/volovatovta/docviewer/core/model/RunStyle;
+}
+
+public final class io/github/volovatovta/docviewer/core/model/Table : io/github/volovatovta/docviewer/core/model/Block {
+	public fun <init> (Ljava/util/List;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/util/List;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getColumnCount ()I
+	public final fun getColumnWidths ()Ljava/util/List;
+	public final fun getRows ()Ljava/util/List;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/volovatovta/docviewer/core/model/TableCell {
+	public fun <init> (Ljava/util/List;IZLjava/lang/Integer;)V
+	public synthetic fun <init> (Ljava/util/List;IZLjava/lang/Integer;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getBackground ()Ljava/lang/Integer;
+	public final fun getBlocks ()Ljava/util/List;
+	public final fun getColSpan ()I
+	public final fun getMergedWithAbove ()Z
+}
+
+public final class io/github/volovatovta/docviewer/core/model/TableDocument {
+	public fun <init> (Ljava/util/List;Ljava/util/List;CIZLjava/lang/String;)V
+	public synthetic fun <init> (Ljava/util/List;Ljava/util/List;CIZLjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getCharsetName ()Ljava/lang/String;
+	public final fun getColumnCount ()I
+	public final fun getDelimiter ()C
+	public final fun getHeader ()Ljava/util/List;
+	public final fun getRows ()Ljava/util/List;
+	public final fun getTruncated ()Z
+}
+
+public final class io/github/volovatovta/docviewer/core/model/TableRow {
+	public fun <init> (Ljava/util/List;Z)V
+	public synthetic fun <init> (Ljava/util/List;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getCells ()Ljava/util/List;
+	public final fun isHeader ()Z
+}
+
+public final class io/github/volovatovta/docviewer/core/model/TextAlignment : java/lang/Enum {
+	public static final field Center Lio/github/volovatovta/docviewer/core/model/TextAlignment;
+	public static final field End Lio/github/volovatovta/docviewer/core/model/TextAlignment;
+	public static final field Justify Lio/github/volovatovta/docviewer/core/model/TextAlignment;
+	public static final field Start Lio/github/volovatovta/docviewer/core/model/TextAlignment;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/volovatovta/docviewer/core/model/TextAlignment;
+	public static fun values ()[Lio/github/volovatovta/docviewer/core/model/TextAlignment;
+}
+
+public final class io/github/volovatovta/docviewer/core/model/TextRun : io/github/volovatovta/docviewer/core/model/Inline {
+	public fun <init> (Ljava/lang/String;Lio/github/volovatovta/docviewer/core/model/RunStyle;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Lio/github/volovatovta/docviewer/core/model/RunStyle;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getLink ()Ljava/lang/String;
+	public final fun getStyle ()Lio/github/volovatovta/docviewer/core/model/RunStyle;
+	public final fun getText ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/volovatovta/docviewer/core/model/VerticalAlign : java/lang/Enum {
+	public static final field Baseline Lio/github/volovatovta/docviewer/core/model/VerticalAlign;
+	public static final field Subscript Lio/github/volovatovta/docviewer/core/model/VerticalAlign;
+	public static final field Superscript Lio/github/volovatovta/docviewer/core/model/VerticalAlign;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/volovatovta/docviewer/core/model/VerticalAlign;
+	public static fun values ()[Lio/github/volovatovta/docviewer/core/model/VerticalAlign;
+}
+

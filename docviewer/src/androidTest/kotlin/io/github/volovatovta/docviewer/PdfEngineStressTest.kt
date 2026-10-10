@@ -25,88 +25,111 @@ class PdfEngineStressTest(private val pdf: TestPdf) {
     companion object {
         @JvmStatic
         @Parameterized.Parameters(name = "{0}")
-        fun cases(): List<TestPdf> = TestPdf.own() + TestPdf.generated() + TestPdf.corpus()
+        fun cases(): List<TestPdf> = TestPdf.own() + GeneratedPdfs.all() + TestPdf.corpus()
 
         // Real-world files that are broken on purpose: failing cleanly is as good as rendering.
-        private val MAY_FAIL = setOf("helloworld-bad", "bad-PageLabels")
+        private val MayFail = setOf("helloworld-bad", "bad-PageLabels")
+
+        private const val SCREEN_WIDTH = 1080
+        private const val BASE_BITMAP_PIXELS = 2_500_000f
+        private const val ZOOM = 4
+        private const val TILE_HEIGHT = 1920
+        private const val ALL_PAGES_UP_TO = 50
+        private const val FIRST_PAGES = 30
+        private const val LAST_PAGES = 20
     }
+
+    private class RenderStats(val rendered: Int, val totalMs: Long, val worstMs: Long, val nonBlank: Int)
 
     @Test
     fun opensRendersAndSearches() {
-        val file = pdf.file()
-        val openStart = SystemClock.elapsedRealtime()
-        val document = try {
-            PdfDocument.open(file, null)
-        } catch (e: CorruptedDocumentException) {
-            if (pdf.name in MAY_FAIL) {
-                report("failed-cleanly", 0, SystemClock.elapsedRealtime() - openStart, 0, 0, null, null)
-                return
-            }
-            throw e
-        } catch (e: PasswordProtectedException) {
-            fail("${pdf.name} unexpectedly asks for a password")
-        } catch (e: PasswordUnsupportedException) {
-            fail("${pdf.name} unexpectedly asks for a password")
-        }
-        val openMs = SystemClock.elapsedRealtime() - openStart
+        val started = SystemClock.elapsedRealtime()
+        val document = openOrNull()
+        val openMs = SystemClock.elapsedRealtime() - started
+        if (document == null) return log("result=failed-cleanly|openMs=$openMs")
         try {
-            val count = document.pageCount
-            assertTrue(count > 0)
-            val pages = if (count <= 50) (0 until count).toList() else (0 until 30) + (count - 20 until count)
-            var total = 0L
-            var worst = 0L
-            var nonBlank = 0
-            for (index in pages) {
-                val size = document.pageSizes[index]
-                // Same budget as the viewer: fit a 1080 px wide screen, at most ~2.5 MP per page.
-                val width = minOf(1080f, sqrt(2_500_000f * size.width / size.height)).toInt().coerceAtLeast(1)
-                val height = (width * size.height / size.width).toInt().coerceAtLeast(1)
-                val start = SystemClock.elapsedRealtime()
-                val bitmap = runBlocking { document.render(index, width, height) }
-                val ms = SystemClock.elapsedRealtime() - start
-                total += ms
-                worst = maxOf(worst, ms)
-                assertNotNull(bitmap, "page $index of ${pdf.name} did not render")
-                if (!isBlank(bitmap)) nonBlank++
-                bitmap.recycle()
-            }
-            // A zoomed-in tile of the first page, as rendered for crisp text at 4x.
-            val first = document.pageSizes[0]
-            val pageWidth = (1080 * 4)
-            val pageHeight = (pageWidth * first.height / first.width).toInt().coerceAtLeast(1)
-            val tile = runBlocking {
-                document.render(0, pageWidth, pageHeight, pageWidth / 3, (pageHeight / 3).coerceAtMost(pageHeight - 1), 1080, minOf(1920, pageHeight))
-            }
-            assertNotNull(tile, "zoomed tile of ${pdf.name} did not render")
-            tile.recycle()
-
-            var hits: Int? = null
-            val word = pdf.searchWord
-            if (word != null && document.isSearchSupported) {
-                hits = runBlocking { (0 until count).sumOf { document.search(it, word).size } }
-                assertTrue(hits >= pdf.minHits, "search for '$word' in ${pdf.name} found $hits, expected >= ${pdf.minHits}")
-            }
-            if (pdf.name !in MAY_FAIL) assertTrue(nonBlank > 0, "every rendered page of ${pdf.name} is blank")
-            report("ok", count, openMs, total, worst, nonBlank, hits, pages.size)
+            assertTrue(document.pageCount > 0)
+            val stats = renderPages(document)
+            renderZoomedTile(document)
+            val hits = searchHits(document)
+            if (pdf.name !in MayFail) assertTrue(stats.nonBlank > 0, "every rendered page of ${pdf.name} is blank")
+            log(
+                "result=ok|pages=${document.pageCount}|openMs=$openMs|rendered=${stats.rendered}|" +
+                    "renderAvgMs=${stats.totalMs / stats.rendered}|renderMaxMs=${stats.worstMs}|" +
+                    "nonBlank=${stats.nonBlank}|hits=$hits",
+            )
         } finally {
             document.close()
         }
     }
 
-    private fun report(result: String, pages: Int, openMs: Long, renderTotal: Long, renderWorst: Long, nonBlank: Int?, hits: Int?, rendered: Int = 0) {
-        Log.i(
-            "DVTEST",
-            "RESULT|api=${Build.VERSION.SDK_INT}|pdf=${pdf.name}|result=$result|pages=$pages|openMs=$openMs|" +
-                "rendered=$rendered|renderAvgMs=${if (rendered > 0) renderTotal / rendered else 0}|renderMaxMs=$renderWorst|nonBlank=$nonBlank|hits=$hits",
-        )
+    private fun openOrNull(): PdfDocument? = try {
+        PdfDocument.open(pdf.file(), password = null)
+    } catch (e: CorruptedDocumentException) {
+        if (pdf.name in MayFail) null else throw e
+    } catch (e: PasswordProtectedException) {
+        fail("${pdf.name} unexpectedly asks for a password", e)
+    } catch (e: PasswordUnsupportedException) {
+        fail("${pdf.name} unexpectedly asks for a password", e)
     }
 
-    private fun isBlank(bitmap: Bitmap): Boolean {
-        val row = IntArray(bitmap.width)
-        for (y in 0 until bitmap.height) {
-            bitmap.getPixels(row, 0, bitmap.width, 0, y, bitmap.width, 1)
-            if (row.any { it != Color.WHITE }) return false
+    private fun renderPages(document: PdfDocument): RenderStats {
+        val count = document.pageCount
+        val pages = if (count <= ALL_PAGES_UP_TO) {
+            0 until count
+        } else {
+            (0 until FIRST_PAGES) + (count - LAST_PAGES until count)
         }
-        return true
+        var total = 0L
+        var worst = 0L
+        var nonBlank = 0
+        for (page in pages) {
+            val size = document.pageSizes[page]
+            // Same budget as the viewer: fit the screen width, at most ~2.5 MP per page.
+            val cappedWidth = sqrt(BASE_BITMAP_PIXELS * size.width / size.height)
+            val width = minOf(SCREEN_WIDTH.toFloat(), cappedWidth).toInt().coerceAtLeast(1)
+            val height = (width * size.height / size.width).toInt().coerceAtLeast(1)
+            val started = SystemClock.elapsedRealtime()
+            val rendered = runBlocking { document.render(page, width, height) }
+            val bitmap = assertNotNull(rendered, "page $page did not render")
+            val ms = SystemClock.elapsedRealtime() - started
+            total += ms
+            worst = maxOf(worst, ms)
+            if (!bitmap.isBlank()) nonBlank++
+            bitmap.recycle()
+        }
+        return RenderStats(pages.count(), total, worst, nonBlank)
+    }
+
+    // A tile of the first page at 4x, as the viewer renders for crisp text when zoomed in.
+    private fun renderZoomedTile(document: PdfDocument) {
+        val first = document.pageSizes[0]
+        val pageWidth = SCREEN_WIDTH * ZOOM
+        val pageHeight = (pageWidth * first.height / first.width).toInt().coerceAtLeast(1)
+        val top = (pageHeight / 3).coerceAtMost(pageHeight - 1)
+        val tile = runBlocking {
+            document.render(0, pageWidth, pageHeight, pageWidth / 3, top, SCREEN_WIDTH, minOf(TILE_HEIGHT, pageHeight))
+        }
+        assertNotNull(tile, "zoomed tile of ${pdf.name} did not render").recycle()
+    }
+
+    private fun searchHits(document: PdfDocument): Int? {
+        val word = pdf.searchWord ?: return null
+        if (!document.isSearchSupported) return null
+        val hits = runBlocking { (0 until document.pageCount).sumOf { document.search(it, word).size } }
+        assertTrue(hits >= pdf.minHits, "search for '$word' in ${pdf.name} found $hits, expected >= ${pdf.minHits}")
+        return hits
+    }
+
+    private fun Bitmap.isBlank(): Boolean {
+        val row = IntArray(width)
+        return (0 until height).all { y ->
+            getPixels(row, 0, width, 0, y, width, 1)
+            row.all { it == Color.WHITE }
+        }
+    }
+
+    private fun log(fields: String) {
+        Log.i("DVTEST", "RESULT|api=${Build.VERSION.SDK_INT}|pdf=${pdf.name}|$fields")
     }
 }

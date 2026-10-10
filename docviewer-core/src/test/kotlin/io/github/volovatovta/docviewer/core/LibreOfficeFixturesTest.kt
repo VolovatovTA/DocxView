@@ -48,17 +48,28 @@ class LibreOfficeFixturesTest(private val fileName: String) {
     @Test
     fun table() {
         val table = doc.blocks.filterIsInstance<Table>().single()
-        val cells = table.rows.map { row -> row.cells.map { cell -> cell.blocks.filterIsInstance<Paragraph>().joinToString { it.plainText } } }
-        assertEquals(listOf(listOf("Name", "Qty", "Price"), listOf("Яблоки", "10", "99.5"), listOf("Pears", "3", "120")), cells)
+        val cells = table.rows.map { row ->
+            row.cells.map { cell -> cell.blocks.filterIsInstance<Paragraph>().joinToString { it.plainText } }
+        }
+        val expected = listOf(
+            listOf("Name", "Qty", "Price"),
+            listOf("Яблоки", "10", "99.5"),
+            listOf("Pears", "3", "120"),
+        )
+        assertEquals(expected, cells)
     }
 
     @Test
     fun lists() {
         val items = paragraphs().filter { it.style.listMarker != null }.map { it.style.listMarker to it.plainText }
-        assertEquals(
-            listOf("•" to "first bullet", "•" to "second bullet", "1." to "step one", "2." to "step two", "3." to "step three"),
-            items,
+        val expected = listOf(
+            "•" to "first bullet",
+            "•" to "second bullet",
+            "1." to "step one",
+            "2." to "step two",
+            "3." to "step three",
         )
+        assertEquals(expected, items)
     }
 
     @Test

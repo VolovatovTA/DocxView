@@ -39,7 +39,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:contentDescription="@string/prev"
-            android:text="↑" />
+            android:text="@string/prev_symbol" />
 
         <Button
             android:id="@+id/next"
@@ -47,7 +47,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:contentDescription="@string/next"
-            android:text="↓" />
+            android:text="@string/next_symbol" />
     </LinearLayout>
 
     <!-- The whole integration for XML screens: one tag. -->

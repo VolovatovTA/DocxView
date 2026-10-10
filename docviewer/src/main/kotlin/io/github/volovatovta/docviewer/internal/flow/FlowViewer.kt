@@ -2,7 +2,6 @@ package io.github.volovatovta.docviewer.internal.flow
 
 import android.util.LruCache
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.calculateZoom
@@ -19,19 +18,17 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.github.volovatovta.docviewer.DocumentViewerColors
 import io.github.volovatovta.docviewer.DocumentViewerConfig
@@ -39,18 +36,27 @@ import io.github.volovatovta.docviewer.DocumentViewerState
 import io.github.volovatovta.docviewer.core.FlowMatch
 import io.github.volovatovta.docviewer.core.FlowSearch
 import io.github.volovatovta.docviewer.core.model.FlowDocument
-import io.github.volovatovta.docviewer.internal.ViewerController
-import io.github.volovatovta.docviewer.internal.ui.FastScrollbar
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
+import io.github.volovatovta.docviewer.core.model.Table
+import java.util.IdentityHashMap
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
-private const val MIN_TEXT_SCALE = 0.6f
-private const val MAX_TEXT_SCALE = 3f
+private object FlowViewerSpec {
+    val HorizontalPadding = 20.dp
+    val TopPadding = 28.dp
+    val BottomPadding = 48.dp
+
+    // Pinch scale snaps to steps of 1/50 so tiny finger jitter does not reflow the whole document.
+    const val SCALE_STEPS = 50
+    const val MIN_SCALE_CHANGE = 0.01f
+    const val PERCENT = 100
+}
+
+private object ImageCacheSize {
+    const val HEAP_SHARE_DIVISOR = 8
+    const val MAX_BYTES = 64L * 1024 * 1024
+    const val BYTES_PER_PIXEL = 4
+}
 
 @Composable
 internal fun FlowViewer(
@@ -59,140 +65,138 @@ internal fun FlowViewer(
     config: DocumentViewerConfig,
     colors: DocumentViewerColors,
     onLink: (String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    val listState = rememberLazyListState(initialFirstVisibleItemIndex = remember { state.consumeInitialPage() }.coerceIn(0, (document.blocks.size - 1).coerceAtLeast(0)))
-    var scale by remember(document) { mutableFloatStateOf(state.zoom.coerceIn(MIN_TEXT_SCALE, MAX_TEXT_SCALE)) }
-    val hits = remember(state.searchHits) { state.searchHits.filterIsInstance<FlowMatch>() }
-    val byParagraph = remember(hits) { FlowSearch.byParagraph(hits) }
-    val imageCache = remember(document) {
-        object : LruCache<String, ImageBitmap>((Runtime.getRuntime().maxMemory() / 8).coerceAtMost(64L * 1024 * 1024).toInt()) {
-            override fun sizeOf(key: String, value: ImageBitmap) = value.width * value.height * 4
-        }
+    val initialItem = remember { state.consumeInitialPage() }.coerceIn(0, document.blocks.lastIndex.coerceAtLeast(0))
+    val listState = rememberLazyListState(initialFirstVisibleItemIndex = initialItem)
+    var scale by remember(document) { mutableFloatStateOf(TextScale.clamp(state.zoom)) }
+    val applyScale: (Float) -> Unit = { value ->
+        scale = value
+        state.zoom = value
     }
-    val ctx = FlowContext(
-        colors = colors,
-        textSize = config.textSize * scale,
-        scale = scale,
-        highlights = byParagraph,
-        current = hits.getOrNull(state.currentSearchResult),
-        onLink = onLink,
-        images = document.images,
-        imageCache = imageCache,
-        tableColumns = remember(document, scale) { java.util.IdentityHashMap() },
-    )
+    val context = rememberFlowContext(document, state, config, colors, onLink, scale)
 
-    BoxWithConstraints(Modifier.fillMaxSize().background(colors.background)) {
+    BoxWithConstraints(modifier.fillMaxSize().background(colors.background)) {
         val viewportHeight = with(LocalDensity.current) { maxHeight.toPx() }
         val controller = remember(document, listState) {
-            FlowController(document, listState, viewportHeight, setScale = { scale = it; state.zoom = it }, getScale = { scale })
+            FlowController(document, listState, viewportHeight, currentScale = { scale }, onScale = applyScale)
         }
         controller.viewportHeight = viewportHeight
-        DisposableEffect(controller) {
-            state.controller = controller
-            onDispose { if (state.controller === controller) state.controller = null }
-        }
-        LaunchedEffect(listState) {
-            snapshotFlow { listState.firstVisibleItemIndex }.distinctUntilChanged().collect { state.currentPage = it }
-        }
+        BindController(state, controller)
+        TrackCurrentItem(listState, state)
 
         // The "paper" column spans the full height even when the document is shorter than the screen.
-        Box(Modifier.align(Alignment.TopCenter).widthIn(max = config.maxContentWidth).fillMaxWidth().fillMaxHeight().background(colors.page))
-        val list: @Composable () -> Unit = {
-            LazyColumn(
-                state = listState,
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                itemsIndexed(document.blocks) { index, block ->
-                    val top = if (index == 0) 28.dp else 0.dp
-                    val bottom = if (index == document.blocks.lastIndex) 48.dp else 0.dp
-                    Box(
-                        Modifier.widthIn(max = config.maxContentWidth).fillMaxWidth()
-                            .padding(start = 20.dp, end = 20.dp, top = top, bottom = bottom),
-                    ) {
-                        BlockView(block, ctx)
-                    }
-                }
+        Box(
+            Modifier
+                .align(Alignment.TopCenter)
+                .widthIn(max = config.maxContentWidth)
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .background(colors.page),
+        )
+        Box(Modifier.fillMaxSize().pinchToScaleText(currentScale = { scale }, onScale = applyScale)) {
+            if (config.textSelectable) {
+                SelectionContainer { FlowList(document, listState, context, config.maxContentWidth) }
+            } else {
+                FlowList(document, listState, context, config.maxContentWidth)
             }
         }
-        Box(
-            Modifier.fillMaxSize().pointerInput(Unit) {
-                // Two-finger pinch reflows text; consumed in the Initial pass so the list does not scroll meanwhile.
-                awaitEachGesture {
-                    awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
-                    do {
-                        val event = awaitPointerEvent(PointerEventPass.Initial)
-                        if (event.changes.count { it.pressed } >= 2) {
-                            val zoom = event.calculateZoom()
-                            if (zoom != 1f) {
-                                val next = (scale * zoom).coerceIn(MIN_TEXT_SCALE, MAX_TEXT_SCALE)
-                                if (abs(next - scale) > 0.01f) {
-                                    scale = (next * 50).roundToInt() / 50f
-                                    state.zoom = scale
-                                }
-                            }
-                            event.changes.forEach { it.consume() }
-                        }
-                    } while (event.changes.any { it.pressed })
-                }
-            },
-        ) {
-            if (config.textSelectable) SelectionContainer { list() } else list()
-        }
         if (config.showScrollbar) {
-            val total = document.blocks.size
-            FastScrollbar(
-                isScrolling = listState.isScrollInProgress,
-                fraction = { listState.scrollFraction() },
-                visibleFraction = {
-                    val visible = listState.layoutInfo.visibleItemsInfo.size
-                    if (total == 0) 1f else (visible.toFloat() / total).coerceAtMost(1f)
-                },
-                onScrollTo = { f -> listState.requestScrollToItem((f * (total - 1)).roundToInt().coerceAtLeast(0)) },
+            ListFastScrollbar(
+                listState = listState,
                 colors = colors,
+                label = { fraction -> "${(fraction * FlowViewerSpec.PERCENT).roundToInt()}%" },
                 modifier = Modifier.align(Alignment.CenterEnd),
-                label = { f -> "${(f * 100).roundToInt()}%" },
             )
         }
     }
 }
 
-internal fun LazyListState.scrollFraction(): Float {
-    val info = layoutInfo
-    val total = info.totalItemsCount
-    val visible = info.visibleItemsInfo
-    if (total == 0 || visible.isEmpty()) return 0f
-    val first = visible.first()
-    val partial = if (first.size > 0) (-first.offset.toFloat() / first.size).coerceIn(0f, 1f) else 0f
-    val scrollable = (total - visible.size).coerceAtLeast(1)
-    if (!canScrollForward) return 1f
-    return ((first.index + partial) / scrollable).coerceIn(0f, 1f)
+@Composable
+private fun FlowList(
+    document: FlowDocument,
+    listState: LazyListState,
+    context: FlowContext,
+    maxContentWidth: Dp,
+    modifier: Modifier = Modifier,
+) {
+    LazyColumn(
+        state = listState,
+        modifier = modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        itemsIndexed(document.blocks) { index, block ->
+            Box(
+                Modifier
+                    .widthIn(max = maxContentWidth)
+                    .fillMaxWidth()
+                    .padding(
+                        start = FlowViewerSpec.HorizontalPadding,
+                        end = FlowViewerSpec.HorizontalPadding,
+                        top = if (index == 0) FlowViewerSpec.TopPadding else 0.dp,
+                        bottom = if (index == document.blocks.lastIndex) FlowViewerSpec.BottomPadding else 0.dp,
+                    ),
+            ) {
+                BlockView(block, context)
+            }
+        }
+    }
 }
 
-private class FlowController(
-    private val document: FlowDocument,
-    private val listState: LazyListState,
-    var viewportHeight: Float,
-    private val setScale: (Float) -> Unit,
-    private val getScale: () -> Float,
-) : ViewerController {
+@Composable
+private fun rememberFlowContext(
+    document: FlowDocument,
+    state: DocumentViewerState,
+    config: DocumentViewerConfig,
+    colors: DocumentViewerColors,
+    onLink: (String) -> Unit,
+    scale: Float,
+): FlowContext {
+    val hits = remember(state.searchHits) { state.searchHits.filterIsInstance<FlowMatch>() }
+    val highlights = remember(hits) { FlowSearch.byParagraph(hits) }
+    val imageCache = remember(document) { ImageBitmapCache() }
+    val tableColumns = remember(document, scale) { IdentityHashMap<Table, ColumnContent>() }
+    return FlowContext(
+        colors = colors,
+        textSize = config.textSize * scale,
+        scale = scale,
+        search = SearchHighlights(highlights, hits.getOrNull(state.currentSearchResult)),
+        onLink = onLink,
+        images = FlowImages(document.images, imageCache),
+        tableColumns = tableColumns,
+    )
+}
 
-    override fun search(query: String): Flow<List<Any>> = flow { emit(FlowSearch.search(document, query)) }.flowOn(Dispatchers.Default)
+private class ImageBitmapCache : LruCache<String, ImageBitmap>(maxBytes()) {
+    override fun sizeOf(key: String, value: ImageBitmap): Int =
+        value.width * value.height * ImageCacheSize.BYTES_PER_PIXEL
 
-    override suspend fun reveal(hit: Any) {
-        hit as FlowMatch
-        val visible = listState.layoutInfo.visibleItemsInfo.firstOrNull { it.index == hit.blockIndex }
-        // Matches already comfortably on screen do not need a jump.
-        if (visible != null && visible.offset > viewportHeight * 0.1f && visible.offset + minOf(visible.size, 200) < viewportHeight * 0.85f) return
-        if (abs(hit.blockIndex - listState.firstVisibleItemIndex) > 60) listState.scrollToItem(hit.blockIndex) else listState.animateScrollToItem(hit.blockIndex)
-        if (hit.blockIndex > 0 && listState.canScrollBackward) listState.animateScrollBy(-viewportHeight * 0.25f)
+    private companion object {
+        fun maxBytes(): Int {
+            val heapShare = Runtime.getRuntime().maxMemory() / ImageCacheSize.HEAP_SHARE_DIVISOR
+            return heapShare.coerceAtMost(ImageCacheSize.MAX_BYTES).toInt()
+        }
+    }
+}
+
+// Two-finger pinch reflows text; consumed in the Initial pass so the list does not scroll meanwhile.
+private fun Modifier.pinchToScaleText(currentScale: () -> Float, onScale: (Float) -> Unit): Modifier =
+    pointerInput(Unit) {
+        awaitEachGesture {
+            awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
+            do {
+                val event = awaitPointerEvent(PointerEventPass.Initial)
+                if (event.changes.count { it.pressed } >= 2) {
+                    snappedScale(currentScale(), event.calculateZoom())?.let(onScale)
+                    event.changes.forEach { it.consume() }
+                }
+            } while (event.changes.any { it.pressed })
+        }
     }
 
-    override suspend fun scrollToItem(index: Int, animate: Boolean) {
-        if (animate && abs(index - listState.firstVisibleItemIndex) < 60) listState.animateScrollToItem(index) else listState.scrollToItem(index)
-    }
-
-    override suspend fun zoomBy(factor: Float) = zoomTo(getScale() * factor)
-
-    override suspend fun zoomTo(zoom: Float) = setScale(zoom.coerceIn(MIN_TEXT_SCALE, MAX_TEXT_SCALE))
+private fun snappedScale(current: Float, zoom: Float): Float? {
+    if (zoom == 1f) return null
+    val next = TextScale.clamp(current * zoom)
+    if (abs(next - current) <= FlowViewerSpec.MIN_SCALE_CHANGE) return null
+    return (next * FlowViewerSpec.SCALE_STEPS).roundToInt() / FlowViewerSpec.SCALE_STEPS.toFloat()
 }

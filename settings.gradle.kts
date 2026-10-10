@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "DocViewer"
-include(":docviewer-core", ":docviewer", ":sample")
+include(":docviewer-core", ":docviewer", ":sample", ":konsist")

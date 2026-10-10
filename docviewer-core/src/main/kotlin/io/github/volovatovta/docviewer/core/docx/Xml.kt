@@ -4,19 +4,25 @@ import org.xml.sax.Attributes
 import org.xml.sax.InputSource
 import org.xml.sax.helpers.DefaultHandler
 import java.io.InputStream
+import javax.xml.XMLConstants
 import javax.xml.parsers.SAXParserFactory
 
 internal object Xml {
+
+    // Hardening switches; not every platform parser knows all of them, and Android's Expat never loads entities anyway.
+    private val secureFeatures = mapOf(
+        // OOXML parts never carry a DOCTYPE, so rejecting it also stops entity-expansion bombs on the JVM.
+        "http://apache.org/xml/features/disallow-doctype-decl" to true,
+        XMLConstants.FEATURE_SECURE_PROCESSING to true,
+        "http://xml.org/sax/features/external-general-entities" to false,
+        "http://xml.org/sax/features/external-parameter-entities" to false,
+        "http://apache.org/xml/features/nonvalidating/load-external-dtd" to false,
+    )
+
     private val factory: SAXParserFactory by lazy {
         SAXParserFactory.newInstance().apply {
             isNamespaceAware = true
-            // Not every platform parser knows these features; Android's Expat never resolves external entities anyway.
-            // OOXML parts never carry a DOCTYPE, so rejecting it also stops entity-expansion bombs on the JVM.
-            runCatching { setFeature("http://apache.org/xml/features/disallow-doctype-decl", true) }
-            runCatching { setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true) }
-            runCatching { setFeature("http://xml.org/sax/features/external-general-entities", false) }
-            runCatching { setFeature("http://xml.org/sax/features/external-parameter-entities", false) }
-            runCatching { setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false) }
+            secureFeatures.forEach { (feature, enabled) -> runCatching { setFeature(feature, enabled) } }
         }
     }
 
@@ -29,24 +35,25 @@ internal fun localName(localName: String?, qName: String?): String =
     if (!localName.isNullOrEmpty()) localName else qName.orEmpty().substringAfter(':')
 
 // Attribute lookup by local name: transitional and strict OOXML use different namespace URIs.
-internal operator fun Attributes.get(local: String): String? {
-    for (i in 0 until length) {
-        val name = getLocalName(i).let { if (it.isNullOrEmpty()) getQName(i).substringAfter(':') else it }
-        if (name == local) return getValue(i)
-    }
-    return null
-}
+internal operator fun Attributes.get(local: String): String? =
+    (0 until length).firstOrNull { localName(getLocalName(it), getQName(it)) == local }?.let(::getValue)
 
-internal fun Attributes.int(local: String): Int? = this[local]?.trim()?.toIntOrNull() ?: this[local]?.trim()?.toDoubleOrNull()?.toInt()
+internal fun Attributes.int(local: String): Int? {
+    val value = this[local]?.trim() ?: return null
+    return value.toIntOrNull() ?: value.toDoubleOrNull()?.toInt()
+}
 
 // OOXML on/off attribute: a missing w:val means "on".
-internal fun Attributes.onOff(): Boolean = when (this["val"]?.lowercase()) {
-    null, "1", "true", "on" -> true
-    else -> false
-}
+internal fun Attributes.onOff(): Boolean = this["val"]?.lowercase().let { it == null || it in ON_VALUES }
+
+internal fun Attributes.isOn(local: String): Boolean = this[local]?.lowercase() in ON_VALUES
 
 internal fun parseHexColor(value: String?): Int? {
-    val v = value?.trim()?.removePrefix("#") ?: return null
-    if (v.length != 6 || v.equals("auto", ignoreCase = true)) return null
-    return v.toIntOrNull(16)?.let { it or 0xFF000000.toInt() }
+    val hex = value?.trim()?.removePrefix("#")?.takeIf { it.length == HEX_COLOR_LENGTH } ?: return null
+    return hex.toIntOrNull(HEX_RADIX)?.let { it or OPAQUE_ALPHA }
 }
+
+private val ON_VALUES = setOf("1", "true", "on")
+private const val HEX_COLOR_LENGTH = 6
+private const val HEX_RADIX = 16
+private const val OPAQUE_ALPHA = 0xFF000000.toInt()

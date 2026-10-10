@@ -1,6 +1,11 @@
 import io.gitlab.arturbosch.detekt.Detekt
 import io.gitlab.arturbosch.detekt.extensions.DetektExtension
 
+buildscript {
+    // dependency-analysis ships a newer kotlin-bom that would upgrade the Kotlin compiler client under KGP.
+    configurations.classpath { exclude(group = "org.jetbrains.kotlin", module = "kotlin-bom") }
+}
+
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false
@@ -9,6 +14,55 @@ plugins {
     alias(libs.plugins.kotlin.compose) apply false
     alias(libs.plugins.maven.publish) apply false
     alias(libs.plugins.detekt)
+    alias(libs.plugins.kover)
+    alias(libs.plugins.binary.compatibility.validator)
+    alias(libs.plugins.dependency.analysis)
+    alias(libs.plugins.module.graph.assert)
+}
+
+// Raise when coverage grows; a pull request that lowers it must explain why.
+val minimumLineCoverage = 50
+
+// Public API dumps live in <module>/api; `apiCheck` (part of `check`) fails on unintended changes.
+apiValidation {
+    ignoredProjects += listOf("sample", "konsist")
+    nonPublicMarkers += "kotlin.PublishedApi"
+}
+
+// Merged unit-test coverage: `./gradlew koverHtmlReport` for humans, `koverXmlReport` for CI.
+dependencies {
+    kover(project(":docviewer-core"))
+    kover(project(":docviewer"))
+}
+
+kover {
+    reports {
+        // Measures logic, not pixels: composables and generated classes are excluded.
+        filters {
+            excludes {
+                annotatedBy("androidx.compose.runtime.Composable")
+                classes("*ComposableSingletons*", "*.BuildConfig", "*.R", "*.R$*")
+            }
+        }
+        verify {
+            rule("line coverage must not fall below the baseline") {
+                minBound(minimumLineCoverage)
+            }
+        }
+    }
+}
+
+// Module dependency rules, checked by `./gradlew assertModuleGraph`.
+moduleGraphAssert {
+    maxHeight = 3
+    allowed = arrayOf(
+        ":sample -> :docviewer",
+        ":docviewer -> :docviewer-core",
+    )
+    restricted = arrayOf(
+        // The parsers stay a pure JVM library that anyone can use without Android.
+        ":docviewer-core -X> :.*",
+    )
 }
 
 allprojects {
@@ -18,6 +72,7 @@ allprojects {
 
 subprojects {
     apply(plugin = "io.gitlab.arturbosch.detekt")
+    if (name in setOf("docviewer-core", "docviewer")) apply(plugin = "org.jetbrains.kotlinx.kover")
 
     extensions.configure<DetektExtension> {
         buildUponDefaultConfig = true

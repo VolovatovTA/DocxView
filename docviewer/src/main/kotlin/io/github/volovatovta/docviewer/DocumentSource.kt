@@ -1,11 +1,12 @@
 package io.github.volovatovta.docviewer
 
 import android.net.Uri
+import androidx.core.net.toUri
 import io.github.volovatovta.docviewer.core.model.DocumentFormat
 import java.io.File
 import java.io.InputStream
 
-// Where the document comes from. `format` forces a parser instead of detecting it from the content.
+/** Where the document comes from; `format` forces a parser instead of detecting it from the content. */
 public sealed class DocumentSource {
     public abstract val format: DocumentFormat?
 
@@ -32,7 +33,8 @@ public sealed class DocumentSource {
         override val format: DocumentFormat? = null,
     ) : DocumentSource() {
         // Same array instance = same document, so an inline `DocumentSource.bytes(b)` does not reload on recomposition.
-        override fun equals(other: Any?): Boolean = other is FromBytes && other.bytes === bytes && other.fileName == fileName && other.format == format
+        override fun equals(other: Any?): Boolean =
+            other is FromBytes && other.bytes === bytes && other.fileName == fileName && other.format == format
 
         override fun hashCode(): Int = System.identityHashCode(bytes) * 31 + (fileName?.hashCode() ?: 0)
     }
@@ -49,6 +51,10 @@ public sealed class DocumentSource {
     }
 
     public companion object {
+        private const val ASSET_PREFIX = "asset:///"
+        private val WebPrefixes = listOf("http://", "https://")
+        private val UriPrefixes = listOf("content://", "file://", "android.resource://")
+
         @JvmStatic
         @JvmOverloads
         public fun uri(uri: Uri, format: DocumentFormat? = null): DocumentSource = FromUri(uri, format = format)
@@ -72,9 +78,9 @@ public sealed class DocumentSource {
         // Parses the dv_source XML attribute: asset:///, file://, content://, http(s):// or a plain path.
         @JvmStatic
         public fun parse(value: String): DocumentSource = when {
-            value.startsWith("asset:///") -> FromAsset(value.removePrefix("asset:///"))
-            value.startsWith("http://") || value.startsWith("https://") -> FromUrl(value)
-            value.startsWith("content://") || value.startsWith("file://") || value.startsWith("android.resource://") -> FromUri(Uri.parse(value))
+            value.startsWith(ASSET_PREFIX) -> FromAsset(value.removePrefix(ASSET_PREFIX))
+            WebPrefixes.any { value.startsWith(it) } -> FromUrl(value)
+            UriPrefixes.any { value.startsWith(it) } -> FromUri(value.toUri())
             else -> FromFile(File(value))
         }
     }

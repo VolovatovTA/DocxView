@@ -41,25 +41,25 @@ class PdfViewerUiTest {
     fun book41Pages() = fullScenario(TestPdf.own().single())
 
     @Test
-    fun twoThousandPages() = fullScenario(generated("gen-2000-pages"))
+    fun twoThousandPages() = fullScenario(GeneratedPdfs.named("gen-2000-pages"))
 
     @Test
-    fun giantPoster() = fullScenario(generated("gen-giant-poster"))
+    fun giantPoster() = fullScenario(GeneratedPdfs.named("gen-giant-poster"))
 
     @Test
-    fun receipt() = fullScenario(generated("gen-receipt"))
+    fun receipt() = fullScenario(GeneratedPdfs.named("gen-receipt"))
 
     @Test
-    fun mixedPageSizes() = fullScenario(generated("gen-mixed-sizes"))
+    fun mixedPageSizes() = fullScenario(GeneratedPdfs.named("gen-mixed-sizes"))
 
     @Test
-    fun vectorHeavy() = fullScenario(generated("gen-vector-heavy"))
+    fun vectorHeavy() = fullScenario(GeneratedPdfs.named("gen-vector-heavy"))
 
     @Test
     fun tracemonkeyFromCorpus() {
         val pdf = TestPdf.corpus().firstOrNull { it.name == "tracemonkey" }
         assumeTrue("run tools/fetch-test-pdfs.sh first", pdf != null)
-        fullScenario(pdf!!)
+        pdf?.let(::fullScenario)
     }
 
     @Test
@@ -94,9 +94,8 @@ class PdfViewerUiTest {
     fun truncatedFileDoesNotCrash() {
         show(TestPdf.truncated())
         awaitStatus { it is DocumentStatus.Ready || it is DocumentStatus.Failed }
-        val status = state.status
-        log("truncated-book", "status=${status::class.simpleName} pages=${state.pageCount}")
-        if (status is DocumentStatus.Ready) {
+        log("truncated-book", "status=${state.status::class.simpleName} pages=${state.pageCount}")
+        if (state.status is DocumentStatus.Ready) {
             rule.runOnIdle { state.goToPage(state.pageCount - 1) }
             rule.waitForIdle()
             settle()
@@ -108,44 +107,61 @@ class PdfViewerUiTest {
         show(pdf)
         awaitStatus { it is DocumentStatus.Ready || it is DocumentStatus.Failed }
         (state.status as? DocumentStatus.Failed)?.let { fail("${pdf.name} failed to open: ${it.error}") }
-        val count = state.pageCount
         settle()
         shot(pdf.name, "open")
+        val zoomAfterPinch = exerciseGestures(pdf)
+        goToLastPage(pdf)
+        searchIfSupported(pdf)
+        val hits = state.searchResultCount
+        log(pdf.name, "ui=ok pages=${state.pageCount} zoomAfterPinch=$zoomAfterPinch searchHits=$hits")
+    }
 
+    // Fling, double tap, pan, pinch and double tap back, checking the zoom after each step.
+    private fun exerciseGestures(pdf: TestPdf): Float {
         rule.onRoot().performTouchInput { swipeUp(durationMillis = 150) }
         rule.waitForIdle()
-
         rule.onRoot().performTouchInput { doubleClick(center) }
-        rule.waitUntil(5_000) { state.zoom > 1.5f }
+        rule.waitUntil(GESTURE_TIMEOUT_MS) { state.zoom > 1.5f }
         rule.onRoot().performTouchInput { swipe(center, center + Offset(-300f, -400f), 300) }
         settle()
         shot(pdf.name, "zoomed")
 
         val before = state.zoom
         rule.onRoot().performTouchInput {
-            pinch(center - Offset(40f, 0f), center - Offset(240f, 0f), center + Offset(40f, 0f), center + Offset(240f, 0f), 400)
+            pinch(
+                start0 = center - Offset(40f, 0f),
+                end0 = center - Offset(240f, 0f),
+                start1 = center + Offset(40f, 0f),
+                end1 = center + Offset(240f, 0f),
+                durationMillis = 400,
+            )
         }
         rule.waitForIdle()
-        assertTrue(state.zoom > before, "pinch-out did not zoom in (${state.zoom} <= $before)")
-        assertTrue(state.zoom <= DocumentViewerConfig().maxZoom + 0.01f)
+        val afterPinch = state.zoom
+        assertTrue(afterPinch > before, "pinch-out did not zoom in ($afterPinch <= $before)")
+        assertTrue(afterPinch <= DocumentViewerConfig().maxZoom + 0.01f)
 
         rule.onRoot().performTouchInput { doubleClick(center) }
-        rule.waitUntil(5_000) { state.zoom < 1.01f }
+        rule.waitUntil(GESTURE_TIMEOUT_MS) { state.zoom < 1.01f }
+        return afterPinch
+    }
 
-        rule.runOnIdle { state.goToPage(count - 1) }
-        rule.waitUntil(20_000) { state.currentPage >= count - 2 }
+    private fun goToLastPage(pdf: TestPdf) {
+        val last = state.pageCount - 1
+        rule.runOnIdle { state.goToPage(last) }
+        rule.waitUntil(NAVIGATION_TIMEOUT_MS) { state.currentPage >= last - 1 }
         settle()
         shot(pdf.name, "last-page")
+    }
 
-        val word = pdf.searchWord
-        if (word != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-            rule.runOnIdle { state.search(word) }
-            rule.waitUntil(120_000) { !state.isSearching && state.searchResultCount >= pdf.minHits }
-            rule.runOnIdle { state.nextSearchResult() }
-            settle()
-            shot(pdf.name, "search")
-        }
-        log(pdf.name, "ui=ok pages=$count zoomAfterPinch=$before->${state.zoom} searchHits=${state.searchResultCount}")
+    private fun searchIfSupported(pdf: TestPdf) {
+        val word = pdf.searchWord ?: return
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM) return
+        rule.runOnIdle { state.search(word) }
+        rule.waitUntil(SEARCH_TIMEOUT_MS) { !state.isSearching && state.searchResultCount >= pdf.minHits }
+        rule.runOnIdle { state.nextSearchResult() }
+        settle()
+        shot(pdf.name, "search")
     }
 
     private fun show(pdf: TestPdf) {
@@ -153,7 +169,8 @@ class PdfViewerUiTest {
         rule.setContent { DocumentViewer(DocumentSource.FromFile(file), Modifier.fillMaxSize(), state = state) }
     }
 
-    private fun awaitStatus(condition: (DocumentStatus) -> Boolean) = rule.waitUntil(90_000) { condition(state.status) }
+    private fun awaitStatus(condition: (DocumentStatus) -> Boolean) =
+        rule.waitUntil(OPEN_TIMEOUT_MS) { condition(state.status) }
 
     // Tiles render after a short debounce on the PDF thread, which the test clock does not drive by itself.
     private fun settle() {
@@ -166,10 +183,19 @@ class PdfViewerUiTest {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
         val dir = File(TestPdf.context.getExternalFilesDir(null), "screens").apply { mkdirs() }
         val bitmap = rule.onRoot().captureToImage().asAndroidBitmap()
-        File(dir, "api${Build.VERSION.SDK_INT}-$name-$step.png").outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        File(dir, "api${Build.VERSION.SDK_INT}-$name-$step.png").outputStream().use {
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
+        }
     }
 
-    private fun log(name: String, message: String) = Log.i("DVTEST", "UI|api=${Build.VERSION.SDK_INT}|pdf=$name|$message")
+    private fun log(name: String, message: String) {
+        Log.i("DVTEST", "UI|api=${Build.VERSION.SDK_INT}|pdf=$name|$message")
+    }
 
-    private fun generated(name: String) = TestPdf.generated().single { it.name == name }
+    private companion object {
+        const val GESTURE_TIMEOUT_MS = 5_000L
+        const val NAVIGATION_TIMEOUT_MS = 20_000L
+        const val OPEN_TIMEOUT_MS = 90_000L
+        const val SEARCH_TIMEOUT_MS = 120_000L
+    }
 }

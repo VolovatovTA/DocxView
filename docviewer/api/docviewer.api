@@ -1,0 +1,409 @@
+public final class io/github/volovatovta/docviewer/DocumentInfo {
+	public static final field $stable I
+	public fun <init> (Lio/github/volovatovta/docviewer/core/model/DocumentFormat;Ljava/lang/String;Ljava/lang/String;IJZ)V
+	public final fun component1 ()Lio/github/volovatovta/docviewer/core/model/DocumentFormat;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()I
+	public final fun component5 ()J
+	public final fun component6 ()Z
+	public final fun copy (Lio/github/volovatovta/docviewer/core/model/DocumentFormat;Ljava/lang/String;Ljava/lang/String;IJZ)Lio/github/volovatovta/docviewer/DocumentInfo;
+	public static synthetic fun copy$default (Lio/github/volovatovta/docviewer/DocumentInfo;Lio/github/volovatovta/docviewer/core/model/DocumentFormat;Ljava/lang/String;Ljava/lang/String;IJZILjava/lang/Object;)Lio/github/volovatovta/docviewer/DocumentInfo;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFileName ()Ljava/lang/String;
+	public final fun getFormat ()Lio/github/volovatovta/docviewer/core/model/DocumentFormat;
+	public final fun getItemCount ()I
+	public final fun getSizeBytes ()J
+	public final fun getTitle ()Ljava/lang/String;
+	public fun hashCode ()I
+	public final fun isSearchSupported ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class io/github/volovatovta/docviewer/DocumentSource {
+	public static final field $stable I
+	public static final field Companion Lio/github/volovatovta/docviewer/DocumentSource$Companion;
+	public static final fun asset (Ljava/lang/String;)Lio/github/volovatovta/docviewer/DocumentSource;
+	public static final fun asset (Ljava/lang/String;Lio/github/volovatovta/docviewer/core/model/DocumentFormat;)Lio/github/volovatovta/docviewer/DocumentSource;
+	public static final fun bytes ([B)Lio/github/volovatovta/docviewer/DocumentSource;
+	public static final fun bytes ([BLjava/lang/String;)Lio/github/volovatovta/docviewer/DocumentSource;
+	public static final fun file (Ljava/io/File;)Lio/github/volovatovta/docviewer/DocumentSource;
+	public static final fun file (Ljava/io/File;Lio/github/volovatovta/docviewer/core/model/DocumentFormat;)Lio/github/volovatovta/docviewer/DocumentSource;
+	public abstract fun getFormat ()Lio/github/volovatovta/docviewer/core/model/DocumentFormat;
+	public static final fun parse (Ljava/lang/String;)Lio/github/volovatovta/docviewer/DocumentSource;
+	public static final fun uri (Landroid/net/Uri;)Lio/github/volovatovta/docviewer/DocumentSource;
+	public static final fun uri (Landroid/net/Uri;Lio/github/volovatovta/docviewer/core/model/DocumentFormat;)Lio/github/volovatovta/docviewer/DocumentSource;
+	public static final fun url (Ljava/lang/String;)Lio/github/volovatovta/docviewer/DocumentSource;
+	public static final fun url (Ljava/lang/String;Ljava/util/Map;)Lio/github/volovatovta/docviewer/DocumentSource;
+}
+
+public final class io/github/volovatovta/docviewer/DocumentSource$Companion {
+	public final fun asset (Ljava/lang/String;)Lio/github/volovatovta/docviewer/DocumentSource;
+	public final fun asset (Ljava/lang/String;Lio/github/volovatovta/docviewer/core/model/DocumentFormat;)Lio/github/volovatovta/docviewer/DocumentSource;
+	public static synthetic fun asset$default (Lio/github/volovatovta/docviewer/DocumentSource$Companion;Ljava/lang/String;Lio/github/volovatovta/docviewer/core/model/DocumentFormat;ILjava/lang/Object;)Lio/github/volovatovta/docviewer/DocumentSource;
+	public final fun bytes ([B)Lio/github/volovatovta/docviewer/DocumentSource;
+	public final fun bytes ([BLjava/lang/String;)Lio/github/volovatovta/docviewer/DocumentSource;
+	public static synthetic fun bytes$default (Lio/github/volovatovta/docviewer/DocumentSource$Companion;[BLjava/lang/String;ILjava/lang/Object;)Lio/github/volovatovta/docviewer/DocumentSource;
+	public final fun file (Ljava/io/File;)Lio/github/volovatovta/docviewer/DocumentSource;
+	public final fun file (Ljava/io/File;Lio/github/volovatovta/docviewer/core/model/DocumentFormat;)Lio/github/volovatovta/docviewer/DocumentSource;
+	public static synthetic fun file$default (Lio/github/volovatovta/docviewer/DocumentSource$Companion;Ljava/io/File;Lio/github/volovatovta/docviewer/core/model/DocumentFormat;ILjava/lang/Object;)Lio/github/volovatovta/docviewer/DocumentSource;
+	public final fun parse (Ljava/lang/String;)Lio/github/volovatovta/docviewer/DocumentSource;
+	public final fun uri (Landroid/net/Uri;)Lio/github/volovatovta/docviewer/DocumentSource;
+	public final fun uri (Landroid/net/Uri;Lio/github/volovatovta/docviewer/core/model/DocumentFormat;)Lio/github/volovatovta/docviewer/DocumentSource;
+	public static synthetic fun uri$default (Lio/github/volovatovta/docviewer/DocumentSource$Companion;Landroid/net/Uri;Lio/github/volovatovta/docviewer/core/model/DocumentFormat;ILjava/lang/Object;)Lio/github/volovatovta/docviewer/DocumentSource;
+	public final fun url (Ljava/lang/String;)Lio/github/volovatovta/docviewer/DocumentSource;
+	public final fun url (Ljava/lang/String;Ljava/util/Map;)Lio/github/volovatovta/docviewer/DocumentSource;
+	public static synthetic fun url$default (Lio/github/volovatovta/docviewer/DocumentSource$Companion;Ljava/lang/String;Ljava/util/Map;ILjava/lang/Object;)Lio/github/volovatovta/docviewer/DocumentSource;
+}
+
+public final class io/github/volovatovta/docviewer/DocumentSource$FromAsset : io/github/volovatovta/docviewer/DocumentSource {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;Lio/github/volovatovta/docviewer/core/model/DocumentFormat;)V
+	public synthetic fun <init> (Ljava/lang/String;Lio/github/volovatovta/docviewer/core/model/DocumentFormat;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lio/github/volovatovta/docviewer/core/model/DocumentFormat;
+	public final fun copy (Ljava/lang/String;Lio/github/volovatovta/docviewer/core/model/DocumentFormat;)Lio/github/volovatovta/docviewer/DocumentSource$FromAsset;
+	public static synthetic fun copy$default (Lio/github/volovatovta/docviewer/DocumentSource$FromAsset;Ljava/lang/String;Lio/github/volovatovta/docviewer/core/model/DocumentFormat;ILjava/lang/Object;)Lio/github/volovatovta/docviewer/DocumentSource$FromAsset;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getFormat ()Lio/github/volovatovta/docviewer/core/model/DocumentFormat;
+	public final fun getPath ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/volovatovta/docviewer/DocumentSource$FromBytes : io/github/volovatovta/docviewer/DocumentSource {
+	public static final field $stable I
+	public fun <init> ([BLjava/lang/String;Lio/github/volovatovta/docviewer/core/model/DocumentFormat;)V
+	public synthetic fun <init> ([BLjava/lang/String;Lio/github/volovatovta/docviewer/core/model/DocumentFormat;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBytes ()[B
+	public final fun getFileName ()Ljava/lang/String;
+	public fun getFormat ()Lio/github/volovatovta/docviewer/core/model/DocumentFormat;
+	public fun hashCode ()I
+}
+
+public final class io/github/volovatovta/docviewer/DocumentSource$FromFile : io/github/volovatovta/docviewer/DocumentSource {
+	public static final field $stable I
+	public fun <init> (Ljava/io/File;Lio/github/volovatovta/docviewer/core/model/DocumentFormat;)V
+	public synthetic fun <init> (Ljava/io/File;Lio/github/volovatovta/docviewer/core/model/DocumentFormat;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/io/File;
+	public final fun component2 ()Lio/github/volovatovta/docviewer/core/model/DocumentFormat;
+	public final fun copy (Ljava/io/File;Lio/github/volovatovta/docviewer/core/model/DocumentFormat;)Lio/github/volovatovta/docviewer/DocumentSource$FromFile;
+	public static synthetic fun copy$default (Lio/github/volovatovta/docviewer/DocumentSource$FromFile;Ljava/io/File;Lio/github/volovatovta/docviewer/core/model/DocumentFormat;ILjava/lang/Object;)Lio/github/volovatovta/docviewer/DocumentSource$FromFile;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFile ()Ljava/io/File;
+	public fun getFormat ()Lio/github/volovatovta/docviewer/core/model/DocumentFormat;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/volovatovta/docviewer/DocumentSource$FromStream : io/github/volovatovta/docviewer/DocumentSource {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;Lio/github/volovatovta/docviewer/core/model/DocumentFormat;Lio/github/volovatovta/docviewer/DocumentSource$StreamProvider;)V
+	public synthetic fun <init> (Ljava/lang/String;Lio/github/volovatovta/docviewer/core/model/DocumentFormat;Lio/github/volovatovta/docviewer/DocumentSource$StreamProvider;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getFileName ()Ljava/lang/String;
+	public fun getFormat ()Lio/github/volovatovta/docviewer/core/model/DocumentFormat;
+	public final fun getOpen ()Lio/github/volovatovta/docviewer/DocumentSource$StreamProvider;
+}
+
+public final class io/github/volovatovta/docviewer/DocumentSource$FromUri : io/github/volovatovta/docviewer/DocumentSource {
+	public static final field $stable I
+	public fun <init> (Landroid/net/Uri;Ljava/lang/String;Ljava/lang/String;Lio/github/volovatovta/docviewer/core/model/DocumentFormat;)V
+	public synthetic fun <init> (Landroid/net/Uri;Ljava/lang/String;Ljava/lang/String;Lio/github/volovatovta/docviewer/core/model/DocumentFormat;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Landroid/net/Uri;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Lio/github/volovatovta/docviewer/core/model/DocumentFormat;
+	public final fun copy (Landroid/net/Uri;Ljava/lang/String;Ljava/lang/String;Lio/github/volovatovta/docviewer/core/model/DocumentFormat;)Lio/github/volovatovta/docviewer/DocumentSource$FromUri;
+	public static synthetic fun copy$default (Lio/github/volovatovta/docviewer/DocumentSource$FromUri;Landroid/net/Uri;Ljava/lang/String;Ljava/lang/String;Lio/github/volovatovta/docviewer/core/model/DocumentFormat;ILjava/lang/Object;)Lio/github/volovatovta/docviewer/DocumentSource$FromUri;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFileName ()Ljava/lang/String;
+	public fun getFormat ()Lio/github/volovatovta/docviewer/core/model/DocumentFormat;
+	public final fun getMimeType ()Ljava/lang/String;
+	public final fun getUri ()Landroid/net/Uri;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/volovatovta/docviewer/DocumentSource$FromUrl : io/github/volovatovta/docviewer/DocumentSource {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;Ljava/util/Map;Lio/github/volovatovta/docviewer/core/model/DocumentFormat;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/Map;Lio/github/volovatovta/docviewer/core/model/DocumentFormat;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/Map;
+	public final fun component3 ()Lio/github/volovatovta/docviewer/core/model/DocumentFormat;
+	public final fun copy (Ljava/lang/String;Ljava/util/Map;Lio/github/volovatovta/docviewer/core/model/DocumentFormat;)Lio/github/volovatovta/docviewer/DocumentSource$FromUrl;
+	public static synthetic fun copy$default (Lio/github/volovatovta/docviewer/DocumentSource$FromUrl;Ljava/lang/String;Ljava/util/Map;Lio/github/volovatovta/docviewer/core/model/DocumentFormat;ILjava/lang/Object;)Lio/github/volovatovta/docviewer/DocumentSource$FromUrl;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getFormat ()Lio/github/volovatovta/docviewer/core/model/DocumentFormat;
+	public final fun getHeaders ()Ljava/util/Map;
+	public final fun getUrl ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class io/github/volovatovta/docviewer/DocumentSource$StreamProvider {
+	public abstract fun open ()Ljava/io/InputStream;
+}
+
+public abstract interface class io/github/volovatovta/docviewer/DocumentStatus {
+}
+
+public final class io/github/volovatovta/docviewer/DocumentStatus$Failed : io/github/volovatovta/docviewer/DocumentStatus {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/Throwable;)V
+	public final fun component1 ()Ljava/lang/Throwable;
+	public final fun copy (Ljava/lang/Throwable;)Lio/github/volovatovta/docviewer/DocumentStatus$Failed;
+	public static synthetic fun copy$default (Lio/github/volovatovta/docviewer/DocumentStatus$Failed;Ljava/lang/Throwable;ILjava/lang/Object;)Lio/github/volovatovta/docviewer/DocumentStatus$Failed;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getError ()Ljava/lang/Throwable;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/volovatovta/docviewer/DocumentStatus$Idle : io/github/volovatovta/docviewer/DocumentStatus {
+	public static final field $stable I
+	public static final field INSTANCE Lio/github/volovatovta/docviewer/DocumentStatus$Idle;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/volovatovta/docviewer/DocumentStatus$Loading : io/github/volovatovta/docviewer/DocumentStatus {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/Float;)V
+	public synthetic fun <init> (Ljava/lang/Float;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/Float;
+	public final fun copy (Ljava/lang/Float;)Lio/github/volovatovta/docviewer/DocumentStatus$Loading;
+	public static synthetic fun copy$default (Lio/github/volovatovta/docviewer/DocumentStatus$Loading;Ljava/lang/Float;ILjava/lang/Object;)Lio/github/volovatovta/docviewer/DocumentStatus$Loading;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getProgress ()Ljava/lang/Float;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/volovatovta/docviewer/DocumentStatus$PasswordRequired : io/github/volovatovta/docviewer/DocumentStatus {
+	public static final field $stable I
+	public fun <init> (Z)V
+	public final fun component1 ()Z
+	public final fun copy (Z)Lio/github/volovatovta/docviewer/DocumentStatus$PasswordRequired;
+	public static synthetic fun copy$default (Lio/github/volovatovta/docviewer/DocumentStatus$PasswordRequired;ZILjava/lang/Object;)Lio/github/volovatovta/docviewer/DocumentStatus$PasswordRequired;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getWrongPassword ()Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/volovatovta/docviewer/DocumentStatus$Ready : io/github/volovatovta/docviewer/DocumentStatus {
+	public static final field $stable I
+	public fun <init> (Lio/github/volovatovta/docviewer/DocumentInfo;)V
+	public final fun component1 ()Lio/github/volovatovta/docviewer/DocumentInfo;
+	public final fun copy (Lio/github/volovatovta/docviewer/DocumentInfo;)Lio/github/volovatovta/docviewer/DocumentStatus$Ready;
+	public static synthetic fun copy$default (Lio/github/volovatovta/docviewer/DocumentStatus$Ready;Lio/github/volovatovta/docviewer/DocumentInfo;ILjava/lang/Object;)Lio/github/volovatovta/docviewer/DocumentStatus$Ready;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getInfo ()Lio/github/volovatovta/docviewer/DocumentInfo;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/volovatovta/docviewer/DocumentView : android/widget/FrameLayout {
+	public static final field $stable I
+	public fun <init> (Landroid/content/Context;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
+	public synthetic fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun clearSearch ()V
+	public final fun getColors ()Lio/github/volovatovta/docviewer/DocumentViewerColors;
+	public final fun getConfig ()Lio/github/volovatovta/docviewer/DocumentViewerConfig;
+	public final fun getCurrentPage ()I
+	public final fun getPageCount ()I
+	public final fun getSource ()Lio/github/volovatovta/docviewer/DocumentSource;
+	public final fun getState ()Lio/github/volovatovta/docviewer/DocumentViewerState;
+	public final fun getStatus ()Lio/github/volovatovta/docviewer/DocumentStatus;
+	public final fun getTheme ()Lio/github/volovatovta/docviewer/DocumentView$Theme;
+	public final fun goToPage (I)V
+	public final fun nextSearchResult ()V
+	public final fun previousSearchResult ()V
+	public final fun resetZoom ()V
+	public final fun retry ()V
+	public final fun search (Ljava/lang/String;)V
+	public final fun setAsset (Ljava/lang/String;)V
+	public final fun setAsset (Ljava/lang/String;Lio/github/volovatovta/docviewer/core/model/DocumentFormat;)V
+	public static synthetic fun setAsset$default (Lio/github/volovatovta/docviewer/DocumentView;Ljava/lang/String;Lio/github/volovatovta/docviewer/core/model/DocumentFormat;ILjava/lang/Object;)V
+	public final fun setColors (Lio/github/volovatovta/docviewer/DocumentViewerColors;)V
+	public final fun setConfig (Lio/github/volovatovta/docviewer/DocumentViewerConfig;)V
+	public final fun setFile (Ljava/io/File;)V
+	public final fun setFile (Ljava/io/File;Lio/github/volovatovta/docviewer/core/model/DocumentFormat;)V
+	public static synthetic fun setFile$default (Lio/github/volovatovta/docviewer/DocumentView;Ljava/io/File;Lio/github/volovatovta/docviewer/core/model/DocumentFormat;ILjava/lang/Object;)V
+	public final fun setListener (Lio/github/volovatovta/docviewer/DocumentViewListener;)V
+	public final fun setSource (Lio/github/volovatovta/docviewer/DocumentSource;)V
+	public final fun setTheme (Lio/github/volovatovta/docviewer/DocumentView$Theme;)V
+	public final fun setUri (Landroid/net/Uri;)V
+	public final fun setUri (Landroid/net/Uri;Lio/github/volovatovta/docviewer/core/model/DocumentFormat;)V
+	public static synthetic fun setUri$default (Lio/github/volovatovta/docviewer/DocumentView;Landroid/net/Uri;Lio/github/volovatovta/docviewer/core/model/DocumentFormat;ILjava/lang/Object;)V
+	public final fun setUrl (Ljava/lang/String;)V
+	public final fun setUrl (Ljava/lang/String;Ljava/util/Map;)V
+	public static synthetic fun setUrl$default (Lio/github/volovatovta/docviewer/DocumentView;Ljava/lang/String;Ljava/util/Map;ILjava/lang/Object;)V
+	public final fun submitPassword (Ljava/lang/String;)V
+	public final fun zoomIn ()V
+	public final fun zoomOut ()V
+}
+
+public final class io/github/volovatovta/docviewer/DocumentView$Theme : java/lang/Enum {
+	public static final field Auto Lio/github/volovatovta/docviewer/DocumentView$Theme;
+	public static final field Dark Lio/github/volovatovta/docviewer/DocumentView$Theme;
+	public static final field Light Lio/github/volovatovta/docviewer/DocumentView$Theme;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/volovatovta/docviewer/DocumentView$Theme;
+	public static fun values ()[Lio/github/volovatovta/docviewer/DocumentView$Theme;
+}
+
+public abstract interface class io/github/volovatovta/docviewer/DocumentViewListener {
+	public fun onLinkClicked (Ljava/lang/String;)Z
+	public fun onPageChanged (II)V
+	public fun onSearchResultsChanged (II)V
+	public fun onStatusChanged (Lio/github/volovatovta/docviewer/DocumentStatus;)V
+}
+
+public final class io/github/volovatovta/docviewer/DocumentViewListener$DefaultImpls {
+	public static fun onLinkClicked (Lio/github/volovatovta/docviewer/DocumentViewListener;Ljava/lang/String;)Z
+	public static fun onPageChanged (Lio/github/volovatovta/docviewer/DocumentViewListener;II)V
+	public static fun onSearchResultsChanged (Lio/github/volovatovta/docviewer/DocumentViewListener;II)V
+	public static fun onStatusChanged (Lio/github/volovatovta/docviewer/DocumentViewListener;Lio/github/volovatovta/docviewer/DocumentStatus;)V
+}
+
+public final class io/github/volovatovta/docviewer/DocumentViewerColors {
+	public static final field $stable I
+	public static final field DARK_PAGE_LUMINANCE F
+	public synthetic fun <init> (JJJJJJJJJJJJJJJLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-0d7_KjU ()J
+	public final fun component10-0d7_KjU ()J
+	public final fun component11-0d7_KjU ()J
+	public final fun component12-0d7_KjU ()J
+	public final fun component13-0d7_KjU ()J
+	public final fun component14-0d7_KjU ()J
+	public final fun component15-0d7_KjU ()J
+	public final fun component2-0d7_KjU ()J
+	public final fun component3-0d7_KjU ()J
+	public final fun component4-0d7_KjU ()J
+	public final fun component5-0d7_KjU ()J
+	public final fun component6-0d7_KjU ()J
+	public final fun component7-0d7_KjU ()J
+	public final fun component8-0d7_KjU ()J
+	public final fun component9-0d7_KjU ()J
+	public final fun copy-sQnm1Ko (JJJJJJJJJJJJJJJ)Lio/github/volovatovta/docviewer/DocumentViewerColors;
+	public static synthetic fun copy-sQnm1Ko$default (Lio/github/volovatovta/docviewer/DocumentViewerColors;JJJJJJJJJJJJJJJILjava/lang/Object;)Lio/github/volovatovta/docviewer/DocumentViewerColors;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAccent-0d7_KjU ()J
+	public final fun getBackground-0d7_KjU ()J
+	public final fun getCurrentSearchMatch-0d7_KjU ()J
+	public final fun getLink-0d7_KjU ()J
+	public final fun getOnAccent-0d7_KjU ()J
+	public final fun getOnOverlay-0d7_KjU ()J
+	public final fun getOverlay-0d7_KjU ()J
+	public final fun getPage-0d7_KjU ()J
+	public final fun getScrollbar-0d7_KjU ()J
+	public final fun getSearchMatch-0d7_KjU ()J
+	public final fun getSecondaryText-0d7_KjU ()J
+	public final fun getStripe-0d7_KjU ()J
+	public final fun getTableBorder-0d7_KjU ()J
+	public final fun getTableHeader-0d7_KjU ()J
+	public final fun getText-0d7_KjU ()J
+	public fun hashCode ()I
+	public final fun isDark ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/volovatovta/docviewer/DocumentViewerConfig {
+	public static final field $stable I
+	public synthetic fun <init> (FFFJFZZZZLio/github/volovatovta/docviewer/core/CsvOptions;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (FFFJFZZZZLio/github/volovatovta/docviewer/core/CsvOptions;ZLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()F
+	public final fun component10 ()Lio/github/volovatovta/docviewer/core/CsvOptions;
+	public final fun component11 ()Z
+	public final fun component2 ()F
+	public final fun component3-D9Ej5fM ()F
+	public final fun component4-XSAIIZE ()J
+	public final fun component5-D9Ej5fM ()F
+	public final fun component6 ()Z
+	public final fun component7 ()Z
+	public final fun component8 ()Z
+	public final fun component9 ()Z
+	public final fun copy-7wu-nFo (FFFJFZZZZLio/github/volovatovta/docviewer/core/CsvOptions;Z)Lio/github/volovatovta/docviewer/DocumentViewerConfig;
+	public static synthetic fun copy-7wu-nFo$default (Lio/github/volovatovta/docviewer/DocumentViewerConfig;FFFJFZZZZLio/github/volovatovta/docviewer/core/CsvOptions;ZILjava/lang/Object;)Lio/github/volovatovta/docviewer/DocumentViewerConfig;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCsvOptions ()Lio/github/volovatovta/docviewer/core/CsvOptions;
+	public final fun getDoubleTapZoom ()F
+	public final fun getMaxContentWidth-D9Ej5fM ()F
+	public final fun getMaxZoom ()F
+	public final fun getPageSpacing-D9Ej5fM ()F
+	public final fun getPdfNightMode ()Z
+	public final fun getShowCsvRowNumbers ()Z
+	public final fun getShowPageIndicator ()Z
+	public final fun getShowScrollbar ()Z
+	public final fun getTextSelectable ()Z
+	public final fun getTextSize-XSAIIZE ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/volovatovta/docviewer/DocumentViewerDefaults {
+	public static final field $stable I
+	public static final field INSTANCE Lio/github/volovatovta/docviewer/DocumentViewerDefaults;
+	public final fun colors (ZLandroidx/compose/runtime/Composer;II)Lio/github/volovatovta/docviewer/DocumentViewerColors;
+	public static final fun darkColors ()Lio/github/volovatovta/docviewer/DocumentViewerColors;
+	public static final fun darkColors--OWjLjI (JJ)Lio/github/volovatovta/docviewer/DocumentViewerColors;
+	public static final fun darkColors-8_81llA (J)Lio/github/volovatovta/docviewer/DocumentViewerColors;
+	public static final fun darkColors-jRlVdoo (JJJJ)Lio/github/volovatovta/docviewer/DocumentViewerColors;
+	public static synthetic fun darkColors-jRlVdoo$default (JJJJILjava/lang/Object;)Lio/github/volovatovta/docviewer/DocumentViewerColors;
+	public static final fun darkColors-ysEtTa8 (JJJ)Lio/github/volovatovta/docviewer/DocumentViewerColors;
+	public static final fun lightColors ()Lio/github/volovatovta/docviewer/DocumentViewerColors;
+	public static final fun lightColors--OWjLjI (JJ)Lio/github/volovatovta/docviewer/DocumentViewerColors;
+	public static final fun lightColors-8_81llA (J)Lio/github/volovatovta/docviewer/DocumentViewerColors;
+	public static final fun lightColors-jRlVdoo (JJJJ)Lio/github/volovatovta/docviewer/DocumentViewerColors;
+	public static synthetic fun lightColors-jRlVdoo$default (JJJJILjava/lang/Object;)Lio/github/volovatovta/docviewer/DocumentViewerColors;
+	public static final fun lightColors-ysEtTa8 (JJJ)Lio/github/volovatovta/docviewer/DocumentViewerColors;
+}
+
+public final class io/github/volovatovta/docviewer/DocumentViewerKt {
+	public static final fun DocumentViewer (Lio/github/volovatovta/docviewer/DocumentSource;Landroidx/compose/ui/Modifier;Lio/github/volovatovta/docviewer/DocumentViewerState;Lio/github/volovatovta/docviewer/DocumentViewerConfig;Lio/github/volovatovta/docviewer/DocumentViewerColors;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Landroidx/compose/runtime/Composer;II)V
+}
+
+public final class io/github/volovatovta/docviewer/DocumentViewerState {
+	public static final field $stable I
+	public static final field Companion Lio/github/volovatovta/docviewer/DocumentViewerState$Companion;
+	public fun <init> ()V
+	public fun <init> (IF)V
+	public synthetic fun <init> (IFILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun clearSearch ()V
+	public final fun getCurrentPage ()I
+	public final fun getCurrentSearchResult ()I
+	public final fun getInfo ()Lio/github/volovatovta/docviewer/DocumentInfo;
+	public final fun getPageCount ()I
+	public final fun getSearchQuery ()Ljava/lang/String;
+	public final fun getSearchResultCount ()I
+	public final fun getStatus ()Lio/github/volovatovta/docviewer/DocumentStatus;
+	public final fun getZoom ()F
+	public final fun goToPage (I)V
+	public final fun isSearching ()Z
+	public final fun nextSearchResult ()V
+	public final fun previousSearchResult ()V
+	public final fun resetZoom ()V
+	public final fun retry ()V
+	public final fun scrollToPage (IZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun scrollToPage$default (Lio/github/volovatovta/docviewer/DocumentViewerState;IZLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun search (Ljava/lang/String;)V
+	public final fun submitPassword (Ljava/lang/String;)V
+	public final fun zoomIn ()V
+	public final fun zoomOut ()V
+}
+
+public final class io/github/volovatovta/docviewer/DocumentViewerState$Companion {
+	public final fun getSaver ()Landroidx/compose/runtime/saveable/Saver;
+}
+
+public final class io/github/volovatovta/docviewer/DocumentViewerStateKt {
+	public static final fun rememberDocumentViewerState (ILandroidx/compose/runtime/Composer;II)Lio/github/volovatovta/docviewer/DocumentViewerState;
+}
+
