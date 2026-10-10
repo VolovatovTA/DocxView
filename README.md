@@ -211,8 +211,8 @@ sample           демо: Compose-экран со всеми форматами
 Тестовые документы в `docviewer-core/src/test/resources` сохранены настоящими
 редакторами: LibreOffice (DOC/DOCX со списками, таблицами и ссылками) и macOS `textutil`.
 
-Как выпустить релиз — в [RELEASING.md](RELEASING.md); участие в разработке — в
-[CONTRIBUTING.md](CONTRIBUTING.md); об уязвимостях — по инструкции в [SECURITY.md](SECURITY.md).
+Участие в разработке — в [CONTRIBUTING.md](CONTRIBUTING.md); об уязвимостях — по инструкции
+в [SECURITY.md](SECURITY.md).
 
 ## Лицензия
 
