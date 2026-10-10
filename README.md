@@ -11,9 +11,10 @@ works the same in **Jetpack Compose** and in **XML layouts**.
 No WebView, no native libraries, no Apache POI: PDF pages are drawn by the platform
 `PdfRenderer`, office formats and CSV are parsed by a pure Kotlin/JVM parser.
 
-| PDF | DOCX (dark theme) | PDF search | CSV |
-|---|---|---|---|
-| ![](docs/pdf.png) | ![](docs/docx_dark.png) | ![](docs/pdf_search.png) | ![](docs/csv_search.png) |
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/showcase-dark.png">
+  <img alt="DocxView screens: a PDF, a Word document in the dark theme, PDF search and CSV search" src="docs/showcase-light.png">
+</picture>
 
 ## Features
 
