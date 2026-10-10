@@ -11,6 +11,9 @@ internal object Xml {
         SAXParserFactory.newInstance().apply {
             isNamespaceAware = true
             // Not every platform parser knows these features; Android's Expat never resolves external entities anyway.
+            // OOXML parts never carry a DOCTYPE, so rejecting it also stops entity-expansion bombs on the JVM.
+            runCatching { setFeature("http://apache.org/xml/features/disallow-doctype-decl", true) }
+            runCatching { setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true) }
             runCatching { setFeature("http://xml.org/sax/features/external-general-entities", false) }
             runCatching { setFeature("http://xml.org/sax/features/external-parameter-entities", false) }
             runCatching { setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false) }

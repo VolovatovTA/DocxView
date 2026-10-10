@@ -18,6 +18,7 @@ import java.io.File
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertIs
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -205,6 +206,14 @@ class DocxParserTest {
         assertNull((body.inlines.first() as TextRun).style.relativeSize, "body text must be normalized to 1.0")
         assertTrue(doc.paragraphs().any { it.plainText == "Яблоки" })
         assertEquals(1, FlowSearch.search(doc, "NEEDLE").size)
+    }
+
+    @Test
+    fun `DOCTYPE declarations are rejected`() {
+        // OOXML never declares a DOCTYPE; accepting one opens the door to XXE and entity-expansion bombs.
+        val document = """<?xml version="1.0"?><!DOCTYPE w:document [<!ENTITY e "INJECTED">]>""" +
+            """<w:document $ns><w:body><w:p><w:r><w:t>&e;</w:t></w:r></w:p><w:sectPr/></w:body></w:document>"""
+        assertFailsWith<CorruptedDocumentException> { docx("", mapOf("word/document.xml" to document)) }
     }
 }
 

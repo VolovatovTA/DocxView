@@ -10,6 +10,7 @@ import io.github.volovatovta.docviewer.core.model.Paragraph
 import io.github.volovatovta.docviewer.core.model.RunStyle
 import io.github.volovatovta.docviewer.core.model.TextRun
 import io.github.volovatovta.docviewer.core.model.VerticalAlign
+import io.github.volovatovta.docviewer.core.readUpTo
 import org.xml.sax.Attributes
 import org.xml.sax.SAXException
 import org.xml.sax.helpers.DefaultHandler
@@ -165,9 +166,10 @@ public object DocxParser {
         override fun open(imageId: String): ByteArray? = synchronized(this) {
             if (closed) return null
             val entry = zip.getEntry(imageId) ?: return null
-            // Guard against zip bombs posing as images.
+            // Guard against zip bombs posing as images; the declared size can lie, so cap the actual read too.
             if (entry.size > MAX_IMAGE_BYTES) return null
-            zip.getInputStream(entry).use { it.readBytes() }
+            val bytes = zip.getInputStream(entry).use { it.readUpTo(MAX_IMAGE_BYTES.toInt() + 1) }
+            if (bytes.size > MAX_IMAGE_BYTES) null else bytes
         }
 
         override fun close() = synchronized(this) {

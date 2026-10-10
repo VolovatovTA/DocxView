@@ -139,16 +139,21 @@ internal object DocumentLoader {
     }
 
     private suspend fun download(context: Context, source: DocumentSource.FromUrl, onProgress: (Float?) -> Unit): ResolvedFile {
-        var url = URL(source.url)
+        val origin = URL(source.url)
+        var url = origin
         var connection: HttpURLConnection
         var redirects = 0
         // HttpURLConnection does not follow http -> https redirects on its own.
         while (true) {
+            if (url.protocol != "http" && url.protocol != "https") throw NetworkException("Unsupported URL scheme: ${url.protocol}")
             connection = (url.openConnection() as HttpURLConnection).apply {
                 connectTimeout = 15_000
                 readTimeout = 30_000
                 instanceFollowRedirects = true
-                source.headers.forEach { (k, v) -> setRequestProperty(k, v) }
+                // Caller headers (often Authorization) must not leak to another host after a redirect.
+                if (url.host.equals(origin.host, ignoreCase = true)) {
+                    source.headers.forEach { (k, v) -> setRequestProperty(k, v) }
+                }
             }
             val code = try {
                 connection.responseCode
@@ -157,8 +162,12 @@ internal object DocumentLoader {
             }
             if (code in 300..399 && redirects++ < 5) {
                 val location = connection.getHeaderField("Location") ?: break
-                url = URL(url, location)
+                val next = URL(url, location)
                 connection.disconnect()
+                if (url.protocol == "https" && next.protocol != "https") {
+                    throw NetworkException("Refusing redirect from HTTPS to ${next.protocol}")
+                }
+                url = next
                 continue
             }
             if (code !in 200..299) {
