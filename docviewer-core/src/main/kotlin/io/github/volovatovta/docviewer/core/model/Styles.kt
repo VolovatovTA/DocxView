@@ -4,6 +4,16 @@ public enum class VerticalAlign { Baseline, Superscript, Subscript }
 
 public enum class TextAlignment { Start, Center, End, Justify }
 
+/** One side of a paragraph frame; a null color means the default text color. */
+public data class BorderLine(val color: Int?, val widthPt: Float)
+
+public data class ParagraphBorders(
+    val top: BorderLine? = null,
+    val bottom: BorderLine? = null,
+    val start: BorderLine? = null,
+    val end: BorderLine? = null,
+)
+
 public data class RunStyle(
     val bold: Boolean = false,
     val italic: Boolean = false,
@@ -35,6 +45,9 @@ public data class ParagraphStyle(
     val listMarker: String? = null,
     val listLevel: Int = 0,
     val background: Int? = null,
+    // Line height as a multiple of single spacing; null leaves it to the viewer.
+    val lineSpacing: Float? = null,
+    val borders: ParagraphBorders? = null,
 ) {
     public companion object {
         public const val TITLE_LEVEL: Int = 100

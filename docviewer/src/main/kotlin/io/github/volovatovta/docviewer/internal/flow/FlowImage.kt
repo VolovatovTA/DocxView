@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
@@ -96,6 +97,21 @@ internal fun FlowImage(
         if (isFullscreen && ready != null) {
             ZoomableImageDialog(ready.bitmap, run.description, onDismiss = { isFullscreen = false })
         }
+    }
+}
+
+// A small picture inside a line of text: it fills the placeholder the text reserved for it.
+@Composable
+internal fun InlineFlowImage(run: ImageRun, context: FlowContext, modifier: Modifier = Modifier) {
+    val image by rememberDecodedImage(run.imageId, context)
+    when (val current = image) {
+        is ImageState.Ready -> Image(
+            bitmap = current.bitmap,
+            contentDescription = run.description,
+            modifier = modifier.fillMaxSize(),
+            contentScale = ContentScale.Fit,
+        )
+        else -> Box(modifier.fillMaxSize())
     }
 }
 

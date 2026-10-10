@@ -116,8 +116,10 @@ internal fun TableRowView(table: Table, rowIndex: Int, context: FlowContext, mod
 @Composable
 private fun TableCellContent(cell: TableCell, context: FlowContext, cellPadding: Dp, modifier: Modifier = Modifier) {
     val horizontalPadding = cellPadding + TableSpec.CellExtraHorizontalPadding
-    Column(modifier.padding(horizontal = horizontalPadding, vertical = cellPadding)) {
-        cell.blocks.forEach { BlockView(it, context, compact = true) }
+    CompositionLocalProvider(LocalSurfaceColor provides cell.background?.let(::Color)) {
+        Column(modifier.padding(horizontal = horizontalPadding, vertical = cellPadding)) {
+            cell.blocks.forEach { BlockView(it, context, compact = true) }
+        }
     }
 }
 
@@ -130,7 +132,8 @@ private fun rememberTableRuntime(table: Table, context: FlowContext): TableRunti
             (TableSpec.CellPadding * context.scale + TableSpec.CellExtraHorizontalPadding).toPx() * 2 +
                 TableSpec.MeasureSafety.toPx()
         }
-        TableRuntime(measureColumns(table, measurer, TextStyle(fontSize = context.textSize), padding))
+        val pointPx = with(density) { (1f * context.scale).dp.toPx() }
+        TableRuntime(measureColumns(table, measurer, TextStyle(fontSize = context.textSize), padding, pointPx))
     }
 }
 

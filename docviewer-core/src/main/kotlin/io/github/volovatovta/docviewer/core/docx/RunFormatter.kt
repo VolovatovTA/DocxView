@@ -7,8 +7,15 @@ import kotlin.math.abs
 // Resolves the cascade "document defaults → paragraph style → character style → direct formatting" to a RunStyle.
 internal class RunFormatter(private val styles: StyleSheet) {
 
-    fun effectiveProperties(paragraphStyleId: String?, direct: RunProperties): RunProperties {
-        val paragraphRun = styles.resolveParagraph(paragraphStyleId).second
+    // Table style formatting sits above the paragraph style here: body styles rarely set what tables color.
+    fun effectiveProperties(
+        paragraphStyleId: String?,
+        direct: RunProperties,
+        table: RunProperties? = null,
+    ): RunProperties {
+        val paragraphRun = styles.resolveParagraph(
+            paragraphStyleId
+        ).second.let { run -> table?.let(run::overlay) ?: run }
         val characterStyle = direct.styleId?.let(styles::resolveRunStyle)
         val styled = characterStyle?.let(paragraphRun::overlay) ?: paragraphRun
         return styled.overlay(direct)

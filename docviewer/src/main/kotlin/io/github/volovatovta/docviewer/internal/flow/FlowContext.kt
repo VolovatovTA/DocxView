@@ -3,6 +3,7 @@ package io.github.volovatovta.docviewer.internal.flow
 import android.util.LruCache
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.unit.TextUnit
 import io.github.volovatovta.docviewer.DocumentViewerColors
@@ -32,3 +33,6 @@ internal class SearchHighlights(private val byParagraph: Map<Paragraph, List<Flo
 internal class FlowImages(val store: ImageStore, val cache: LruCache<String, ImageBitmap>)
 
 internal val LocalInHeaderRow = staticCompositionLocalOf { false }
+
+// Fill behind the text when it is not the page, e.g. a shaded table cell; text without a color contrasts with it.
+internal val LocalSurfaceColor = staticCompositionLocalOf<Color?> { null }

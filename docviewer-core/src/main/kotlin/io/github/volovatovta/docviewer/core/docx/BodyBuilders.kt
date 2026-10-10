@@ -7,6 +7,7 @@ import io.github.volovatovta.docviewer.core.model.RunStyle
 import io.github.volovatovta.docviewer.core.model.Table
 import io.github.volovatovta.docviewer.core.model.TableCell
 import io.github.volovatovta.docviewer.core.model.TableRow
+import io.github.volovatovta.docviewer.core.model.TextAlignment
 import io.github.volovatovta.docviewer.core.model.TextRun
 import org.xml.sax.Attributes
 
@@ -35,9 +36,11 @@ internal class ParagraphBuilder {
     }
 }
 
-internal class TableBuilder {
+internal class TableBuilder(private val styles: StyleSheet) {
     private val gridColumns = ArrayList<Int>()
     private val rows = ArrayList<RowBuilder>()
+    var styleId: String? = null
+    var look = TableLook()
 
     val currentCell: CellBuilder? get() = rows.lastOrNull()?.cells?.lastOrNull()
 
@@ -53,9 +56,22 @@ internal class TableBuilder {
         rows.lastOrNull()?.isHeader = isHeader
     }
 
-    fun startCell(): CellBuilder = CellBuilder().also { cell -> rows.lastOrNull()?.cells?.add(cell) }
+    // The last row is unknown while cells stream in, so only its shading is applied, once the table is complete.
+    fun startCell(): CellBuilder {
+        val row = rows.lastOrNull()
+        val rowIndex = (rows.size - 1).coerceAtLeast(0)
+        val column = row?.cells?.sumOf { it.colSpan } ?: 0
+        val cell = CellBuilder()
+        cell.styleCondition = styles.tableCondition(styleId, look.conditionsOf(rowIndex, column, gridColumns.size))
+        row?.cells?.add(cell)
+        return cell
+    }
 
     fun build(): Table {
+        if (look.lastRow) {
+            val shading = styles.tableCondition(styleId, listOf(TableLook.LAST_ROW)).shading
+            rows.lastOrNull()?.cells?.forEach { cell -> shading?.let { cell.styleCondition.shading = it } }
+        }
         val widths = if (gridColumns.isNotEmpty() && gridColumns.all { it > 0 }) {
             gridColumns.map(OoxmlUnits::twipsToPoints)
         } else {
@@ -77,6 +93,7 @@ internal class CellBuilder {
     var colSpan = 1
     var verticalMerge: String? = null
     var background: Int? = null
+    var styleCondition = TableCondition()
 
     fun build(): TableCell {
         val continuesAbove = verticalMerge == CONTINUE
@@ -84,7 +101,7 @@ internal class CellBuilder {
             blocks = if (continuesAbove) emptyList() else blocks,
             colSpan = colSpan.coerceAtLeast(1),
             mergedWithAbove = continuesAbove,
-            background = background,
+            background = background ?: styleCondition.shading,
         )
     }
 
@@ -96,6 +113,10 @@ internal class CellBuilder {
 
 internal class ImageBuilder {
     var relationshipId: String? = null
+    var floating = false
+
+    // wp:positionH/wp:align of a floating image: left, center, right, inside or outside.
+    var horizontalAlign: String? = null
     private var widthPt: Float? = null
     private var heightPt: Float? = null
     private var description: String? = null
@@ -123,7 +144,16 @@ internal class ImageBuilder {
     }
 
     fun build(relationships: Relationships): ImageRun? =
-        relationships.internalTarget(relationshipId)?.let { ImageRun(it, widthPt, heightPt, description) }
+        relationships.internalTarget(relationshipId)?.let { target ->
+            ImageRun(target, widthPt, heightPt, description, floatAlignment.takeIf { floating })
+        }
+
+    private val floatAlignment: TextAlignment
+        get() = when (horizontalAlign) {
+            "center" -> TextAlignment.Center
+            "right", "outside" -> TextAlignment.End
+            else -> TextAlignment.Start
+        }
 
     private fun cssLengthToPoints(value: String): Float? {
         val number = value.takeWhile { it.isDigit() || it in NUMBER_SIGNS }

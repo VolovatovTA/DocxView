@@ -1,5 +1,6 @@
 package io.github.volovatovta.docviewer.core.docx
 
+import io.github.volovatovta.docviewer.core.model.BorderLine
 import io.github.volovatovta.docviewer.core.model.TextAlignment
 import io.github.volovatovta.docviewer.core.model.VerticalAlign
 import org.xml.sax.Attributes
@@ -41,6 +42,18 @@ internal object PropertyReader {
         "outlineLvl" to { attributes, paragraph -> paragraph.outlineLevel = attributes.int("val") },
         "shd" to { attributes, paragraph -> paragraph.shading = parseHexColor(attributes["fill"]) },
         "pageBreakBefore" to { attributes, paragraph -> paragraph.pageBreakBefore = attributes.onOff() },
+        "framePr" to { attributes, paragraph ->
+            paragraph.dropCap = attributes["dropCap"].let { it == "drop" || it == "margin" }
+        },
+    )
+
+    private val borderSides: Map<String, (ParagraphProperties, BorderLine) -> Unit> = mapOf(
+        "top" to { paragraph, line -> paragraph.borderTop = line },
+        "bottom" to { paragraph, line -> paragraph.borderBottom = line },
+        "left" to { paragraph, line -> paragraph.borderStart = line },
+        "start" to { paragraph, line -> paragraph.borderStart = line },
+        "right" to { paragraph, line -> paragraph.borderEnd = line },
+        "end" to { paragraph, line -> paragraph.borderEnd = line },
     )
 
     private val verticalAlignments = mapOf(
@@ -76,6 +89,15 @@ internal object PropertyReader {
 
     fun applyParagraph(element: String, attributes: Attributes, paragraph: ParagraphProperties) {
         paragraphReaders[element]?.invoke(attributes, paragraph)
+    }
+
+    // A side of w:pBdr; "nil" and "none" switch off a border inherited from the style.
+    fun applyParagraphBorder(element: String, attributes: Attributes, paragraph: ParagraphProperties) {
+        val side = borderSides[element] ?: return
+        val kind = attributes["val"]
+        val eighths = attributes.int("sz") ?: DEFAULT_BORDER_EIGHTHS
+        val width = if (kind == null || kind in noBorder) 0f else eighths / EIGHTHS_PER_POINT
+        side(paragraph, BorderLine(parseHexColor(attributes["color"]), width))
     }
 
     private fun readColor(attributes: Attributes, run: RunProperties) {
@@ -120,7 +142,16 @@ internal object PropertyReader {
     private fun readSpacing(attributes: Attributes, paragraph: ParagraphProperties) {
         attributes.int("before")?.let { paragraph.spacingBefore = it }
         attributes.int("after")?.let { paragraph.spacingAfter = it }
+        // Only proportional spacing carries over to reflowed text; exact heights depend on Word's page layout.
+        val rule = attributes["lineRule"] ?: AUTO_LINE_RULE
+        attributes.int("line")?.takeIf { rule == AUTO_LINE_RULE }?.let { paragraph.lineSpacing = it / SINGLE_LINE }
     }
+
+    private const val AUTO_LINE_RULE = "auto"
+    private const val SINGLE_LINE = 240f
+    private const val EIGHTHS_PER_POINT = 8f
+    private const val DEFAULT_BORDER_EIGHTHS = 4
+    private val noBorder = setOf("nil", "none")
 }
 
 // The named palette of w:highlight.

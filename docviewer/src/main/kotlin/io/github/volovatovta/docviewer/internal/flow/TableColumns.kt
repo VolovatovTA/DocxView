@@ -20,7 +20,14 @@ private object ColumnMeasuring {
 }
 
 // Numbers like "12 400" count as one word: splitting them would make the column unreadable.
-internal fun measureColumns(table: Table, measurer: TextMeasurer, style: TextStyle, padding: Float): ColumnContent {
+// Paragraph indents count too: a first-line indent the column ignores would push the first word into a break.
+internal fun measureColumns(
+    table: Table,
+    measurer: TextMeasurer,
+    style: TextStyle,
+    padding: Float,
+    pointPx: Float,
+): ColumnContent {
     val count = table.columnCount.coerceAtLeast(1)
     val content = ColumnContent(FloatArray(count), FloatArray(count))
     val headerStyle = style.copy(fontWeight = FontWeight.SemiBold)
@@ -28,7 +35,8 @@ internal fun measureColumns(table: Table, measurer: TextMeasurer, style: TextSty
         val rowStyle = if (row.isHeader) headerStyle else style
         row.singleColumnCells(count).forEach { (column, cell) ->
             cell.blocks.filterIsInstance<Paragraph>().forEach { paragraph ->
-                content.include(column, paragraph.plainText.trim(), measurer, rowStyle, padding)
+                val indent = paragraph.style.indentStartPt + paragraph.style.firstLineIndentPt.coerceAtLeast(0f)
+                content.include(column, paragraph.plainText.trim(), measurer, rowStyle, padding + indent * pointPx)
             }
         }
     }

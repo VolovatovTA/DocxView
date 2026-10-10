@@ -18,4 +18,6 @@ public class ImageRun(
     public val widthPt: Float? = null,
     public val heightPt: Float? = null,
     public val description: String? = null,
+    // Floating images are placed on their own line, aligned as anchored in the document; null means inline.
+    public val floatAlignment: TextAlignment? = null,
 ) : Inline

@@ -123,6 +123,19 @@ public final class io/github/volovatovta/docviewer/core/docx/DocxParser {
 public abstract interface class io/github/volovatovta/docviewer/core/model/Block {
 }
 
+public final class io/github/volovatovta/docviewer/core/model/BorderLine {
+	public fun <init> (Ljava/lang/Integer;F)V
+	public final fun component1 ()Ljava/lang/Integer;
+	public final fun component2 ()F
+	public final fun copy (Ljava/lang/Integer;F)Lio/github/volovatovta/docviewer/core/model/BorderLine;
+	public static synthetic fun copy$default (Lio/github/volovatovta/docviewer/core/model/BorderLine;Ljava/lang/Integer;FILjava/lang/Object;)Lio/github/volovatovta/docviewer/core/model/BorderLine;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getColor ()Ljava/lang/Integer;
+	public final fun getWidthPt ()F
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/github/volovatovta/docviewer/core/model/Divider : io/github/volovatovta/docviewer/core/model/Block {
 	public static final field INSTANCE Lio/github/volovatovta/docviewer/core/model/Divider;
 	public fun equals (Ljava/lang/Object;)Z
@@ -160,9 +173,10 @@ public final class io/github/volovatovta/docviewer/core/model/FlowDocument : jav
 }
 
 public final class io/github/volovatovta/docviewer/core/model/ImageRun : io/github/volovatovta/docviewer/core/model/Inline {
-	public fun <init> (Ljava/lang/String;Ljava/lang/Float;Ljava/lang/Float;Ljava/lang/String;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Float;Ljava/lang/Float;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/Float;Ljava/lang/Float;Ljava/lang/String;Lio/github/volovatovta/docviewer/core/model/TextAlignment;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Float;Ljava/lang/Float;Ljava/lang/String;Lio/github/volovatovta/docviewer/core/model/TextAlignment;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getDescription ()Ljava/lang/String;
+	public final fun getFloatAlignment ()Lio/github/volovatovta/docviewer/core/model/TextAlignment;
 	public final fun getHeightPt ()Ljava/lang/Float;
 	public final fun getImageId ()Ljava/lang/String;
 	public final fun getWidthPt ()Ljava/lang/Float;
@@ -203,13 +217,34 @@ public final class io/github/volovatovta/docviewer/core/model/Paragraph : io/git
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/github/volovatovta/docviewer/core/model/ParagraphBorders {
+	public fun <init> ()V
+	public fun <init> (Lio/github/volovatovta/docviewer/core/model/BorderLine;Lio/github/volovatovta/docviewer/core/model/BorderLine;Lio/github/volovatovta/docviewer/core/model/BorderLine;Lio/github/volovatovta/docviewer/core/model/BorderLine;)V
+	public synthetic fun <init> (Lio/github/volovatovta/docviewer/core/model/BorderLine;Lio/github/volovatovta/docviewer/core/model/BorderLine;Lio/github/volovatovta/docviewer/core/model/BorderLine;Lio/github/volovatovta/docviewer/core/model/BorderLine;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/github/volovatovta/docviewer/core/model/BorderLine;
+	public final fun component2 ()Lio/github/volovatovta/docviewer/core/model/BorderLine;
+	public final fun component3 ()Lio/github/volovatovta/docviewer/core/model/BorderLine;
+	public final fun component4 ()Lio/github/volovatovta/docviewer/core/model/BorderLine;
+	public final fun copy (Lio/github/volovatovta/docviewer/core/model/BorderLine;Lio/github/volovatovta/docviewer/core/model/BorderLine;Lio/github/volovatovta/docviewer/core/model/BorderLine;Lio/github/volovatovta/docviewer/core/model/BorderLine;)Lio/github/volovatovta/docviewer/core/model/ParagraphBorders;
+	public static synthetic fun copy$default (Lio/github/volovatovta/docviewer/core/model/ParagraphBorders;Lio/github/volovatovta/docviewer/core/model/BorderLine;Lio/github/volovatovta/docviewer/core/model/BorderLine;Lio/github/volovatovta/docviewer/core/model/BorderLine;Lio/github/volovatovta/docviewer/core/model/BorderLine;ILjava/lang/Object;)Lio/github/volovatovta/docviewer/core/model/ParagraphBorders;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBottom ()Lio/github/volovatovta/docviewer/core/model/BorderLine;
+	public final fun getEnd ()Lio/github/volovatovta/docviewer/core/model/BorderLine;
+	public final fun getStart ()Lio/github/volovatovta/docviewer/core/model/BorderLine;
+	public final fun getTop ()Lio/github/volovatovta/docviewer/core/model/BorderLine;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/github/volovatovta/docviewer/core/model/ParagraphStyle {
 	public static final field Companion Lio/github/volovatovta/docviewer/core/model/ParagraphStyle$Companion;
 	public static final field TITLE_LEVEL I
 	public fun <init> ()V
-	public fun <init> (Lio/github/volovatovta/docviewer/core/model/TextAlignment;IFFLjava/lang/Float;Ljava/lang/Float;Ljava/lang/String;ILjava/lang/Integer;)V
-	public synthetic fun <init> (Lio/github/volovatovta/docviewer/core/model/TextAlignment;IFFLjava/lang/Float;Ljava/lang/Float;Ljava/lang/String;ILjava/lang/Integer;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/github/volovatovta/docviewer/core/model/TextAlignment;IFFLjava/lang/Float;Ljava/lang/Float;Ljava/lang/String;ILjava/lang/Integer;Ljava/lang/Float;Lio/github/volovatovta/docviewer/core/model/ParagraphBorders;)V
+	public synthetic fun <init> (Lio/github/volovatovta/docviewer/core/model/TextAlignment;IFFLjava/lang/Float;Ljava/lang/Float;Ljava/lang/String;ILjava/lang/Integer;Ljava/lang/Float;Lio/github/volovatovta/docviewer/core/model/ParagraphBorders;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lio/github/volovatovta/docviewer/core/model/TextAlignment;
+	public final fun component10 ()Ljava/lang/Float;
+	public final fun component11 ()Lio/github/volovatovta/docviewer/core/model/ParagraphBorders;
 	public final fun component2 ()I
 	public final fun component3 ()F
 	public final fun component4 ()F
@@ -218,14 +253,16 @@ public final class io/github/volovatovta/docviewer/core/model/ParagraphStyle {
 	public final fun component7 ()Ljava/lang/String;
 	public final fun component8 ()I
 	public final fun component9 ()Ljava/lang/Integer;
-	public final fun copy (Lio/github/volovatovta/docviewer/core/model/TextAlignment;IFFLjava/lang/Float;Ljava/lang/Float;Ljava/lang/String;ILjava/lang/Integer;)Lio/github/volovatovta/docviewer/core/model/ParagraphStyle;
-	public static synthetic fun copy$default (Lio/github/volovatovta/docviewer/core/model/ParagraphStyle;Lio/github/volovatovta/docviewer/core/model/TextAlignment;IFFLjava/lang/Float;Ljava/lang/Float;Ljava/lang/String;ILjava/lang/Integer;ILjava/lang/Object;)Lio/github/volovatovta/docviewer/core/model/ParagraphStyle;
+	public final fun copy (Lio/github/volovatovta/docviewer/core/model/TextAlignment;IFFLjava/lang/Float;Ljava/lang/Float;Ljava/lang/String;ILjava/lang/Integer;Ljava/lang/Float;Lio/github/volovatovta/docviewer/core/model/ParagraphBorders;)Lio/github/volovatovta/docviewer/core/model/ParagraphStyle;
+	public static synthetic fun copy$default (Lio/github/volovatovta/docviewer/core/model/ParagraphStyle;Lio/github/volovatovta/docviewer/core/model/TextAlignment;IFFLjava/lang/Float;Ljava/lang/Float;Ljava/lang/String;ILjava/lang/Integer;Ljava/lang/Float;Lio/github/volovatovta/docviewer/core/model/ParagraphBorders;ILjava/lang/Object;)Lio/github/volovatovta/docviewer/core/model/ParagraphStyle;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAlignment ()Lio/github/volovatovta/docviewer/core/model/TextAlignment;
 	public final fun getBackground ()Ljava/lang/Integer;
+	public final fun getBorders ()Lio/github/volovatovta/docviewer/core/model/ParagraphBorders;
 	public final fun getFirstLineIndentPt ()F
 	public final fun getHeadingLevel ()I
 	public final fun getIndentStartPt ()F
+	public final fun getLineSpacing ()Ljava/lang/Float;
 	public final fun getListLevel ()I
 	public final fun getListMarker ()Ljava/lang/String;
 	public final fun getSpaceAfterPt ()Ljava/lang/Float;

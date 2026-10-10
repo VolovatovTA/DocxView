@@ -1,5 +1,6 @@
 package io.github.volovatovta.docviewer.internal.flow
 
+import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.text.AnnotatedString
@@ -17,6 +18,8 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.em
 import io.github.volovatovta.docviewer.DocumentViewerColors
 import io.github.volovatovta.docviewer.core.FlowMatch
+import io.github.volovatovta.docviewer.core.model.ImageRun
+import io.github.volovatovta.docviewer.core.model.Inline
 import io.github.volovatovta.docviewer.core.model.RunStyle
 import io.github.volovatovta.docviewer.core.model.TextRun
 import io.github.volovatovta.docviewer.core.model.VerticalAlign
@@ -37,17 +40,36 @@ private object Contrast {
 }
 
 // offset is where these runs start in the paragraph's plain text; matches use those coordinates.
+// Inline images become placeholders named by their index in inlines, which shifts later text by one character.
 internal fun paragraphText(
-    runs: List<TextRun>,
+    inlines: List<Inline>,
     offset: Int,
     matches: List<FlowMatch>?,
     context: FlowContext,
+    surface: Color? = null,
 ): AnnotatedString = buildAnnotatedString {
-    runs.forEach { run -> appendRun(run, context) }
-    matches?.let { highlightMatches(it, offset, context) }
+    val placeholders = ArrayList<Int>()
+    var plainLength = 0
+    inlines.forEachIndexed { index, inline ->
+        when (inline) {
+            is TextRun -> {
+                appendRun(inline, context, surface)
+                plainLength += inline.text.length
+            }
+            is ImageRun -> {
+                placeholders += plainLength
+                appendInlineContent(inlineImageId(index), IMAGE_ALTERNATE_TEXT)
+            }
+        }
+    }
+    matches?.let { highlightMatches(it, offset, placeholders, context) }
 }
 
-private fun AnnotatedString.Builder.appendRun(run: TextRun, context: FlowContext) {
+internal fun inlineImageId(index: Int) = "image$index"
+
+private const val IMAGE_ALTERNATE_TEXT = "\uFFFC"
+
+private fun AnnotatedString.Builder.appendRun(run: TextRun, context: FlowContext, surface: Color?) {
     val start = length
     val link = run.link
     if (link == null) {
@@ -58,27 +80,34 @@ private fun AnnotatedString.Builder.appendRun(run: TextRun, context: FlowContext
         )
         withLink(LinkAnnotation.Clickable(link, linkStyle) { context.onLink(link) }) { append(run.text) }
     }
-    addStyle(run.style.toSpanStyle(context.colors, isLink = link != null), start, length)
+    addStyle(run.style.toSpanStyle(context.colors, isLink = link != null, surface), start, length)
 }
 
-private fun AnnotatedString.Builder.highlightMatches(matches: List<FlowMatch>, offset: Int, context: FlowContext) {
-    val end = offset + length
+private fun AnnotatedString.Builder.highlightMatches(
+    matches: List<FlowMatch>,
+    offset: Int,
+    placeholders: List<Int>,
+    context: FlowContext,
+) {
+    val plainLength = length - placeholders.size
+    val end = offset + plainLength
     val colors = context.colors
+    fun shown(plain: Int) = plain + placeholders.count { it < plain }
     matches.filter { it.end > offset && it.start < end }.forEach { match ->
         val color = if (match === context.search.current) colors.currentSearchMatch else colors.searchMatch
         addStyle(
             SpanStyle(background = color),
-            (match.start - offset).coerceAtLeast(0),
-            (match.end - offset).coerceAtMost(length),
+            shown((match.start - offset).coerceAtLeast(0)),
+            shown((match.end - offset).coerceAtMost(plainLength)),
         )
     }
 }
 
-private fun RunStyle.toSpanStyle(colors: DocumentViewerColors, isLink: Boolean): SpanStyle {
+private fun RunStyle.toSpanStyle(colors: DocumentViewerColors, isLink: Boolean, surface: Color?): SpanStyle {
     if (this == RunStyle.Default) return SpanStyle()
     val backgroundColor = background?.let(::Color)
     return SpanStyle(
-        color = if (isLink) Color.Unspecified else readableColor(color, backgroundColor, colors),
+        color = if (isLink) Color.Unspecified else readableColor(color, backgroundColor ?: surface, colors),
         fontSize = relativeFontSize(),
         fontWeight = FontWeight.Bold.takeIf { bold },
         fontStyle = FontStyle.Italic.takeIf { italic },
@@ -122,7 +151,7 @@ private fun readableColor(argb: Int?, background: Color?, colors: DocumentViewer
     return if (contrastRatio(color, background ?: colors.page) >= Contrast.MIN_RATIO) color else fallback
 }
 
-private fun inkOn(background: Color): Color =
+internal fun inkOn(background: Color): Color =
     if (background.luminance() > Contrast.LIGHT_BACKGROUND_LUMINANCE) Contrast.DarkInk else Color.White
 
 private fun contrastRatio(first: Color, second: Color): Float {

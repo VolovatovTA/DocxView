@@ -1,6 +1,7 @@
 package io.github.volovatovta.docviewer.core.docx
 
 import io.github.volovatovta.docviewer.core.model.Block
+import io.github.volovatovta.docviewer.core.model.Inline
 import io.github.volovatovta.docviewer.core.model.PageBreak
 import io.github.volovatovta.docviewer.core.model.Paragraph
 import io.github.volovatovta.docviewer.core.model.RunStyle
@@ -29,6 +30,7 @@ internal class DocxBodyHandler(
 
     private class NoteContext(val kind: String, val id: String?)
 
+    private val styles = styles
     private val runFormatter = RunFormatter(styles)
     private val paragraphFormatter = ParagraphFormatter(styles, numbering)
     private val path = ArrayList<String>()
@@ -40,6 +42,7 @@ internal class DocxBodyHandler(
     private val fields = FieldTracker()
     private var image: ImageBuilder? = null
     private var note: NoteContext? = null
+    private var dropCap: List<Inline>? = null
     private val text = StringBuilder()
     private var collectingText = false
 
@@ -57,6 +60,7 @@ internal class DocxBodyHandler(
         onClose("hyperlink") { links.removeLastOrNull() },
         onClose("fldSimple") { fields.end() },
         onClose("drawing") { finishImage() },
+        onClose("align") { finishImageAlignment() },
         onClose("pict") { finishImage() },
         onClose("object") { finishImage() },
         onClose("txbxContent") { finishTextBox() },
@@ -111,7 +115,9 @@ internal class DocxBodyHandler(
     )
 
     private fun tableHandlers() = mapOf(
-        onOpen("tbl") { tables += TableBuilder() },
+        onOpen("tbl") { tables += TableBuilder(styles) },
+        onOpen("tblStyle") { if (it.parent == "tblPr") table?.styleId = it.attributes["val"] },
+        onOpen("tblLook") { table?.look = TableLook.of(it.attributes) },
         onOpen("gridCol") { table?.addGridColumn(it.attributes.int("w") ?: 0) },
         onOpen("tr") { table?.startRow() },
         onOpen("tblHeader") { table?.markHeaderRow(it.attributes.onOff()) },
@@ -127,6 +133,8 @@ internal class DocxBodyHandler(
         onOpen("pict") { image = ImageBuilder() },
         onOpen("object") { image = ImageBuilder() },
         onOpen("extent") { image?.readExtent(it.attributes) },
+        onOpen("anchor") { image?.floating = true },
+        onOpen("align") { if (it.parent == "positionH" && image != null) startCollectingText() },
         onOpen("docPr") { image?.readDescription(it.attributes) },
         onOpen("blip") { image?.relationshipId = it.attributes["embed"] },
         onOpen("imagedata") { image?.relationshipId = it.attributes["id"] },
@@ -161,6 +169,11 @@ internal class DocxBodyHandler(
             element.parent == "pPr" || element.parent == "numPr" -> {
                 PropertyReader.applyParagraph(element.name, element.attributes, paragraph.direct)
             }
+            element.parent == "pBdr" -> PropertyReader.applyParagraphBorder(
+                element.name,
+                element.attributes,
+                paragraph.direct
+            )
         }
     }
 
@@ -187,7 +200,11 @@ internal class DocxBodyHandler(
     private fun appendText(value: String, superscript: Boolean = false) {
         val paragraph = paragraph ?: return
         if (value.isEmpty() || fields.isInsideInstruction) return
-        val properties = runFormatter.effectiveProperties(paragraph.direct.styleId, paragraph.run ?: RunProperties())
+        val properties = runFormatter.effectiveProperties(
+            paragraph.direct.styleId,
+            paragraph.run ?: RunProperties(),
+            table?.currentCell?.styleCondition?.run,
+        )
         if (properties.hidden == true) return
         val style = runFormatter.style(properties).raisedIf(superscript)
         val shown = if (properties.caps == true) value.uppercase() else value
@@ -231,6 +248,13 @@ internal class DocxBodyHandler(
         context.id?.let { appendText(noteMarker(context.kind, it), superscript = true) }
     }
 
+    private fun finishImageAlignment() {
+        if (!collectingText) return
+        collectingText = false
+        image?.horizontalAlign = text.toString().trim()
+        text.setLength(0)
+    }
+
     private fun finishImage() {
         val built = image?.build(relationships)
         image = null
@@ -250,8 +274,15 @@ internal class DocxBodyHandler(
         val builder = paragraphs.removeLastOrNull() ?: return
         val target = containers.last()
         val properties = paragraphFormatter.properties(builder.direct)
+        // A drop cap is a separate framed paragraph in Word; it becomes the first letter of the next one.
+        if (properties.dropCap == true && builder.trailing.isEmpty()) {
+            dropCap = builder.inlines.toList()
+            return
+        }
         if (builder.pageBreakBefore || properties.pageBreakBefore == true) addPageBreak(target)
-        target += Paragraph(builder.inlines.toList(), paragraphFormatter.style(properties))
+        val inlines = dropCap?.let { it + builder.inlines } ?: builder.inlines.toList()
+        dropCap = null
+        target += Paragraph(inlines, paragraphFormatter.style(properties, builder.direct))
         target.addAll(builder.trailing)
         if (builder.pageBreakAfter) addPageBreak(target)
     }

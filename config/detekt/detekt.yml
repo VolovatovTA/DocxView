@@ -59,7 +59,7 @@ Compose:
     active: true
   CompositionLocalAllowlist:
     active: true
-    allowedCompositionLocals: LocalInHeaderRow
+    allowedCompositionLocals: LocalInHeaderRow,LocalSurfaceColor
   CompositionLocalNaming:
     active: true
   ContentEmitterReturningValues:
