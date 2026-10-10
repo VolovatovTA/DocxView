@@ -3,6 +3,8 @@
 [![CI](https://github.com/VolovatovTA/DocxView/actions/workflows/ci.yml/badge.svg)](https://github.com/VolovatovTA/DocxView/actions/workflows/ci.yml)
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.volovatovta.docviewer/docviewer)](https://central.sonatype.com/artifact/io.github.volovatovta.docviewer/docviewer)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
+[![Min API](https://img.shields.io/badge/min%20API-23%20(Android%206.0)-brightgreen.svg)](https://developer.android.com/tools/releases/platforms)
+[![Max API](https://img.shields.io/badge/tested%20up%20to%20API-37%20(Android%2017)-brightgreen.svg)](#compatibility)
 
 View **PDF, DOCX, DOC, CSV/TSV and TXT** inside an Android app with a single component that
 works the same in **Jetpack Compose** and in **XML layouts**.
@@ -62,6 +64,11 @@ dependencies {
 To build from source, run `./gradlew publishToMavenLocal` and add `mavenLocal()` to your repositories.
 
 `minSdk 23`, `compileSdk 36`. Loading from a URL requires the `INTERNET` permission.
+
+### Compatibility
+
+Every API level from 23 (Android 6.0) to 37 (Android 17), including 36.1, passes the full
+instrumented suite (45 tests: PDF engine stress, concurrency and UI scenarios) on emulators.
 
 ## Compose
 
