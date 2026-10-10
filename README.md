@@ -282,13 +282,14 @@ all of them green:
 | Check | Command | What it guards |
 |---|---|---|
 | Unit tests | `./gradlew test` | parsers on real documents, viewer geometry, table layout |
-| Instrumented tests | `./gradlew :docviewer:connectedDebugAndroidTest` | PDF engine and UI on API 30 and 35 in CI |
+| Instrumented tests | `./gradlew :docviewer:connectedDebugAndroidTest` | PDF engine, viewers, rotation, process death and leaks on API 30 and 35 in CI |
 | Detekt | `./gradlew detekt` | code smells, ktlint formatting and Compose rules, zero findings allowed |
 | Android Lint | `./gradlew lint` | warnings are errors |
 | Public API | `./gradlew apiCheck` (`apiDump` to update) | binary compatibility of the published API |
 | Coverage | `./gradlew koverHtmlReport koverVerify` | merged line coverage must not drop below the baseline |
 | Architecture | `./gradlew :konsist:test assertModuleGraph` | parsers stay free of Android, internals stay internal |
 | Dependencies | `./gradlew buildHealth` | no unused or misdeclared dependencies |
+| Complexity | `tools/complexity.sh` (needs `pip install lizard`) | no function above cyclomatic complexity 20; the most complex ones are listed on every run |
 
 Test results are annotated on the pull request, coverage is posted as a comment, and every
 report plus the sample APK is attached to the workflow run.
