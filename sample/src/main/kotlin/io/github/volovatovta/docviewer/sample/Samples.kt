@@ -25,6 +25,14 @@ internal val BundledSamples = listOf(
         color = BadgeColors.Docx,
         location = "asset:///sample.docx",
     ),
+    // calibre's showcase of Word features, downloaded on open: it is not ours to bundle.
+    Sample(
+        title = "Word · calibre demo",
+        subtitle = "Downloaded from calibre-ebook.com: table styles, lists, drop caps, images",
+        badge = "DOCX",
+        color = BadgeColors.Docx,
+        location = "https://calibre-ebook.com/downloads/demos/demo.docx",
+    ),
     Sample(
         title = "Word 97 · DOC",
         subtitle = "The same report in the legacy binary format",
