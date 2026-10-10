@@ -78,6 +78,7 @@ internal fun FlowViewer(
         onLink = onLink,
         images = document.images,
         imageCache = imageCache,
+        tableColumns = remember(document, scale) { java.util.IdentityHashMap() },
     )
 
     BoxWithConstraints(Modifier.fillMaxSize().background(colors.background)) {

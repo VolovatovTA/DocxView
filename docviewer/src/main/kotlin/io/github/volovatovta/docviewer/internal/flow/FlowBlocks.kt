@@ -112,6 +112,8 @@ internal class FlowContext(
     val onLink: (String) -> Unit,
     val images: ImageStore,
     val imageCache: LruCache<String, ImageBitmap>,
+    // Survives list items leaving the screen, so tables are not re-measured on every scroll back.
+    val tableColumns: MutableMap<Table, ColumnContent>,
 )
 
 private val LocalInHeaderRow = staticCompositionLocalOf { false }
@@ -432,7 +434,7 @@ private fun TableView(table: Table, ctx: FlowContext) {
     val padding = (6 * ctx.scale).dp
     val measurer = rememberTextMeasurer(cacheSize = 0)
     val localDensity = LocalDensity.current
-    val contentWidths = remember(table, ctx.scale) {
+    val contentWidths = ctx.tableColumns.getOrPut(table) {
         measureColumns(table, measurer, TextStyle(fontSize = ctx.textSize), with(localDensity) { (padding + 2.dp).toPx() * 2 + 2.dp.toPx() })
     }
     Layout(
@@ -529,7 +531,7 @@ private fun TableView(table: Table, ctx: FlowContext) {
     }
 }
 
-private class ColumnContent(val min: FloatArray, val max: FloatArray)
+internal class ColumnContent(val min: FloatArray, val max: FloatArray)
 
 // Longest unbreakable word and longest line per column; numbers like "12 400" count as one word.
 private fun measureColumns(table: Table, measurer: TextMeasurer, style: TextStyle, padding: Float): ColumnContent {

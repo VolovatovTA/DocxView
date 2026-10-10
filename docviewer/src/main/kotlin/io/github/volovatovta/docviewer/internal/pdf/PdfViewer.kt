@@ -245,7 +245,7 @@ private val InvertMatrix = ColorMatrix(floatArrayOf(-1f, 0f, 0f, 0f, 255f, 0f, -
 @Composable
 internal fun PdfViewer(document: PdfDocument, state: DocumentViewerState, config: DocumentViewerConfig, colors: DocumentViewerColors) {
     val cache = remember(document) {
-        BitmapCache((Runtime.getRuntime().maxMemory() / 6).coerceAtMost(128L * 1024 * 1024).toInt())
+        BitmapCache((Runtime.getRuntime().maxMemory() / 8).coerceAtMost(64L * 1024 * 1024).toInt())
     }
     DisposableEffect(cache) { onDispose { cache.evictAll() } }
     val nightFilter = remember(config.pdfNightMode) { if (config.pdfNightMode) ColorFilter.colorMatrix(InvertMatrix) else null }

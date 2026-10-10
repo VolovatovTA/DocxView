@@ -228,6 +228,7 @@ private fun ViewerScreen(location: String, onBack: () -> Unit) {
     var searching by rememberSaveable { mutableStateOf(false) }
     var query by rememberSaveable { mutableStateOf("") }
     var nightPdf by rememberSaveable { mutableStateOf(false) }
+    var selectable by rememberSaveable { mutableStateOf(true) }
     var menu by remember { mutableStateOf(false) }
     val ready = state.status as? DocumentStatus.Ready
 
@@ -305,6 +306,10 @@ private fun ViewerScreen(location: String, onBack: () -> Unit) {
                                 menu = false
                                 nightPdf = !nightPdf
                             })
+                            DropdownMenuItem(text = { Text(if (selectable) "Выключить выделение текста" else "Включить выделение текста") }, onClick = {
+                                menu = false
+                                selectable = !selectable
+                            })
                             DropdownMenuItem(text = { Text("В начало") }, onClick = { menu = false; state.goToPage(0) })
                         }
                     }
@@ -315,7 +320,7 @@ private fun ViewerScreen(location: String, onBack: () -> Unit) {
         DocumentViewer(
             source = source,
             state = state,
-            config = DocumentViewerConfig(pdfNightMode = nightPdf),
+            config = DocumentViewerConfig(pdfNightMode = nightPdf, textSelectable = selectable),
             colors = DocumentViewerDefaults.colors(),
             modifier = Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding).imePadding(),
         )

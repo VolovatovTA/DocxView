@@ -1,0 +1,2 @@
+HSPLio/github/volovatovta/docviewer/**;->**(**)**
+Lio/github/volovatovta/docviewer/**;
