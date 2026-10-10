@@ -15,7 +15,7 @@ internal object XlsFormat : FormatReader {
 
     override fun recognizes(file: ProbedFile): Boolean =
         WORKBOOK in file.oleStreams || LEGACY_BOOK in file.oleStreams ||
-            file.isEncryptedOffice && file.hint?.isSpreadsheet == true
+            file.isOpaqueOffice && file.hint?.isSpreadsheet == true
 
     override fun read(request: ReadRequest): DocumentContent {
         request.requireMemoryFor(this)

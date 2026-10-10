@@ -40,11 +40,18 @@ internal class ProbedFile(val file: File, val hint: DocumentFormat?) {
 
     /** Stream names of an OLE container, lowercased. */
     val oleStreams: Set<String> by lazy {
-        if (!isOle) emptySet() else runCatching { CompoundFile(file.readBytes()).streamNames }.getOrDefault(emptySet())
+        if (!isOle || isOversizedOle) return@lazy emptySet()
+        runCatching { CompoundFile(file.readBytes()).streamNames }.getOrDefault(emptySet())
     }
 
-    /** A password-protected Office file; only its name tells a Word document from a workbook. */
-    val isEncryptedOffice: Boolean get() = CompoundFile.ENCRYPTED_PACKAGE.lowercase() in oleStreams
+    /**
+     * An Office container whose streams cannot tell a Word document from a workbook, so only the name can:
+     * a password-protected one, or one too large to read whole, which its reader then refuses as too large.
+     */
+    val isOpaqueOffice: Boolean get() = isOversizedOle || CompoundFile.ENCRYPTED_PACKAGE.lowercase() in oleStreams
+
+    private val isOversizedOle: Boolean
+        get() = isOle && file.length() > Runtime.getRuntime().maxMemory() / OLE_HEAP_SHARE
 
     /** The start of the file as text, or null when it reads like binary data. */
     val text: String? by lazy {
@@ -72,6 +79,7 @@ internal class ProbedFile(val file: File, val hint: DocumentFormat?) {
 
     private companion object {
         const val HEADER_BYTES = 1024
+        const val OLE_HEAP_SHARE = 4
         const val TEXT_SAMPLE_BYTES = 16 * 1024
         const val MAX_BINARY_CHARACTER_SHARE = 0.02
         const val TEXT_CONTROL_CHARACTERS = "\r\n\t\u000C"

@@ -16,23 +16,37 @@ internal enum class DateSystem(private val epochYear: Int, private val epochMont
     Excel1904(1904, Calendar.JANUARY, 1),
     ;
 
+    /** Excel shows `#####` instead of a date before its epoch or after 9999. */
+    fun isDate(serial: Double): Boolean =
+        serial >= 0 && serial < if (this == Excel1900) LAST_SERIAL else LAST_SERIAL_1904
+
     // Excel 1900 counts a 29 February 1900 that never was, so serials before it start one day later.
     fun dateTime(serial: Double): CellDateTime {
         val days = floor(serial).toInt()
         val seconds = ((serial - days) * SECONDS_PER_DAY).roundToInt()
+        // Serial 0 is "0 January 1900" and serial 60 the phantom leap day, as Excel shows them.
+        val shownDay = when {
+            this != Excel1900 || seconds >= SECONDS_PER_DAY -> null
+            days == 0 -> 0
+            days == PHANTOM_LEAP_DAY -> PHANTOM_DAY_OF_MONTH
+            else -> null
+        }
         val phantomLeapDay = if (this == Excel1900 && days < PHANTOM_LEAP_DAY) 1 else 0
         val calendar = GregorianCalendar(UTC).apply {
             clear()
             set(epochYear, epochMonth, epochDay)
-            add(Calendar.DAY_OF_MONTH, days + phantomLeapDay)
+            add(Calendar.DAY_OF_MONTH, days + phantomLeapDay + if (shownDay == 0) 1 else 0)
             add(Calendar.SECOND, seconds)
         }
-        return CellDateTime(calendar, (serial * SECONDS_PER_DAY).roundToLong())
+        return CellDateTime(calendar, (serial * SECONDS_PER_DAY).roundToLong(), shownDay)
     }
 
     private companion object {
         const val SECONDS_PER_DAY = 86_400
         const val PHANTOM_LEAP_DAY = 60
+        const val PHANTOM_DAY_OF_MONTH = 29
+        const val LAST_SERIAL = 2_958_466.0
+        const val LAST_SERIAL_1904 = 2_957_004.0
         val UTC: TimeZone = TimeZone.getTimeZone("UTC")
     }
 }
@@ -43,10 +57,14 @@ internal enum class NameStyle { Short, Full, Narrow }
  * The date and time of a cell, split into the fields a format code shows. Built on java.util.Calendar:
  * Android has java.time only from API 26, and the SDK supports API 23.
  */
-internal class CellDateTime(private val calendar: Calendar, val elapsedSeconds: Long) {
+internal class CellDateTime(
+    private val calendar: Calendar,
+    val elapsedSeconds: Long,
+    private val shownDay: Int? = null,
+) {
     val year: Int get() = calendar[Calendar.YEAR]
     val month: Int get() = calendar[Calendar.MONTH] + 1
-    val day: Int get() = calendar[Calendar.DAY_OF_MONTH]
+    val day: Int get() = shownDay ?: calendar[Calendar.DAY_OF_MONTH]
     val hour: Int get() = calendar[Calendar.HOUR_OF_DAY]
     val minute: Int get() = calendar[Calendar.MINUTE]
     val second: Int get() = calendar[Calendar.SECOND]

@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import io.github.volovatovta.docviewer.DocumentViewerColors
 import io.github.volovatovta.docviewer.DocumentViewerConfig
 import io.github.volovatovta.docviewer.DocumentViewerState
+import io.github.volovatovta.docviewer.internal.EvictOnLowMemory
 import io.github.volovatovta.docviewer.internal.ui.FastScrollbar
 import io.github.volovatovta.docviewer.internal.ui.ScrollIndicator
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -35,6 +36,7 @@ internal fun PdfViewer(
     modifier: Modifier = Modifier,
 ) {
     val cache = remember(document) { BitmapCache.sizedForHeap() }
+    EvictOnLowMemory(cache)
     DisposableEffect(cache) { onDispose { cache.evictAll() } }
     BoxWithConstraints(modifier.fillMaxSize().background(colors.background).clipToBounds()) {
         val viewport = rememberPdfViewport(

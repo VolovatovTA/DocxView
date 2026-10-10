@@ -38,6 +38,7 @@ import io.github.volovatovta.docviewer.core.FlowSearch
 import io.github.volovatovta.docviewer.core.model.FlowDocument
 import io.github.volovatovta.docviewer.core.model.Table
 import io.github.volovatovta.docviewer.core.stream.TextFile
+import io.github.volovatovta.docviewer.internal.EvictOnLowMemory
 import java.util.IdentityHashMap
 import kotlin.math.abs
 import kotlin.math.roundToInt
@@ -158,6 +159,7 @@ private fun rememberFlowContext(
     val hits = remember(state.searchHits) { state.searchHits.filterIsInstance<FlowMatch>() }
     val highlights = remember(hits) { FlowSearch.byParagraph(hits) }
     val imageCache = remember(document) { ImageBitmapCache() }
+    EvictOnLowMemory(imageCache)
     val tables = remember(document, scale) { IdentityHashMap<Table, TableRuntime>() }
     return FlowContext(
         colors = colors,

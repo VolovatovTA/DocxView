@@ -37,6 +37,15 @@ uses [Semantic Versioning](https://semver.org/).
 - The PDF zoom and the row of a workbook's later sheets survive rotation and process death;
   another sheet opens at its top.
 - Very wide sheets compose only the columns on screen.
+- Rotation no longer downloads or copies the document again: the local copy is handed to the
+  recreated screen.
+- Documents open one at a time, so two large files opened together cannot each claim the same
+  free heap; rendered pages and pictures are dropped when the system runs low on memory.
+- An Excel 97–2003 or Word 97–2003 file too large to read whole is refused as too large
+  instead of reported as an unknown format.
+- Excel formats: fractions (`# ?/?`, `?/8`), the dates Excel invents (0 January and
+  29 February 1900) and `#####` for dates outside Excel's range; number formats are parsed
+  once per workbook rather than once per cell.
 - Integrators with an exhaustive `when` over `DocumentFormat` or `DocumentContent` need
   branches for `XLSX`, `XLS` and `DocumentContent.Sheets`.
 - Built with Android Gradle Plugin 9.4, Gradle 9.8 and Kotlin 2.4. Apps still need

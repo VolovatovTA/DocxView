@@ -13,7 +13,7 @@ internal object DocFormat : FormatReader {
     override val peakMemoryPerByte = 8
 
     override fun recognizes(file: ProbedFile): Boolean =
-        WORD_STREAM in file.oleStreams || file.isEncryptedOffice && file.hint?.isSpreadsheet != true
+        WORD_STREAM in file.oleStreams || file.isOpaqueOffice && file.hint?.isSpreadsheet != true
 
     override fun read(request: ReadRequest): DocumentContent {
         request.requireMemoryFor(this)

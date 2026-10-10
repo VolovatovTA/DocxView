@@ -3,15 +3,18 @@ package io.github.volovatovta.docviewer.core
 import io.github.volovatovta.docviewer.core.docx.ListSymbols
 import io.github.volovatovta.docviewer.core.format.DocumentContent
 import io.github.volovatovta.docviewer.core.format.DocumentReader
+import io.github.volovatovta.docviewer.core.format.ReadOptions
 import io.github.volovatovta.docviewer.core.model.Block
 import io.github.volovatovta.docviewer.core.model.DocumentFormat
 import io.github.volovatovta.docviewer.core.model.Table
 import io.github.volovatovta.docviewer.core.model.Workbook
+import io.github.volovatovta.docviewer.core.ole.CompoundFile
 import io.github.volovatovta.docviewer.core.stream.CsvFile
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import java.io.File
+import java.io.RandomAccessFile
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import kotlin.test.assertEquals
@@ -138,6 +141,19 @@ class HostileInputTest {
         for (format in listOf(DocumentFormat.XLS, DocumentFormat.DOC)) {
             assertFailsWith<DocumentException>(format.name) { DocumentReader.read(file, format = format) }
         }
+    }
+
+    @Test
+    fun `a workbook too large to read whole is refused as too large, not as an unknown format`() {
+        val file = temp.newFile("huge.xls")
+        RandomAccessFile(file, "rw").use { sparse ->
+            sparse.write(CompoundFile.SIGNATURE)
+            sparse.setLength(Runtime.getRuntime().maxMemory() / 4 + 1)
+        }
+        val options = ReadOptions(memoryBudgetBytes = 64L * 1024 * 1024)
+
+        assertEquals(DocumentFormat.XLS, FormatDetector.detect(file, "huge.xls"))
+        assertFailsWith<DocumentTooLargeException> { DocumentReader.read(file, "huge.xls", options = options) }
     }
 
     @Test

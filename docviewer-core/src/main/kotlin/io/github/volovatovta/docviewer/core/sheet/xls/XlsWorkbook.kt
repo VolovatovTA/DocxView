@@ -138,7 +138,8 @@ private class Globals {
 
     fun format(style: Int): NumberFormat {
         val id = styleFormats.getOrElse(style) { 0 }
-        return customFormats[id] ?: NumberFormat.builtIn(id)
+        // Built-in codes are parsed once per workbook, not once per cell.
+        return customFormats.getOrPut(id) { NumberFormat.builtIn(id) }
     }
 
     fun accept(record: BiffRecord) {

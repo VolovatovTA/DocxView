@@ -15,6 +15,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.RuleChain
 import org.junit.runner.RunWith
+import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 
@@ -116,6 +117,23 @@ class RotationTest {
             rule.waitUntil(TIMEOUT_MS) { rule.onAllNodesWithText("Accessories").fetchSemanticsNodes().isNotEmpty() }
         }
     }
+
+    // The local copy is handed to the recreated screen; a rotation never copies or downloads the document again.
+    @Test
+    fun rotatingReusesTheLocalCopy() {
+        rule.waitUntil(TIMEOUT_MS) { rule.onAllNodesWithText("Orders").fetchSemanticsNodes().isNotEmpty() }
+        val copies = cachedCopies()
+        assertEquals(1, copies.size)
+
+        repeat(ROTATIONS) {
+            rule.activityRule.scenario.recreate()
+            rule.waitUntil(TIMEOUT_MS) { rule.onAllNodesWithText("Orders").fetchSemanticsNodes().isNotEmpty() }
+            assertEquals(copies, cachedCopies())
+        }
+    }
+
+    private fun cachedCopies(): Set<String> =
+        File(rule.activity.cacheDir, "docviewer").list().orEmpty().toSet()
 
     private companion object {
         const val TIMEOUT_MS = 30_000L

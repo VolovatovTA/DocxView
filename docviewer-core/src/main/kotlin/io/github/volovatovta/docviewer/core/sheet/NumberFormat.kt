@@ -10,6 +10,7 @@ import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.log10
 import kotlin.math.pow
+import kotlin.math.roundToLong
 
 /** What formatting needs besides the value: the workbook's date system and the reader's locale. */
 internal class FormatContext(val dates: DateSystem, val locale: Locale = Locale.getDefault()) {
@@ -42,8 +43,10 @@ internal sealed class NumberFormat {
 
     /** Built-in formats 14 and 22 follow the reader's regional date style rather than a fixed pattern. */
     class RegionalDate(private val withTime: Boolean) : NumberFormat() {
-        override fun formatFinite(value: Double, context: FormatContext): String =
-            context.dates.dateTime(value).regional(context.locale, withTime)
+        override fun formatFinite(value: Double, context: FormatContext): String {
+            if (!context.dates.isDate(value)) return NOT_A_DATE
+            return context.dates.dateTime(value).regional(context.locale, withTime)
+        }
     }
 
     /** A format code with up to four `;`-separated sections: positive, negative, zero and text. */
@@ -73,6 +76,7 @@ internal sealed class NumberFormat {
 
         private const val GENERAL = "General"
         private const val NOT_A_NUMBER = "#NUM!"
+        const val NOT_A_DATE = "#####"
         private const val REGIONAL_DATE = 14
         private const val REGIONAL_DATE_TIME = 22
         private val builtInCodes = mapOf(
@@ -100,6 +104,7 @@ private sealed interface Section {
                 pattern.trim() == "@" -> TextSection
                 pattern.contains(GENERAL, ignoreCase = true) -> GeneralSection(parts)
                 pattern.any { it.lowercaseChar() in DATE_LETTERS } -> DateSection(parts)
+                FractionSection.matches(pattern) -> FractionSection(parts)
                 else -> NumberSection(parts)
             }
         }
@@ -163,20 +168,32 @@ private class NumberSection(parts: List<Part>) : Section {
         return "${mantissa}E$sign$exponentDigits"
     }
 
-    private fun decimal(code: String, value: Double, context: FormatContext): String {
-        val integer = code.substringBefore('.')
-        val fraction = code.substringAfter('.', "")
-        // The group size is set explicitly: an empty pattern means 3 on the JVM but 0 on Android.
-        val format = DecimalFormat("", context.symbols).apply {
-            isGroupingUsed = ',' in integer
-            groupingSize = DIGITS_PER_GROUP
-            minimumIntegerDigits = integer.count { it == '0' }
-            minimumFractionDigits = fraction.count { it == '0' }
-            maximumFractionDigits = fraction.count { it in PLACEHOLDERS }
-            roundingMode = RoundingMode.HALF_UP
+    private fun decimal(code: String, value: Double, context: FormatContext): String =
+        formatter(code, context.symbols).format(value)
+
+    // A workbook is formatted on the thread that reads it, a column at a time, so formatters are reused.
+    private fun formatter(code: String, symbols: DecimalFormatSymbols): DecimalFormat {
+        if (symbols !== formatterSymbols) {
+            formatters.clear()
+            formatterSymbols = symbols
         }
-        return format.format(value)
+        return formatters.getOrPut(code) {
+            val integer = code.substringBefore('.')
+            val fraction = code.substringAfter('.', "")
+            // The group size is set explicitly: an empty pattern means 3 on the JVM but 0 on Android.
+            DecimalFormat("", symbols).apply {
+                isGroupingUsed = ',' in integer
+                groupingSize = DIGITS_PER_GROUP
+                minimumIntegerDigits = integer.count { it == '0' }
+                minimumFractionDigits = fraction.count { it == '0' }
+                maximumFractionDigits = fraction.count { it in PLACEHOLDERS }
+                roundingMode = RoundingMode.HALF_UP
+            }
+        }
     }
+
+    private var formatterSymbols: DecimalFormatSymbols? = null
+    private val formatters = HashMap<String, DecimalFormat>()
 
     private companion object {
         const val PLACEHOLDERS = "0#?"
@@ -187,12 +204,74 @@ private class NumberSection(parts: List<Part>) : Section {
     }
 }
 
+/** A whole part and a fraction, such as `# ?/?` for "1 1/4" or `?/8` for eighths; `?` pads with spaces. */
+private class FractionSection(parts: List<Part>) : Section {
+    private val text = parts.joinToString("") { it.text }
+    private val slash = text.indexOf('/')
+    private val denominatorCode = text.substring(slash + 1).takeWhile { it in PLACEHOLDERS || it.isDigit() }
+    private val numeratorStart = text.substring(0, slash).trimEnd().let { head ->
+        head.length - head.takeLastWhile { it in PLACEHOLDERS }.length
+    }
+    private val numeratorCode = text.substring(numeratorStart, slash).trim()
+    private val head = text.substring(0, numeratorStart)
+    private val wholeCode = head.trimEnd().takeLastWhile { it in PLACEHOLDERS || it == ',' }
+    private val prefix = head.trimEnd().dropLast(wholeCode.length)
+    private val gap = head.substring(prefix.length + wholeCode.length)
+    private val suffix = text.substring(slash + 1 + denominatorCode.length)
+    private val fixedDenominator = denominatorCode.toIntOrNull()?.takeIf { it > 0 }
+    private val maxDenominator = TEN_POWERS[denominatorCode.length.coerceIn(1, MAX_DENOMINATOR_DIGITS)] - 1
+
+    override fun format(value: Double, context: FormatContext): String {
+        val sign = if (value < 0) "-" else ""
+        val magnitude = abs(value)
+        var whole = if (wholeCode.isEmpty()) 0L else floor(magnitude).toLong()
+        val (numerator, denominator) = fraction(magnitude - whole)
+        if (numerator == denominator && wholeCode.isNotEmpty()) whole++
+        val shown = numerator != 0L && numerator != denominator || wholeCode.isEmpty()
+        val wholeText = if (whole == 0L && wholeCode.none { it == '0' } && shown) "" else whole.toString()
+        val top = numerator.toString().padStart(numeratorCode.length)
+        val bottom = denominator.toString().padEnd(denominatorCode.length)
+        val fractionText = if (shown) "$top/$bottom" else " ".repeat(numeratorCode.length + 1 + denominatorCode.length)
+        return sign + prefix + wholeText + gap + fractionText + suffix
+    }
+
+    // The closest fraction with a denominator of at most as many digits as the code has.
+    private fun fraction(value: Double): Pair<Long, Long> {
+        fixedDenominator?.let { return (value * it).roundToLong() to it.toLong() }
+        var best = value.roundToLong() to 1L
+        var bestError = abs(value - best.first)
+        for (denominator in 2..maxDenominator) {
+            val numerator = (value * denominator).roundToLong()
+            val error = abs(value - numerator.toDouble() / denominator)
+            if (error < bestError - EPSILON) {
+                best = numerator to denominator.toLong()
+                bestError = error
+            }
+        }
+        return best
+    }
+
+    companion object {
+        private const val PLACEHOLDERS = "0#?"
+        private const val MAX_DENOMINATOR_DIGITS = 4
+        private const val EPSILON = 1e-12
+        private val TEN_POWERS = intArrayOf(1, 10, 100, 1000, 10_000)
+
+        fun matches(pattern: String): Boolean {
+            val slash = pattern.indexOf('/')
+            return slash > 0 && pattern[slash - 1] in PLACEHOLDERS &&
+                pattern.getOrNull(slash + 1)?.let { it in PLACEHOLDERS || it.isDigit() } == true
+        }
+    }
+}
+
 /** Days, months, years, hours, minutes and seconds in the order the code writes them. */
 private class DateSection(parts: List<Part>) : Section {
     private val tokens = DateToken.tokenize(parts)
     private val twelveHour = tokens.any { it is DateToken.Meridiem }
 
     override fun format(value: Double, context: FormatContext): String {
+        if (!context.dates.isDate(value)) return NumberFormat.NOT_A_DATE
         val time = context.dates.dateTime(value)
         return tokens.joinToString("") { it.render(time, twelveHour, context.locale) }
     }

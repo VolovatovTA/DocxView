@@ -50,6 +50,28 @@ class NumberFormatTest {
     }
 
     @Test
+    fun `fractions find the closest denominator the code allows`() {
+        assertEquals("1 1/4", format("# ?/?", 1.25))
+        assertEquals(" 1/2", format("# ?/?", 0.5))
+        assertEquals("2    ", format("# ?/?", 2.0))
+        assertEquals("3  1/3 ", format("# ??/??", 3.333))
+        assertEquals("5/8", format("?/8", 0.625))
+        assertEquals("-1 1/2", format("# ?/?", -1.5))
+        assertEquals("7/4", format("?/?", 1.75))
+    }
+
+    @Test
+    fun `dates Excel cannot show and the days it invents`() {
+        assertEquals("00.01.1900", format("dd.mm.yyyy", 0.0))
+        assertEquals("00.01.1900 12:00", format("dd.mm.yyyy hh:mm", 0.5))
+        assertEquals("29.02.1900", format("dd.mm.yyyy", 60.0))
+        assertEquals("#####", format("dd.mm.yyyy", -1.0))
+        assertEquals("#####", format("dd.mm.yyyy", 3_000_000.0))
+        assertEquals("31.12.9999", format("dd.mm.yyyy", 2_958_465.0))
+        assertEquals("#####", NumberFormat.builtIn(14).format(-5.0, us))
+    }
+
+    @Test
     fun `general shows up to ten significant digits`() {
         assertEquals("42", NumberFormat.General.format(42.0, us))
         assertEquals("0.1", NumberFormat.General.format(0.1, us))
