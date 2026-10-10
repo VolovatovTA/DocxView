@@ -3,7 +3,14 @@
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
 uses [Semantic Versioning](https://semver.org/).
 
-## [1.0.0] — unreleased
+## [Unreleased]
+
+- Built with Android Gradle Plugin 9.4, Gradle 9.8 and Kotlin 2.4. Apps still need
+  `compileSdk 35` or newer, as with 1.0.0.
+- `DocumentViewerConfig` gains a no-argument JVM constructor (Kotlin 2.4 generates it for
+  classes whose parameters all have defaults); existing code is unaffected.
+
+## [1.0.0] — 2026-10-10
 
 First public release.
 
