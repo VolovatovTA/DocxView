@@ -83,14 +83,45 @@ import io.github.volovatovta.docviewer.DocumentViewerConfig
 import io.github.volovatovta.docviewer.DocumentViewerDefaults
 import io.github.volovatovta.docviewer.rememberDocumentViewerState
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
-private class Sample(val title: String, val subtitle: String, val badge: String, val color: Color, val location: String)
+private class Sample(
+    val title: String,
+    val subtitle: String,
+    val badge: String,
+    val color: Color,
+    val location: String
+)
 
 private val samples = listOf(
-    Sample("PDF · 41 pages", "Pinch zoom, double tap, fast scroll, search", "PDF", Color(0xFFE5484D), "asset:///sample.pdf"),
-    Sample("Word · DOCX", "Styles, lists, a table, a link, an image", "DOCX", Color(0xFF2F6FEB), "asset:///sample.docx"),
-    Sample("Word 97 · DOC", "The same report in the legacy binary format", "DOC", Color(0xFF1D3F91), "asset:///sample.doc"),
-    Sample("CSV · 2,000 rows", "Windows-1251 and \";\", like an Excel export", "CSV", Color(0xFF12A150), "asset:///sample.csv"),
+    Sample(
+        "PDF · 41 pages",
+        "Pinch zoom, double tap, fast scroll, search",
+        "PDF",
+        Color(0xFFE5484D),
+        "asset:///sample.pdf"
+    ),
+    Sample(
+        "Word · DOCX",
+        "Styles, lists, a table, a link, an image",
+        "DOCX",
+        Color(0xFF2F6FEB),
+        "asset:///sample.docx"
+    ),
+    Sample(
+        "Word 97 · DOC",
+        "The same report in the legacy binary format",
+        "DOC",
+        Color(0xFF1D3F91),
+        "asset:///sample.doc"
+    ),
+    Sample(
+        "CSV · 2,000 rows",
+        "Windows-1251 and \";\", like an Excel export",
+        "CSV",
+        Color(0xFF12A150),
+        "asset:///sample.csv"
+    ),
     Sample("Text · TXT", "A plain text file", "TXT", Color(0xFF6B7280), "asset:///sample.txt"),
 )
 
@@ -104,7 +135,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             val dark = isSystemInDarkTheme()
             val accent = if (dark) Color(0xFF7AA7FF) else Color(0xFF2F6FEB)
-            MaterialTheme(colorScheme = if (dark) darkColorScheme(primary = accent) else lightColorScheme(primary = accent)) {
+            MaterialTheme(
+                colorScheme = if (dark) darkColorScheme(primary = accent) else lightColorScheme(
+                    primary = accent
+                )
+            ) {
                 var opened by rememberSaveable { mutableStateOf<String?>(null) }
                 LaunchedEffect(incoming) {
                     incoming?.let { opened = it }
@@ -131,17 +166,29 @@ class MainActivity : ComponentActivity() {
 @Composable
 private fun HomeScreen(onOpen: (String) -> Unit) {
     val context = LocalContext.current
-    val picker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
-        if (uri != null) onOpen(uri.toString())
-    }
+    val picker =
+        rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
+            if (uri != null) onOpen(uri.toString())
+        }
     var askUrl by remember { mutableStateOf(false) }
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+    val scrollBehavior =
+        TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = { LargeTopAppBar(title = { Text("DocViewer SDK") }, scrollBehavior = scrollBehavior) },
+        topBar = {
+            LargeTopAppBar(
+                title = { Text("DocViewer SDK") },
+                scrollBehavior = scrollBehavior
+            )
+        },
     ) { padding ->
         LazyColumn(
-            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = padding.calculateTopPadding() + 8.dp, bottom = padding.calculateBottomPadding() + 24.dp),
+            contentPadding = PaddingValues(
+                start = 16.dp,
+                end = 16.dp,
+                top = padding.calculateTopPadding() + 8.dp,
+                bottom = padding.calculateBottomPadding() + 24.dp
+            ),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             item {
@@ -173,11 +220,21 @@ private fun HomeScreen(onOpen: (String) -> Unit) {
                         Spacer(Modifier.width(6.dp))
                         Text("Open file")
                     }
-                    OutlinedButton(onClick = { askUrl = true }, modifier = Modifier.weight(1f)) { Text("Open URL") }
+                    OutlinedButton(
+                        onClick = { askUrl = true },
+                        modifier = Modifier.weight(1f)
+                    ) { Text("Open URL") }
                 }
                 Spacer(Modifier.height(10.dp))
                 OutlinedButton(
-                    onClick = { context.startActivity(Intent(context, XmlDemoActivity::class.java)) },
+                    onClick = {
+                        context.startActivity(
+                            Intent(
+                                context,
+                                XmlDemoActivity::class.java
+                            )
+                        )
+                    },
                     modifier = Modifier.fillMaxWidth(),
                 ) { Text("View / XML demo") }
             }
@@ -188,7 +245,13 @@ private fun HomeScreen(onOpen: (String) -> Unit) {
         AlertDialog(
             onDismissRequest = { askUrl = false },
             title = { Text("Open a URL") },
-            text = { OutlinedTextField(url, { url = it }, singleLine = true, label = { Text("Document URL") }) },
+            text = {
+                OutlinedTextField(
+                    url,
+                    { url = it },
+                    singleLine = true,
+                    label = { Text("Document URL") })
+            },
             confirmButton = {
                 TextButton(onClick = {
                     askUrl = false
@@ -207,14 +270,33 @@ private fun SampleCard(sample: Sample, onClick: () -> Unit) {
         shape = RoundedCornerShape(18.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
     ) {
-        Row(Modifier.fillMaxWidth().padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-            Box(Modifier.size(48.dp).background(sample.color, RoundedCornerShape(12.dp)), contentAlignment = Alignment.Center) {
-                Text(sample.badge, color = Color.White, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.labelMedium)
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                Modifier
+                    .size(48.dp)
+                    .background(sample.color, RoundedCornerShape(12.dp)),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    sample.badge,
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.labelMedium
+                )
             }
             Spacer(Modifier.width(16.dp))
             Column(Modifier.weight(1f)) {
                 Text(sample.title, style = MaterialTheme.typography.titleMedium)
-                Text(sample.subtitle, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(
+                    sample.subtitle,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         }
     }
@@ -238,14 +320,21 @@ private fun ViewerScreen(location: String, onBack: () -> Unit) {
             state.clearSearch()
             return@LaunchedEffect
         }
-        delay(300)
+        delay(300L.milliseconds)
         state.search(query)
     }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back") } },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            "Back"
+                        )
+                    }
+                },
                 title = {
                     if (searching) {
                         val focus = remember { FocusRequester() }
@@ -261,11 +350,17 @@ private fun ViewerScreen(location: String, onBack: () -> Unit) {
                                 focusedIndicatorColor = Color.Transparent,
                                 unfocusedIndicatorColor = Color.Transparent,
                             ),
-                            modifier = Modifier.fillMaxWidth().focusRequester(focus),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .focusRequester(focus),
                         )
                     } else {
                         Column {
-                            Text(ready?.info?.title ?: ready?.info?.fileName ?: "Document", maxLines = 1, overflow = TextOverflow.Ellipsis)
+                            Text(
+                                ready?.info?.title ?: ready?.info?.fileName ?: "Document",
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
                             ready?.info?.let {
                                 Text(
                                     "${it.format} · ${formatSize(it.sizeBytes)}",
@@ -287,30 +382,58 @@ private fun ViewerScreen(location: String, onBack: () -> Unit) {
                             },
                             style = MaterialTheme.typography.labelLarge,
                         )
-                        IconButton(onClick = state::previousSearchResult, enabled = count > 0) { Icon(Icons.Default.KeyboardArrowUp, "Back") }
-                        IconButton(onClick = state::nextSearchResult, enabled = count > 0) { Icon(Icons.Default.KeyboardArrowDown, "Next") }
+                        IconButton(
+                            onClick = state::previousSearchResult,
+                            enabled = count > 0
+                        ) { Icon(Icons.Default.KeyboardArrowUp, "Back") }
+                        IconButton(onClick = state::nextSearchResult, enabled = count > 0) {
+                            Icon(
+                                Icons.Default.KeyboardArrowDown,
+                                "Next"
+                            )
+                        }
                         IconButton(onClick = {
                             searching = false
                             query = ""
                         }) { Icon(Icons.Default.Close, "Close search") }
                     } else {
                         if (ready?.info?.isSearchSupported != false) {
-                            IconButton(onClick = { searching = true }, enabled = ready != null) { Icon(Icons.Default.Search, "Search") }
+                            IconButton(
+                                onClick = { searching = true },
+                                enabled = ready != null
+                            ) { Icon(Icons.Default.Search, "Search") }
                         }
-                        IconButton(onClick = { menu = true }) { Icon(Icons.Default.MoreVert, "More") }
+                        IconButton(onClick = { menu = true }) {
+                            Icon(
+                                Icons.Default.MoreVert,
+                                "More"
+                            )
+                        }
                         DropdownMenu(menu, onDismissRequest = { menu = false }) {
-                            DropdownMenuItem(text = { Text("Zoom in") }, onClick = { menu = false; state.zoomIn() })
-                            DropdownMenuItem(text = { Text("Zoom out") }, onClick = { menu = false; state.zoomOut() })
-                            DropdownMenuItem(text = { Text("Reset zoom") }, onClick = { menu = false; state.resetZoom() })
-                            DropdownMenuItem(text = { Text(if (nightPdf) "Normal PDF pages" else "PDF night mode") }, onClick = {
-                                menu = false
-                                nightPdf = !nightPdf
-                            })
-                            DropdownMenuItem(text = { Text(if (selectable) "Disable text selection" else "Enable text selection") }, onClick = {
-                                menu = false
-                                selectable = !selectable
-                            })
-                            DropdownMenuItem(text = { Text("Go to start") }, onClick = { menu = false; state.goToPage(0) })
+                            DropdownMenuItem(
+                                text = { Text("Zoom in") },
+                                onClick = { menu = false; state.zoomIn() })
+                            DropdownMenuItem(
+                                text = { Text("Zoom out") },
+                                onClick = { menu = false; state.zoomOut() })
+                            DropdownMenuItem(
+                                text = { Text("Reset zoom") },
+                                onClick = { menu = false; state.resetZoom() })
+                            DropdownMenuItem(
+                                text = { Text(if (nightPdf) "Normal PDF pages" else "PDF night mode") },
+                                onClick = {
+                                    menu = false
+                                    nightPdf = !nightPdf
+                                })
+                            DropdownMenuItem(
+                                text = { Text(if (selectable) "Disable text selection" else "Enable text selection") },
+                                onClick = {
+                                    menu = false
+                                    selectable = !selectable
+                                })
+                            DropdownMenuItem(
+                                text = { Text("Go to start") },
+                                onClick = { menu = false; state.goToPage(0) })
                         }
                     }
                 },
@@ -322,7 +445,11 @@ private fun ViewerScreen(location: String, onBack: () -> Unit) {
             state = state,
             config = DocumentViewerConfig(pdfNightMode = nightPdf, textSelectable = selectable),
             colors = DocumentViewerDefaults.colors(),
-            modifier = Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding).imePadding(),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .consumeWindowInsets(padding)
+                .imePadding(),
         )
     }
 }

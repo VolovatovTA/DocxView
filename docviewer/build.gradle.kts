@@ -15,6 +15,7 @@ android {
     defaultConfig {
         minSdk = 23
         consumerProguardFiles("consumer-rules.pro")
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     compileOptions {
@@ -24,6 +25,11 @@ android {
 
     buildFeatures {
         compose = true
+    }
+
+    // The instrumentation APK otherwise targets minSdk, which Android 14+ refuses to install.
+    testOptions {
+        targetSdk = 36
     }
 }
 
@@ -38,6 +44,12 @@ dependencies {
     implementation(libs.compose.foundation)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.androidx.core.ktx)
+
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.compose.ui.test.junit4)
+    androidTestImplementation(libs.kotlin.test)
+    debugImplementation(libs.compose.ui.test.manifest)
 }
 
 mavenPublishing {
