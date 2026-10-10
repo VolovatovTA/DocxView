@@ -19,22 +19,18 @@ import kotlinx.coroutines.withContext
 import java.io.Closeable
 import java.io.File
 import java.io.IOException
+import java.util.concurrent.ExecutionException
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import java.util.concurrent.RejectedExecutionException
 
 internal class PdfPageSize(val width: Float, val height: Float)
 
-// PdfRenderer allows one open page at a time and is not thread-safe, so every call runs on one thread.
+// Every PdfRenderer call of every document runs on one shared thread: before Android 8 pdfium had no global lock.
 internal class PdfDocument private constructor(
     private val descriptor: ParcelFileDescriptor,
     private val renderer: PdfRenderer,
     val pageSizes: List<PdfPageSize>,
 ) : Closeable {
-
-    private val executor = Executors.newSingleThreadExecutor { task ->
-        Thread(task, THREAD_NAME).apply { priority = Thread.NORM_PRIORITY - 1 }
-    }
-    private val dispatcher = executor.asCoroutineDispatcher()
 
     @Volatile
     private var closed = false
@@ -80,10 +76,7 @@ internal class PdfDocument private constructor(
     private suspend fun <T> onPdfThread(block: () -> T): T? {
         if (closed) return null
         return try {
-            withContext(dispatcher) { if (closed) null else block() }
-        } catch (expected: RejectedExecutionException) {
-            // The executor rejects work once the document has been closed.
-            null
+            withContext(PdfThread.dispatcher) { if (closed) null else block() }
         } catch (expected: IllegalStateException) {
             // PdfRenderer throws this when the document was closed between the check and the call.
             if (closed) null else throw expected
@@ -93,20 +86,25 @@ internal class PdfDocument private constructor(
     override fun close() {
         if (closed) return
         closed = true
-        executor.execute {
+        PdfThread.executor.execute {
             runCatching { renderer.close() }
             runCatching { descriptor.close() }
         }
-        executor.shutdown()
     }
 
     companion object {
-        private const val THREAD_NAME = "docviewer-pdf"
         private const val OPEN_FAILED = "Cannot open PDF"
         private const val READ_FAILED = "Cannot read PDF pages"
         private const val NO_PAGES = "PDF has no pages"
 
-        fun open(file: File, password: String?): PdfDocument {
+        // Blocks the caller until the shared PDF thread has opened the document.
+        fun open(file: File, password: String?): PdfDocument = try {
+            PdfThread.executor.submit<PdfDocument> { openOnPdfThread(file, password) }.get()
+        } catch (failure: ExecutionException) {
+            throw failure.cause ?: failure
+        }
+
+        private fun openOnPdfThread(file: File, password: String?): PdfDocument {
             val descriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
             val renderer = descriptor.closeOnFailure { openRenderer(descriptor, password) }
             return descriptor.closeOnFailure {
@@ -160,4 +158,16 @@ internal class PdfDocument private constructor(
             }
         }
     }
+}
+
+private object PdfThread {
+    private const val NAME = "docviewer-pdf"
+
+    val executor: ExecutorService = Executors.newSingleThreadExecutor { task ->
+        Thread(task, NAME).apply {
+            isDaemon = true
+            priority = Thread.NORM_PRIORITY - 1
+        }
+    }
+    val dispatcher = executor.asCoroutineDispatcher()
 }

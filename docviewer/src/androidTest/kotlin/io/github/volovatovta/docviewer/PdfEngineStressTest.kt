@@ -30,6 +30,9 @@ class PdfEngineStressTest(private val pdf: TestPdf) {
         // Real-world files that are broken on purpose: failing cleanly is as good as rendering.
         private val MayFail = setOf("helloworld-bad", "bad-PageLabels")
 
+        // Platform pdfium of Android 11-14 draws nothing for this shading; 9-10 and 15+ render it.
+        private val BlankOnPlatform = mapOf("axial_shading_many_inputs" to 30..34)
+
         private const val SCREEN_WIDTH = 1080
         private const val BASE_BITMAP_PIXELS = 2_500_000f
         private const val ZOOM = 4
@@ -52,7 +55,7 @@ class PdfEngineStressTest(private val pdf: TestPdf) {
             val stats = renderPages(document)
             renderZoomedTile(document)
             val hits = searchHits(document)
-            if (pdf.name !in MayFail) assertTrue(stats.nonBlank > 0, "every rendered page of ${pdf.name} is blank")
+            if (mustShowContent()) assertTrue(stats.nonBlank > 0, "every rendered page of ${pdf.name} is blank")
             log(
                 "result=ok|pages=${document.pageCount}|openMs=$openMs|rendered=${stats.rendered}|" +
                     "renderAvgMs=${stats.totalMs / stats.rendered}|renderMaxMs=${stats.worstMs}|" +
@@ -120,6 +123,9 @@ class PdfEngineStressTest(private val pdf: TestPdf) {
         assertTrue(hits >= pdf.minHits, "search for '$word' in ${pdf.name} found $hits, expected >= ${pdf.minHits}")
         return hits
     }
+
+    private fun mustShowContent(): Boolean =
+        pdf.name !in MayFail && BlankOnPlatform[pdf.name]?.contains(Build.VERSION.SDK_INT) != true
 
     private fun Bitmap.isBlank(): Boolean {
         val row = IntArray(width)

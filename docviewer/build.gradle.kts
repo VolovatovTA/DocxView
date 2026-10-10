@@ -60,6 +60,8 @@ dependencies {
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.compose.ui.test.junit4)
+    // Espresso before 3.7 injects input through an InputManager API removed in Android 16 QPR2.
+    androidTestImplementation(libs.androidx.test.espresso.core)
     androidTestImplementation(libs.kotlin.test)
     debugImplementation(libs.compose.ui.test.manifest)
 }
