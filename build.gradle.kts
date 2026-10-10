@@ -13,6 +13,7 @@ plugins {
     alias(libs.plugins.kotlin.jvm) apply false
     alias(libs.plugins.kotlin.compose) apply false
     alias(libs.plugins.maven.publish) apply false
+    alias(libs.plugins.dokka) apply false
     alias(libs.plugins.detekt)
     alias(libs.plugins.kover)
     alias(libs.plugins.binary.compatibility.validator)
@@ -52,11 +53,27 @@ kover {
     }
 }
 
+// `buildHealth` fails on any misdeclared dependency; artifact families count as one dependency.
+dependencyAnalysis {
+    issues {
+        all { onAny { severity("fail") } }
+    }
+    structure {
+        bundle("compose-runtime") { includeGroup("androidx.compose.runtime") }
+        bundle("compose-ui") { includeGroup("androidx.compose.ui") }
+        bundle("compose-foundation") { includeGroup("androidx.compose.foundation") }
+        bundle("compose-animation") { includeGroup("androidx.compose.animation") }
+        bundle("coroutines") { includeGroup("org.jetbrains.kotlinx") }
+        bundle("androidx-test") { includeGroup("androidx.test") }
+        bundle("activity") { includeGroup("androidx.activity") }
+    }
+}
+
 // Module dependency rules, checked by `./gradlew assertModuleGraph`.
 moduleGraphAssert {
     maxHeight = 3
     allowed = arrayOf(
-        ":sample -> :docviewer",
+        ":sample -> :docviewer.*",
         ":docviewer -> :docviewer-core",
     )
     restricted = arrayOf(
@@ -72,6 +89,7 @@ allprojects {
 
 subprojects {
     apply(plugin = "io.gitlab.arturbosch.detekt")
+    apply(plugin = "com.autonomousapps.dependency-analysis")
     if (name in setOf("docviewer-core", "docviewer")) apply(plugin = "org.jetbrains.kotlinx.kover")
 
     extensions.configure<DetektExtension> {

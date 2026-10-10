@@ -49,10 +49,17 @@ kotlin {
 
 dependencies {
     implementation(project(":docviewer"))
+    implementation(project(":docviewer-core"))
+    implementation(libs.compose.runtime)
+    implementation(libs.compose.runtime.saveable)
+    implementation(libs.compose.ui)
+    implementation(libs.compose.foundation)
+    implementation(libs.compose.animation)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.appcompat)
     implementation(libs.compose.material3)
     implementation(libs.compose.material.icons)
-    implementation(libs.compose.ui.tooling.preview)
     debugImplementation(libs.compose.ui.tooling)
 }
