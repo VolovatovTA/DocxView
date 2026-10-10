@@ -1,17 +1,18 @@
-# Безопасность
+# Security
 
-DocViewer открывает файлы и URL, пришедшие извне, поэтому к уязвимостям в парсерах
-(DOCX/DOC/CSV) и в загрузке по сети относимся серьёзно.
+DocxView opens files and URLs that come from outside the app, so vulnerabilities in the parsers
+(DOCX/DOC/CSV) and in network loading are taken seriously.
 
-## Как сообщить об уязвимости
+## Reporting a vulnerability
 
-Не создавайте публичный issue. Отправьте отчёт через
-[приватный security advisory](https://github.com/VolovatovTA/DocxView/security/advisories/new)
-на GitHub: опишите проблему, версию библиотеки и, если есть, файл, который её воспроизводит.
+Do not open a public issue. Send a report through a
+[private security advisory](https://github.com/VolovatovTA/DocxView/security/advisories/new)
+on GitHub: describe the problem, the library version and, if possible, attach a file that
+reproduces it.
 
-Ответ — в течение 7 дней. После исправления выйдет патч-релиз, а в advisory будет указан автор
-находки (если вы не против).
+You will get a response within 7 days. A patch release follows the fix, and the advisory
+credits the reporter (unless you prefer otherwise).
 
-## Поддерживаемые версии
+## Supported versions
 
-Исправления выпускаются для последней минорной версии.
+Fixes are released for the latest minor version.

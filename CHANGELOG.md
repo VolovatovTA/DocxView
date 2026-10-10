@@ -1,13 +1,14 @@
 # Changelog
 
-Формат — [Keep a Changelog](https://keepachangelog.com/ru/1.1.0/), версии — [SemVer](https://semver.org/lang/ru/).
+The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
+uses [Semantic Versioning](https://semver.org/).
 
-## [1.0.0] — не выпущена
+## [1.0.0] — unreleased
 
-Первый публичный релиз.
+First public release.
 
-- `DocumentViewer` (Compose) и `DocumentView` (XML) для PDF, DOCX, DOC, CSV/TSV и TXT.
-- `docviewer-core`: парсеры DOCX, DOC, CSV и TXT на чистом Kotlin/JVM.
-- Загрузка по URL не передаёт заголовки запроса на другой хост при редиректе
-  и не следует редиректам с HTTPS на HTTP.
-- XML-части DOCX с объявлением DOCTYPE отклоняются (защита от XXE и «XML-бомб»).
+- `DocumentViewer` (Compose) and `DocumentView` (XML) for PDF, DOCX, DOC, CSV/TSV and TXT.
+- `docviewer-core`: pure Kotlin/JVM parsers for DOCX, DOC, CSV and TXT.
+- URL loading does not forward request headers to another host on redirect and does not
+  follow redirects from HTTPS to HTTP.
+- DOCX XML parts that declare a DOCTYPE are rejected (protection against XXE and XML bombs).

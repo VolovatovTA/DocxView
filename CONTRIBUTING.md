@@ -1,13 +1,15 @@
-# Участие в разработке
+# Contributing
 
-Баг-репорты, идеи и pull request'ы приветствуются.
+Bug reports, ideas and pull requests are welcome.
 
-- **Баг в отображении документа** — приложите файл, на котором он воспроизводится
-  (без личных данных), и скриншот. Это самый полезный вклад.
-- **Pull request** — перед отправкой запустите `./gradlew build`: он собирает все модули,
-  гоняет тесты и lint. Для новых возможностей парсера добавьте тест в `docviewer-core/src/test`.
-- Публичный API объявлен явно (`explicitApi()`); всё, что не нужно пользователю библиотеки,
-  оставляйте `internal`.
+- **A document renders incorrectly** — attach a file that reproduces the problem (without
+  personal data) and a screenshot. This is the most useful contribution.
+- **Pull requests** — run `./gradlew build` before submitting: it builds every module and runs
+  the unit tests and lint. Add a test to `docviewer-core/src/test` for new parser features.
+  Changes to the PDF viewer should pass the instrumented tests
+  (`./gradlew :docviewer:connectedDebugAndroidTest`).
+- The public API is declared explicitly (`explicitApi()`); keep everything that library users
+  do not need `internal`.
 
-Отправляя изменения, вы соглашаетесь, что они распространяются по лицензии
-[Apache 2.0](LICENSE), как и весь проект.
+By submitting changes you agree that they are distributed under the
+[Apache 2.0](LICENSE) license, like the rest of the project.

@@ -29,7 +29,7 @@ class XmlDemoActivity : AppCompatActivity() {
             }
 
             override fun onPageChanged(page: Int, pageCount: Int) {
-                if (pageCount > 0) status.text = "Блок ${page + 1} из $pageCount"
+                if (pageCount > 0) status.text = "Block ${page + 1} of $pageCount"
             }
 
             override fun onSearchResultsChanged(count: Int, current: Int) {
@@ -51,10 +51,10 @@ class XmlDemoActivity : AppCompatActivity() {
     }
 
     private fun statusText(status: DocumentStatus): String? = when (status) {
-        is DocumentStatus.Loading -> "Загрузка…"
+        is DocumentStatus.Loading -> "Loading…"
         is DocumentStatus.Ready -> "${status.info.format}: ${status.info.fileName}"
-        is DocumentStatus.Failed -> "Ошибка: ${status.error.message}"
-        is DocumentStatus.PasswordRequired -> "Нужен пароль"
+        is DocumentStatus.Failed -> "Error: ${status.error.message}"
+        is DocumentStatus.PasswordRequired -> "Password required"
         DocumentStatus.Idle -> null
     }
 }

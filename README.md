@@ -1,67 +1,67 @@
-# DocViewer SDK
+# DocxView
 
 [![CI](https://github.com/VolovatovTA/DocxView/actions/workflows/ci.yml/badge.svg)](https://github.com/VolovatovTA/DocxView/actions/workflows/ci.yml)
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.volovatovta.docviewer/docviewer)](https://central.sonatype.com/artifact/io.github.volovatovta.docviewer/docviewer)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 
-Просмотр **PDF, DOCX, DOC, CSV/TSV и TXT** внутри Android-приложения — одним компонентом,
-который одинаково встраивается в **Jetpack Compose** и в **XML-разметку**.
-Без нативных библиотек и без Apache POI: PDF рисует системный `PdfRenderer`, офисные
-форматы и CSV разбирает собственный парсер на чистом Kotlin/JVM.
+View **PDF, DOCX, DOC, CSV/TSV and TXT** inside an Android app with a single component that
+works the same in **Jetpack Compose** and in **XML layouts**.
+No WebView, no native libraries, no Apache POI: PDF pages are drawn by the platform
+`PdfRenderer`, office formats and CSV are parsed by a pure Kotlin/JVM parser.
 
-| PDF | DOCX (тёмная тема) | Поиск в PDF | CSV |
+| PDF | DOCX (dark theme) | PDF search | CSV |
 |---|---|---|---|
 | ![](docs/pdf.png) | ![](docs/docx_dark.png) | ![](docs/pdf_search.png) | ![](docs/csv_search.png) |
 
-## Возможности
+## Features
 
 **PDF**
-- зум щипком до 6×, двойной тап, свободный 2D-пан с инерцией, Ctrl+колесо на ПК/хромбуках;
-- страницы виртуализированы на любом масштабе; при зуме видимая область дорисовывается
-  отдельным тайлом в полном разрешении — текст остаётся чётким;
-- индикатор «12 / 300», быстрая прокрутка ползунком с подсказкой страницы;
-- поиск с подсветкой совпадений (Android 15+, это ограничение `PdfRenderer`);
-- PDF с паролем: встроенный экран ввода (Android 15+);
-- ночной режим (инверсия страниц).
+- pinch zoom up to 6×, double tap, free 2D panning with fling, Ctrl + mouse wheel on desktops/Chromebooks;
+- pages stay virtualized at any zoom; when zoomed in, the visible area is re-rendered as a
+  full-resolution tile so text stays sharp;
+- "12 / 300" page indicator and a draggable fast-scroll thumb with a page label;
+- search with highlighted matches (Android 15+, a `PdfRenderer` limitation);
+- password-protected PDFs with a built-in password prompt (Android 15+);
+- night mode (inverted pages).
 
-**DOCX и DOC (Word 97–2003)**
-- стили и заголовки, жирный/курсив/подчёркивание/зачёркивание, цвет, выделение, размеры,
-  верхний/нижний индекс, моноширинные шрифты, выравнивание, отступы;
-- нумерованные и маркированные списки с настоящей нумерацией (`1.`, `a)`, `IV.`, `а)`);
-- таблицы: объединение ячеек, заливка, шапка; ширины колонок считаются по содержимому,
-  широкие таблицы прокручиваются вбок с градиентом по краю;
-- ссылки (`w:hyperlink` и поля `HYPERLINK`), картинки (тап — полноэкранный зум),
-  сноски, разрывы страниц, надписи; удалённые правки не показываются;
-- текст перетекает под ширину экрана, масштабируется щипком, выделяется и копируется;
-- цвета документа автоматически корректируются в тёмной теме (чёрный текст не пропадает).
+**DOCX and DOC (Word 97–2003)**
+- styles and headings, bold/italic/underline/strikethrough, colors, highlighting, font sizes,
+  superscript/subscript, monospace fonts, alignment, indents;
+- numbered and bulleted lists with real numbering (`1.`, `a)`, `IV.`, `а)`);
+- tables with merged cells, shading and header rows; column widths follow the content,
+  wide tables scroll horizontally with a fading edge;
+- links (`w:hyperlink` and `HYPERLINK` fields), images (tap for fullscreen zoom),
+  footnotes, page breaks, text boxes; deleted tracked changes are hidden;
+- text reflows to the screen width, scales with a pinch, and can be selected and copied;
+- document colors are adjusted for the dark theme, so black text never disappears.
 
 **CSV / TSV**
-- RFC 4180: кавычки, переносы строк внутри ячеек, `""`;
-- автоопределение разделителя (`,` `;` `Tab` `|`), кодировки (UTF-8/16, BOM, cp1251, cp1252)
-  и строки заголовка — выгрузки из русского Excel открываются без кракозябр;
-- закреплённые шапка и номера строк, числа выровнены вправо, тап по ячейке — полный текст.
+- RFC 4180: quotes, line breaks inside cells, escaped `""`;
+- automatic detection of the delimiter (`,` `;` `Tab` `|`), the encoding (UTF-8/16 with or
+  without BOM, Windows-1251, Windows-1252) and the header row;
+- pinned header and row numbers, right-aligned numbers, tap a cell to see its full text.
 
-**Общее**
-- источники: `Uri` (content/file), `File`, assets, `ByteArray`, `InputStream`, URL с прогрессом загрузки;
-- формат определяется по содержимому, а не по расширению;
-- поиск по всем форматам, программная навигация, состояние переживает поворот экрана;
-- светлая/тёмная тема, полностью настраиваемые цвета, локализация en/ru;
-- зависимости — только `compose-foundation` и `compose-ui` (Material не нужен).
+**Everything else**
+- sources: `Uri` (content/file), `File`, assets, `ByteArray`, `InputStream`, URL with download progress;
+- the format is detected from the content, not from the file extension;
+- search in every format, programmatic navigation, state survives configuration changes;
+- light and dark themes, fully customizable colors, English and Russian UI strings;
+- dependencies: only `compose-foundation` and `compose-ui` (no Material).
 
-## Подключение
+## Installation
 
-Библиотека публикуется в Maven Central:
+The library is published to Maven Central:
 
 ```kotlin
 dependencies {
     implementation("io.github.volovatovta.docviewer:docviewer:1.0.0")
-    // Только парсеры, без Android: "io.github.volovatovta.docviewer:docviewer-core:1.0.0"
+    // Parsers only, no Android: "io.github.volovatovta.docviewer:docviewer-core:1.0.0"
 }
 ```
 
-Локальная сборка из исходников — `./gradlew publishToMavenLocal` и `mavenLocal()` в репозиториях.
+To build from source, run `./gradlew publishToMavenLocal` and add `mavenLocal()` to your repositories.
 
-`minSdk 23`, `compileSdk 36`. Для загрузки по URL приложению нужно разрешение `INTERNET`.
+`minSdk 23`, `compileSdk 36`. Loading from a URL requires the `INTERNET` permission.
 
 ## Compose
 
@@ -78,22 +78,22 @@ fun ReportScreen(uri: Uri) {
 }
 ```
 
-Управление через `state`:
+Control the viewer through `state`:
 
 ```kotlin
-state.search("выручка")          // подсветит все совпадения и прокрутит к первому
+state.search("revenue")          // highlights all matches and scrolls to the first one
 state.nextSearchResult()
 state.previousSearchResult()
-state.goToPage(10)               // или suspend-версия state.scrollToPage(10)
+state.goToPage(10)               // or the suspending state.scrollToPage(10)
 state.zoomIn(); state.resetZoom()
 
 state.status                     // Idle / Loading(progress) / Ready(info) / PasswordRequired / Failed
-state.currentPage                // страница PDF или первая видимая строка/блок
+state.currentPage                // PDF page, or the first visible row/block
 state.searchResultCount
 state.currentSearchResult
 ```
 
-Настройка внешнего вида и поведения:
+Customize appearance and behavior:
 
 ```kotlin
 DocumentViewer(
@@ -106,7 +106,7 @@ DocumentViewer(
     ),
     colors = DocumentViewerDefaults.lightColors(accent = Color(0xFF00A86B)),
     onLinkClick = { url -> openInCustomTab(url); true },
-    // Свои экраны загрузки, ошибки и ввода пароля — по желанию.
+    // Optional custom loading, error and password screens.
     loading = { progress -> MyShimmer(progress) },
     error = { error, retry -> MyErrorState(error, retry) },
 )
@@ -129,8 +129,8 @@ DocumentViewer(
 
 ```kotlin
 val view = findViewById<DocumentView>(R.id.documentView)
-view.setUri(uri)                       // или setFile / setAsset / setUrl / source = ...
-view.search("договор")
+view.setUri(uri)                       // or setFile / setAsset / setUrl / source = ...
+view.search("contract")
 view.nextSearchResult()
 view.goToPage(3)
 
@@ -142,79 +142,85 @@ view.setListener(object : DocumentViewListener {
 })
 ```
 
-Из Java всё то же самое: `DocumentSource.uri(uri)`, `view.setSource(...)`, методы слушателя
-имеют реализации по умолчанию. Активити должна быть `ComponentActivity`
-(например, `AppCompatActivity`). Все атрибуты — в `docviewer/src/main/res/values/attrs.xml`.
+The same API works from Java: `DocumentSource.uri(uri)`, `view.setSource(...)`, and every
+listener method has a default implementation. The host activity must be a `ComponentActivity`
+(for example, `AppCompatActivity`). All attributes are listed in
+`docviewer/src/main/res/values/attrs.xml`.
 
-## Только парсеры
+## Parsers only
 
-Модуль `docviewer-core` — чистый Kotlin/JVM без Android-зависимостей. Его можно
-использовать отдельно, например для индексации или превью на сервере:
+The `docviewer-core` module is pure Kotlin/JVM with no Android dependencies. Use it on its own,
+for example to index documents or build previews on a server:
 
 ```kotlin
-val doc: FlowDocument = DocxParser.parse(file)      // DocParser, PlainTextParser
+val doc: FlowDocument = DocxParser.parse(file)      // also DocParser, PlainTextParser
 val table: TableDocument = CsvParser.parse(csvFile)
 val matches = FlowSearch.search(doc, "needle")
 val format = FormatDetector.detect(file)
 ```
 
-## Архитектура
+## Architecture
 
 ```
-docviewer-core   модель документа (Paragraph / Table / TextRun / ImageRun ...)
-                 DOCX: ZIP + SAX (styles, numbering, rels, footnotes, поля)
-                 DOC:  OLE2 Compound File → FIB → piece table → CHPX/PAPX FKP → LST
-                 CSV:  токенизатор RFC 4180, детекторы разделителя/кодировки/шапки
-docviewer        DocumentViewer (Compose) и DocumentView (View над ComposeView)
-                 pdf/  PdfRenderer на выделенном потоке, раскладка, жесты, тайлы, поиск
-                 flow/ рендер модели: абзацы, списки, таблицы, картинки
-                 grid/ таблица CSV
-sample           демо: Compose-экран со всеми форматами и XML-экран
+docviewer-core   document model (Paragraph / Table / TextRun / ImageRun ...)
+                 DOCX: ZIP + SAX (styles, numbering, relationships, footnotes, fields)
+                 DOC:  OLE2 compound file → FIB → piece table → CHPX/PAPX FKPs → list tables
+                 CSV:  RFC 4180 tokenizer, delimiter/encoding/header detection
+docviewer        DocumentViewer (Compose) and DocumentView (a View hosting ComposeView)
+                 pdf/  PdfRenderer on a dedicated thread, layout, gestures, tiles, search
+                 flow/ rendering of the model: paragraphs, lists, tables, images
+                 grid/ CSV table
+sample           demo app: a Compose screen for every format and an XML screen
 ```
 
-## Ограничения
+## Limitations
 
-- Поиск в PDF и PDF с паролем — только Android 15+ (на старых версиях
-  `PdfRenderer` не умеет ни того, ни другого; документ при этом открывается).
-- Выделение текста в PDF не поддерживается.
-- DOC/DOCX: колонтитулы, комментарии, формулы OMML (показываются текстом),
-  обтекание и плавающие фигуры не воспроизводятся; EMF/WMF-картинки показываются заглушкой.
-  Документы Word с паролем не открываются (выводится понятная ошибка).
-- Word 6/95 открывается в режиме «только текст».
-- CSV ограничен 500 000 строк (настраивается `CsvOptions.maxRows`), остальное отсекается с плашкой.
+- PDF search and password-protected PDFs require Android 15+ (older `PdfRenderer` supports
+  neither; such documents still open, or fail with a clear message if they need a password).
+- Text selection in PDF is not supported.
+- DOC/DOCX: headers and footers, comments, OMML equations (shown as plain text), text wrapping
+  and floating shapes are not reproduced; EMF/WMF images are shown as placeholders.
+  Password-protected Word documents are not supported and fail with a clear message.
+- Word 6.0/95 documents open as plain text.
+- CSV is limited to 500,000 rows (configurable via `CsvOptions.maxRows`); the rest is cut off
+  with a notice.
 
-## Производительность
+## Performance
 
-Замеры на Redmi Note 8 Pro (Android 11, 60 Гц), release-сборка с R8, серия флингов:
+Measured on a Redmi Note 8 Pro (Android 11, 60 Hz), release build with R8, series of flings:
 
-| Документ | Кадров | Janky | p95 | p99 |
+| Document | Frames | Janky | p95 | p99 |
 |---|---|---|---|---|
-| PDF, 41 стр. | 808 | 0% | 8 мс | 11 мс |
-| CSV, 2000 строк | 955 | 0,1% | 10 мс | 12 мс |
-| DOCX (прогретый) | 456 | 0,7% | 6 мс | 9 мс |
+| PDF, 41 pages | 808 | 0% | 8 ms | 11 ms |
+| CSV, 2,000 rows | 955 | 0.1% | 10 ms | 12 ms |
+| DOCX (warm) | 456 | 0.7% | 6 ms | 9 ms |
 
-Открытие PDF — меньше 0,6 с, утечек потоков и памяти нет (35 циклов открыть/закрыть,
-память выходит на плато). Библиотека содержит Baseline Profile для своего кода.
+A PDF opens in under 0.6 s. No thread or memory leaks over 35 open/close cycles (memory
+reaches a plateau). The library ships a Baseline Profile for its own code.
 
-Самая первая прокрутка DOCX сразу после установки приложения подтормаживает (~9% janky),
-пока ART не скомпилирует код выделения текста Compose (`SelectionContainer`); после фоновой
-компиляции или без выделения — 0,2%. Если это важно: сгенерируйте Baseline Profile
-приложения, включив в сценарий экран просмотра, либо отключите `textSelectable`.
+The very first DOCX scroll right after the app is installed stutters (~9% janky frames) until
+ART compiles Compose's text selection code (`SelectionContainer`); after background compilation,
+or with selection disabled, it drops to 0.2%. If that matters for your app, generate an app
+Baseline Profile that covers the viewer screen, or set `textSelectable = false`.
 
-## Сборка и тесты
+## Building and testing
 
 ```bash
-./gradlew :docviewer-core:test        # 34 теста парсеров на реальных файлах
+./gradlew :docviewer-core:test        # parser unit tests on real documents
 ./gradlew :sample:installDebug
+
+# Instrumented PDF stress tests (engine + UI with real gestures) on a device or emulator
+tools/fetch-test-pdfs.sh              # optional: hard real-world PDFs from the pdf.js test suite
+./gradlew :docviewer:connectedDebugAndroidTest
 ```
 
-Тестовые документы в `docviewer-core/src/test/resources` сохранены настоящими
-редакторами: LibreOffice (DOC/DOCX со списками, таблицами и ссылками) и macOS `textutil`.
+The test documents in `docviewer-core/src/test/resources` were saved by real editors:
+LibreOffice (DOC/DOCX with lists, tables and links) and macOS `textutil`.
 
-Участие в разработке — в [CONTRIBUTING.md](CONTRIBUTING.md); об уязвимостях — по инструкции
-в [SECURITY.md](SECURITY.md).
+See [CONTRIBUTING.md](CONTRIBUTING.md) to contribute and [SECURITY.md](SECURITY.md) to report
+vulnerabilities.
 
-## Лицензия
+## License
 
 ```
 Copyright 2026 Timofei Volovatov

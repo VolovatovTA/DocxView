@@ -87,11 +87,11 @@ import kotlinx.coroutines.delay
 private class Sample(val title: String, val subtitle: String, val badge: String, val color: Color, val location: String)
 
 private val samples = listOf(
-    Sample("PDF · 41 страница", "Зум щипком, двойной тап, быстрая прокрутка, поиск", "PDF", Color(0xFFE5484D), "asset:///sample.pdf"),
-    Sample("Word · DOCX", "Стили, списки, таблица, ссылка, картинка", "DOCX", Color(0xFF2F6FEB), "asset:///sample.docx"),
-    Sample("Word 97 · DOC", "Тот же отчёт в старом бинарном формате", "DOC", Color(0xFF1D3F91), "asset:///sample.doc"),
-    Sample("CSV · 2000 строк", "cp1251 и «;» — как выгрузка из Excel", "CSV", Color(0xFF12A150), "asset:///sample.csv"),
-    Sample("Текст · TXT", "Простой текстовый файл", "TXT", Color(0xFF6B7280), "asset:///sample.txt"),
+    Sample("PDF · 41 pages", "Pinch zoom, double tap, fast scroll, search", "PDF", Color(0xFFE5484D), "asset:///sample.pdf"),
+    Sample("Word · DOCX", "Styles, lists, a table, a link, an image", "DOCX", Color(0xFF2F6FEB), "asset:///sample.docx"),
+    Sample("Word 97 · DOC", "The same report in the legacy binary format", "DOC", Color(0xFF1D3F91), "asset:///sample.doc"),
+    Sample("CSV · 2,000 rows", "Windows-1251 and \";\", like an Excel export", "CSV", Color(0xFF12A150), "asset:///sample.csv"),
+    Sample("Text · TXT", "A plain text file", "TXT", Color(0xFF6B7280), "asset:///sample.txt"),
 )
 
 class MainActivity : ComponentActivity() {
@@ -146,7 +146,7 @@ private fun HomeScreen(onOpen: (String) -> Unit) {
         ) {
             item {
                 Text(
-                    "Один компонент для PDF, DOCX, DOC, CSV и TXT — в Compose и в XML.",
+                    "One component for PDF, DOCX, DOC, CSV and TXT — in Compose and in XML.",
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(bottom = 8.dp),
@@ -171,15 +171,15 @@ private fun HomeScreen(onOpen: (String) -> Unit) {
                     ) {
                         Icon(Icons.Default.Add, null)
                         Spacer(Modifier.width(6.dp))
-                        Text("Открыть файл")
+                        Text("Open file")
                     }
-                    OutlinedButton(onClick = { askUrl = true }, modifier = Modifier.weight(1f)) { Text("По ссылке") }
+                    OutlinedButton(onClick = { askUrl = true }, modifier = Modifier.weight(1f)) { Text("Open URL") }
                 }
                 Spacer(Modifier.height(10.dp))
                 OutlinedButton(
                     onClick = { context.startActivity(Intent(context, XmlDemoActivity::class.java)) },
                     modifier = Modifier.fillMaxWidth(),
-                ) { Text("Демо на View / XML") }
+                ) { Text("View / XML demo") }
             }
         }
     }
@@ -187,15 +187,15 @@ private fun HomeScreen(onOpen: (String) -> Unit) {
         var url by remember { mutableStateOf("https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf") }
         AlertDialog(
             onDismissRequest = { askUrl = false },
-            title = { Text("Открыть по ссылке") },
-            text = { OutlinedTextField(url, { url = it }, singleLine = true, label = { Text("URL документа") }) },
+            title = { Text("Open a URL") },
+            text = { OutlinedTextField(url, { url = it }, singleLine = true, label = { Text("Document URL") }) },
             confirmButton = {
                 TextButton(onClick = {
                     askUrl = false
                     onOpen(url.trim())
-                }) { Text("Открыть") }
+                }) { Text("Open") }
             },
-            dismissButton = { TextButton(onClick = { askUrl = false }) { Text("Отмена") } },
+            dismissButton = { TextButton(onClick = { askUrl = false }) { Text("Cancel") } },
         )
     }
 }
@@ -245,7 +245,7 @@ private fun ViewerScreen(location: String, onBack: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
-                navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Назад") } },
+                navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back") } },
                 title = {
                     if (searching) {
                         val focus = remember { FocusRequester() }
@@ -254,7 +254,7 @@ private fun ViewerScreen(location: String, onBack: () -> Unit) {
                             value = query,
                             onValueChange = { query = it },
                             singleLine = true,
-                            placeholder = { Text("Поиск в документе") },
+                            placeholder = { Text("Search the document") },
                             colors = TextFieldDefaults.colors(
                                 focusedContainerColor = Color.Transparent,
                                 unfocusedContainerColor = Color.Transparent,
@@ -265,7 +265,7 @@ private fun ViewerScreen(location: String, onBack: () -> Unit) {
                         )
                     } else {
                         Column {
-                            Text(ready?.info?.title ?: ready?.info?.fileName ?: "Документ", maxLines = 1, overflow = TextOverflow.Ellipsis)
+                            Text(ready?.info?.title ?: ready?.info?.fileName ?: "Document", maxLines = 1, overflow = TextOverflow.Ellipsis)
                             ready?.info?.let {
                                 Text(
                                     "${it.format} · ${formatSize(it.sizeBytes)}",
@@ -287,30 +287,30 @@ private fun ViewerScreen(location: String, onBack: () -> Unit) {
                             },
                             style = MaterialTheme.typography.labelLarge,
                         )
-                        IconButton(onClick = state::previousSearchResult, enabled = count > 0) { Icon(Icons.Default.KeyboardArrowUp, "Назад") }
-                        IconButton(onClick = state::nextSearchResult, enabled = count > 0) { Icon(Icons.Default.KeyboardArrowDown, "Далее") }
+                        IconButton(onClick = state::previousSearchResult, enabled = count > 0) { Icon(Icons.Default.KeyboardArrowUp, "Back") }
+                        IconButton(onClick = state::nextSearchResult, enabled = count > 0) { Icon(Icons.Default.KeyboardArrowDown, "Next") }
                         IconButton(onClick = {
                             searching = false
                             query = ""
-                        }) { Icon(Icons.Default.Close, "Закрыть поиск") }
+                        }) { Icon(Icons.Default.Close, "Close search") }
                     } else {
                         if (ready?.info?.isSearchSupported != false) {
-                            IconButton(onClick = { searching = true }, enabled = ready != null) { Icon(Icons.Default.Search, "Поиск") }
+                            IconButton(onClick = { searching = true }, enabled = ready != null) { Icon(Icons.Default.Search, "Search") }
                         }
-                        IconButton(onClick = { menu = true }) { Icon(Icons.Default.MoreVert, "Ещё") }
+                        IconButton(onClick = { menu = true }) { Icon(Icons.Default.MoreVert, "More") }
                         DropdownMenu(menu, onDismissRequest = { menu = false }) {
-                            DropdownMenuItem(text = { Text("Увеличить") }, onClick = { menu = false; state.zoomIn() })
-                            DropdownMenuItem(text = { Text("Уменьшить") }, onClick = { menu = false; state.zoomOut() })
-                            DropdownMenuItem(text = { Text("Сбросить масштаб") }, onClick = { menu = false; state.resetZoom() })
-                            DropdownMenuItem(text = { Text(if (nightPdf) "Обычные страницы PDF" else "Ночной режим PDF") }, onClick = {
+                            DropdownMenuItem(text = { Text("Zoom in") }, onClick = { menu = false; state.zoomIn() })
+                            DropdownMenuItem(text = { Text("Zoom out") }, onClick = { menu = false; state.zoomOut() })
+                            DropdownMenuItem(text = { Text("Reset zoom") }, onClick = { menu = false; state.resetZoom() })
+                            DropdownMenuItem(text = { Text(if (nightPdf) "Normal PDF pages" else "PDF night mode") }, onClick = {
                                 menu = false
                                 nightPdf = !nightPdf
                             })
-                            DropdownMenuItem(text = { Text(if (selectable) "Выключить выделение текста" else "Включить выделение текста") }, onClick = {
+                            DropdownMenuItem(text = { Text(if (selectable) "Disable text selection" else "Enable text selection") }, onClick = {
                                 menu = false
                                 selectable = !selectable
                             })
-                            DropdownMenuItem(text = { Text("В начало") }, onClick = { menu = false; state.goToPage(0) })
+                            DropdownMenuItem(text = { Text("Go to start") }, onClick = { menu = false; state.goToPage(0) })
                         }
                     }
                 },
@@ -328,7 +328,7 @@ private fun ViewerScreen(location: String, onBack: () -> Unit) {
 }
 
 private fun formatSize(bytes: Long): String = when {
-    bytes >= 1024 * 1024 -> "%.1f МБ".format(bytes / 1024f / 1024f)
-    bytes >= 1024 -> "${bytes / 1024} КБ"
-    else -> "$bytes Б"
+    bytes >= 1024 * 1024 -> "%.1f MB".format(bytes / 1024f / 1024f)
+    bytes >= 1024 -> "${bytes / 1024} KB"
+    else -> "$bytes B"
 }
