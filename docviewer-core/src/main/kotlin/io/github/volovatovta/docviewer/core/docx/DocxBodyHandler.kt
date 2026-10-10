@@ -6,14 +6,13 @@ import io.github.volovatovta.docviewer.core.model.PageBreak
 import io.github.volovatovta.docviewer.core.model.Paragraph
 import io.github.volovatovta.docviewer.core.model.RunStyle
 import io.github.volovatovta.docviewer.core.model.VerticalAlign
+import io.github.volovatovta.docviewer.core.ooxml.ElementHandler
 import io.github.volovatovta.docviewer.core.ooxml.Relationships
 import io.github.volovatovta.docviewer.core.ooxml.get
 import io.github.volovatovta.docviewer.core.ooxml.int
-import io.github.volovatovta.docviewer.core.ooxml.localName
 import io.github.volovatovta.docviewer.core.ooxml.onOff
 import io.github.volovatovta.docviewer.core.ooxml.parseHexColor
 import org.xml.sax.Attributes
-import org.xml.sax.helpers.DefaultHandler
 
 internal class XmlElement(val name: String, val parent: String?, val attributes: Attributes)
 
@@ -27,7 +26,7 @@ internal class DocxBodyHandler(
     private val relationships: Relationships,
     // Resolves a footnote/endnote reference to the visible marker number.
     private val noteMarker: (kind: String, id: String) -> String,
-) : DefaultHandler() {
+) : ElementHandler() {
 
     val blocks = ArrayList<Block>()
 
@@ -49,8 +48,6 @@ internal class DocxBodyHandler(
     private var image: ImageBuilder? = null
     private var note: NoteContext? = null
     private var dropCap: List<Inline>? = null
-    private val text = StringBuilder()
-    private var collectingText = false
 
     private val paragraph: ParagraphBuilder? get() = paragraphs.lastOrNull()
     private val table: TableBuilder? get() = tables.lastOrNull()
@@ -76,28 +73,24 @@ internal class DocxBodyHandler(
         onClose("endnote") { finishNote() },
     )
 
-    override fun startElement(uri: String?, localName: String?, qName: String?, attributes: Attributes) {
+    override fun start(name: String, attributes: Attributes) {
         if (skipDepth > 0) {
             skipDepth++
             return
         }
-        val element = XmlElement(localName(localName, qName), path.lastOrNull(), attributes)
+        val element = XmlElement(name, path.lastOrNull(), attributes)
         path += element.name
         val handler = openHandlers[element.name]
         if (handler != null) handler(element) else applyProperty(element)
     }
 
-    override fun endElement(uri: String?, localName: String?, qName: String?) {
+    override fun end(name: String) {
         if (skipDepth > 0) {
             skipDepth--
             if (skipDepth == 0) path.removeAt(path.lastIndex)
             return
         }
         closeHandlers[path.removeAt(path.lastIndex)]?.invoke()
-    }
-
-    override fun characters(ch: CharArray, start: Int, length: Int) {
-        if (collectingText && skipDepth == 0) text.appendRange(ch, start, start + length)
     }
 
     private fun textHandlers() = mapOf(
@@ -121,7 +114,7 @@ internal class DocxBodyHandler(
     )
 
     private fun tableHandlers() = mapOf(
-        onOpen("tbl") { tables += TableBuilder(styles) },
+        onOpen("tbl") { startTable() },
         onOpen("tblStyle") { if (it.parent == "tblPr") table?.styleId = it.attributes["val"] },
         onOpen("tblLook") { table?.look = TableLook.of(it.attributes) },
         onOpen("gridCol") { table?.addGridColumn(it.attributes.int("w") ?: 0) },
@@ -193,11 +186,11 @@ internal class DocxBodyHandler(
 
     private fun startCollectingText() {
         text.setLength(0)
-        collectingText = true
+        collecting = true
     }
 
     private fun finishText(isInstruction: Boolean) {
-        collectingText = false
+        collecting = false
         val value = text.toString()
         text.setLength(0)
         if (isInstruction) fields.appendInstruction(value) else appendText(value)
@@ -255,8 +248,8 @@ internal class DocxBodyHandler(
     }
 
     private fun finishImageAlignment() {
-        if (!collectingText) return
-        collectingText = false
+        if (!collecting) return
+        collecting = false
         image?.horizontalAlign = text.toString().trim()
         text.setLength(0)
     }
@@ -270,6 +263,11 @@ internal class DocxBodyHandler(
     private fun finishTextBox() {
         val inner = containers.removeAt(containers.lastIndex)
         paragraph?.trailing?.addAll(inner) ?: containers.last().addAll(inner)
+    }
+
+    // Viewers draw nested tables recursively; deeper than any real document, the inner ones are left out.
+    private fun startTable() {
+        if (tables.size >= MAX_TABLE_NESTING) skipCurrentElement() else tables += TableBuilder(styles)
     }
 
     private fun finishTable() {
@@ -300,6 +298,7 @@ internal class DocxBodyHandler(
 
     private companion object {
         const val NON_BREAKING_HYPHEN = "\u2011"
+        const val MAX_TABLE_NESTING = 16
         const val HEX_RADIX = 16
         val privateUseSymbols = 0xF000..0xF0FF
         val separatorNoteTypes = setOf("separator", "continuationSeparator", "continuationNotice")

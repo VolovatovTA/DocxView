@@ -217,6 +217,8 @@ A new format of an existing kind needs a reader in `docviewer-core` and nothing 
   to 500,000 rows (`CsvOptions.maxRows`).
 - Plain text lines longer than 800 bytes are shown wrapped into several list items; search
   does not find a phrase that spans such a cut.
+- Search stops at 10,000 matches. Word tables nested deeper than 16 levels lose their inner
+  tables, and a PDF page more than ~250 times taller than wide is shortened to fit the screen.
 
 ## Size limits
 

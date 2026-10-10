@@ -48,8 +48,10 @@ internal class SegmentedReader(private val segments: List<ByteArray>, private va
 
     fun int32(): Int = uint16() or (uint16() shl Short.SIZE_BITS)
 
+    // The count comes from the file, so skipping stops where the data ends.
     fun skip(count: Int) {
-        repeat(count) { advance(1) }
+        var left = count
+        while (left-- > 0 && !exhausted) advance(1)
     }
 
     /** XLUnicodeString: a character count, a flags byte and the characters ([MS-XLS] 2.5.294). */

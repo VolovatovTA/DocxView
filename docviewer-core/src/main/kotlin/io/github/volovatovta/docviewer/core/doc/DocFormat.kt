@@ -12,9 +12,8 @@ internal object DocFormat : FormatReader {
 
     override val peakMemoryPerByte = 8
 
-    // Password-protected Office files of any kind are OLE containers; only their name tells a workbook apart.
-    override fun recognizes(file: ProbedFile): Boolean = file.isOle &&
-        (WORD_STREAM in file.oleStreams || ENCRYPTED_PACKAGE in file.oleStreams && file.hint?.isSpreadsheet != true)
+    override fun recognizes(file: ProbedFile): Boolean =
+        WORD_STREAM in file.oleStreams || file.isEncryptedOffice && file.hint?.isSpreadsheet != true
 
     override fun read(request: ReadRequest): DocumentContent {
         request.requireMemoryFor(this)
@@ -22,5 +21,4 @@ internal object DocFormat : FormatReader {
     }
 
     private const val WORD_STREAM = "worddocument"
-    private const val ENCRYPTED_PACKAGE = "encryptedpackage"
 }

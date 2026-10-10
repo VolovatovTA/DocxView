@@ -49,6 +49,7 @@ private object GridViewerSpec {
 @Stable
 internal class GridScroll {
     var offset by mutableFloatStateOf(0f)
+    var viewportWidth by mutableFloatStateOf(0f)
     var max = 0f
 
     fun consume(delta: Float): Float {
@@ -96,6 +97,7 @@ internal fun SheetGrid(
         val viewportWidth = constraints.maxWidth.toFloat()
         val viewportHeight = constraints.maxHeight.toFloat()
         scroll.max = (grid.contentWidth - viewportWidth).coerceAtLeast(0f)
+        scroll.viewportWidth = viewportWidth
         val navigator = remember(
             listState,
             grid

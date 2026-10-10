@@ -17,13 +17,17 @@ internal class FormatContext(val dates: DateSystem, val locale: Locale = Locale.
 }
 
 /** An Excel number format such as `#,##0.00`, `0%` or `dd.mm.yyyy hh:mm`, applied to a numeric cell. */
-internal sealed interface NumberFormat {
+internal sealed class NumberFormat {
 
-    fun format(value: Double, context: FormatContext): String
+    // Excel itself never stores NaN or infinity; a file that does gets the error Excel shows for impossible numbers.
+    fun format(value: Double, context: FormatContext): String =
+        if (value.isFinite()) formatFinite(value, context) else NOT_A_NUMBER
+
+    protected abstract fun formatFinite(value: Double, context: FormatContext): String
 
     /** Up to ten significant digits, like a cell Excel has not been told how to show. */
-    data object General : NumberFormat {
-        override fun format(value: Double, context: FormatContext): String {
+    data object General : NumberFormat() {
+        override fun formatFinite(value: Double, context: FormatContext): String {
             if (value == floor(value) && abs(value) < LONG_SAFE) return value.toLong().toString()
             val plain = BigDecimal(value).round(MathContext(SIGNIFICANT_DIGITS)).stripTrailingZeros()
             val text = if (abs(value) in SCIENTIFIC_BELOW..SCIENTIFIC_FROM) plain.toPlainString() else plain.toString()
@@ -37,16 +41,16 @@ internal sealed interface NumberFormat {
     }
 
     /** Built-in formats 14 and 22 follow the reader's regional date style rather than a fixed pattern. */
-    class RegionalDate(private val withTime: Boolean) : NumberFormat {
-        override fun format(value: Double, context: FormatContext): String =
+    class RegionalDate(private val withTime: Boolean) : NumberFormat() {
+        override fun formatFinite(value: Double, context: FormatContext): String =
             context.dates.dateTime(value).regional(context.locale, withTime)
     }
 
     /** A format code with up to four `;`-separated sections: positive, negative, zero and text. */
-    class Coded(code: String) : NumberFormat {
+    class Coded(code: String) : NumberFormat() {
         private val sections = FormatCode.sections(code).map(Section::of)
 
-        override fun format(value: Double, context: FormatContext): String {
+        override fun formatFinite(value: Double, context: FormatContext): String {
             val negative = sections.getOrNull(1)
             val zero = sections.getOrNull(2)
             return when {
@@ -68,6 +72,7 @@ internal sealed interface NumberFormat {
         fun of(code: String): NumberFormat = if (code.equals(GENERAL, ignoreCase = true)) General else Coded(code)
 
         private const val GENERAL = "General"
+        private const val NOT_A_NUMBER = "#NUM!"
         private const val REGIONAL_DATE = 14
         private const val REGIONAL_DATE_TIME = 22
         private val builtInCodes = mapOf(
@@ -90,20 +95,36 @@ private sealed interface Section {
     companion object {
         fun of(code: String): Section {
             val parts = FormatCode.parts(code)
-            val pattern = parts.filterIsInstance<Part.Code>().joinToString("") { it.text }
+            val pattern = parts.filterNot { it is Part.Literal }.joinToString("") { it.text }
             return when {
                 pattern.trim() == "@" -> TextSection
+                pattern.contains(GENERAL, ignoreCase = true) -> GeneralSection(parts)
                 pattern.any { it.lowercaseChar() in DATE_LETTERS } -> DateSection(parts)
                 else -> NumberSection(parts)
             }
         }
 
         private const val DATE_LETTERS = "ydhsm"
+        private const val GENERAL = "General"
     }
 }
 
 private data object TextSection : Section {
     override fun format(value: Double, context: FormatContext) = NumberFormat.General.format(value, context)
+}
+
+/** "General" among other text, such as `[Red]General` or `-General` in a negative section. */
+private class GeneralSection(private val parts: List<Part>) : Section {
+    override fun format(value: Double, context: FormatContext): String {
+        val number = NumberFormat.General.format(value, context)
+        return parts.joinToString("") { part ->
+            if (part is Part.Literal) part.text else part.text.replace(GENERAL, number, ignoreCase = true)
+        }
+    }
+
+    private companion object {
+        const val GENERAL = "General"
+    }
 }
 
 /** Digits with grouping, decimals, percent, thousands scaling or an exponent, between literal text. */
@@ -185,9 +206,14 @@ private sealed interface DateToken {
     }
 
     /** One date or time field; [length] is how many times the code repeats its letter. */
-    class Field(val letter: Char, val length: Int) : DateToken {
-        override fun render(time: CellDateTime, twelveHour: Boolean, locale: Locale): String = when (letter) {
-            YEAR -> if (length <= 2) "%02d".format(time.year % CENTURY) else time.year.toString()
+    class Field(val letter: Char, val length: Int, private val elapsed: Boolean = false) : DateToken {
+        override fun render(time: CellDateTime, twelveHour: Boolean, locale: Locale): String = when {
+            elapsed -> elapsedNumber(time.elapsedSeconds)
+            else -> timeOfDay(time, twelveHour, locale)
+        }
+
+        private fun timeOfDay(time: CellDateTime, twelveHour: Boolean, locale: Locale): String = when (letter) {
+            YEAR -> if (length <= 2) number(time.year % CENTURY) else time.year.toString()
             MONTH -> name(time.month) { style -> time.monthName(locale, style) }
             DAY -> name(time.day) { style -> time.dayName(locale, style) }
             HOUR -> number(if (twelveHour) (time.hour + HALF_DAY - 1) % HALF_DAY + 1 else time.hour)
@@ -203,7 +229,17 @@ private sealed interface DateToken {
             else -> named(NameStyle.Narrow)
         }
 
-        private fun number(value: Int) = if (length >= 2) "%02d".format(value) else value.toString()
+        private fun elapsedNumber(seconds: Long): String {
+            val units = when (letter) {
+                HOUR -> seconds / SECONDS_PER_HOUR
+                MINUTE -> seconds / SECONDS_PER_MINUTE
+                else -> seconds
+            }
+            return units.toString().padStart(length, '0')
+        }
+
+        // ASCII digits in every locale, as the number sections in the same row use them.
+        private fun number(value: Int) = value.toString().padStart(if (length >= 2) 2 else 1, '0')
     }
 
     class Meridiem(private val short: Boolean) : DateToken {
@@ -225,6 +261,8 @@ private sealed interface DateToken {
         private const val SECOND = 's'
         private const val FIELD_LETTERS = "ydhms"
         private const val CENTURY = 100
+        private const val SECONDS_PER_HOUR = 3_600L
+        private const val SECONDS_PER_MINUTE = 60L
         private const val HALF_DAY = 12
         private const val ABBREVIATED = 3
         private const val FULL = 4
@@ -233,7 +271,11 @@ private sealed interface DateToken {
 
         fun tokenize(parts: List<Part>): List<DateToken> {
             val tokens = parts.flatMap { part ->
-                if (part is Part.Literal) listOf(Literal(part.text)) else fields(part.text)
+                when (part) {
+                    is Part.Literal -> listOf(Literal(part.text))
+                    is Part.Elapsed -> listOf(elapsed(part.text))
+                    is Part.Code -> fields(part.text)
+                }
             }
             return tokens.mapIndexed { index, token -> monthOrMinute(tokens, index, token) }
         }
@@ -256,6 +298,11 @@ private sealed interface DateToken {
             return tokens
         }
 
+        private fun elapsed(code: String): Field {
+            val letter = code.first().lowercaseChar()
+            return Field(letter, code.length, elapsed = true)
+        }
+
         // "m" means minutes right after hours or right before seconds, and months everywhere else.
         private fun monthOrMinute(tokens: List<DateToken>, index: Int, token: DateToken): DateToken {
             if (token !is Field || token.letter != MONTH || token.length !in NUMERIC) return token
@@ -275,6 +322,9 @@ private sealed interface Part {
     class Literal(override val text: String) : Part
 
     class Code(override val text: String) : Part
+
+    /** `[h]`, `[mm]` or `[ss]`: the whole duration in that unit rather than the time of day. */
+    class Elapsed(override val text: String) : Part
 }
 
 private object FormatCode {
@@ -345,7 +395,7 @@ private class SectionScanner(private val section: String) {
     private fun bracket(content: String) {
         when {
             content.startsWith('$') -> literal(content.drop(1).substringBefore('-'))
-            content.isNotEmpty() && content.all { it.lowercaseChar() in ELAPSED } -> code(content)
+            content.isNotEmpty() && content.all { it.lowercaseChar() in ELAPSED } -> parts += Part.Elapsed(content)
         }
     }
 

@@ -56,4 +56,31 @@ class NumberFormatTest {
         assertEquals("3.141592654", NumberFormat.General.format(Math.PI, us))
         assertEquals("3,5", NumberFormat.General.format(3.5, germany))
     }
+
+    @Test
+    fun `numbers Excel cannot store show its error instead of failing the workbook`() {
+        assertEquals("#NUM!", format("0.00", Double.NaN))
+        assertEquals("#NUM!", NumberFormat.General.format(Double.POSITIVE_INFINITY, us))
+        assertEquals("#NUM!", format("dd.mm.yyyy", Double.NEGATIVE_INFINITY))
+    }
+
+    @Test
+    fun `General keeps its meaning inside sections and next to colors`() {
+        assertEquals("1234.5", format("[Red]General", 1234.5))
+        assertEquals("-5", format("General;[Red]-General", -5.0))
+        assertEquals("Total 12", format("\"Total \"General", 12.0))
+    }
+
+    @Test
+    fun `elapsed time counts the whole duration`() {
+        assertEquals("29628:00:00", format("[h]:mm:ss", 1234.5))
+        assertEquals("720:00", format("[mm]:ss", 0.5))
+        assertEquals("90", format("[s]", 90.0 / 86_400))
+    }
+
+    @Test
+    fun `dates use plain digits in every locale, like the numbers next to them`() {
+        val arabic = FormatContext(DateSystem.Excel1900, Locale.forLanguageTag("ar-EG"))
+        assertEquals("10.10.2026", format("dd.mm.yyyy", 46_305.0, arabic))
+    }
 }

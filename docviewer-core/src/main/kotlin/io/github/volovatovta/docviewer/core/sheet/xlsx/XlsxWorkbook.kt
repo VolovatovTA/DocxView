@@ -1,43 +1,40 @@
 package io.github.volovatovta.docviewer.core.sheet.xlsx
 
 import io.github.volovatovta.docviewer.core.CorruptedDocumentException
+import io.github.volovatovta.docviewer.core.UnsupportedFormatException
 import io.github.volovatovta.docviewer.core.model.Workbook
+import io.github.volovatovta.docviewer.core.ooxml.ElementHandler
 import io.github.volovatovta.docviewer.core.ooxml.OpcPackage
 import io.github.volovatovta.docviewer.core.ooxml.get
 import io.github.volovatovta.docviewer.core.ooxml.isOn
-import io.github.volovatovta.docviewer.core.ooxml.localName
 import io.github.volovatovta.docviewer.core.sheet.DateSystem
 import io.github.volovatovta.docviewer.core.sheet.FormatContext
 import io.github.volovatovta.docviewer.core.sheet.NumberFormat
 import io.github.volovatovta.docviewer.core.sheet.SheetBuilder
+import io.github.volovatovta.docviewer.core.sheet.SheetLimits
 import org.xml.sax.Attributes
-import org.xml.sax.helpers.DefaultHandler
 
 /** Reads the visible worksheets of an .xlsx package ([ECMA-376] SpreadsheetML) into a [Workbook]. */
 internal class XlsxWorkbook(private val pkg: OpcPackage) {
 
     fun read(): Workbook {
         val workbookPath = pkg.mainPartPath() ?: DEFAULT_WORKBOOK
-        val workbook = WorkbookHandler().also {
-            if (!pkg.parse(
-                    workbookPath,
-                    it
-                )
-            ) {
-                throw CorruptedDocumentException("XLSX has no workbook")
-            }
-        }
+        val workbook = WorkbookHandler()
+        if (!pkg.parse(workbookPath, workbook)) throw CorruptedDocumentException("XLSX has no workbook")
         val relationships = pkg.relationshipsOf(workbookPath)
-        val strings = relationships.partOfType(
-            SHARED_STRINGS
-        )?.let { path -> SharedStringsHandler().also { pkg.parse(path, it) }.strings }
-        val styles = relationships.partOfType(STYLES)?.let { path -> StylesHandler().also { pkg.parse(path, it) } }
-        val cells = CellText(strings.orEmpty(), styles?.formats.orEmpty(), FormatContext(workbook.dateSystem))
+        val strings = relationships.partOfType(SHARED_STRINGS)
+            ?.let { path -> SharedStringsHandler().also { pkg.parse(path, it) }.strings }
+            .orEmpty()
+        val formats = relationships.partOfType(STYLES)
+            ?.let { path -> StylesHandler().also { pkg.parse(path, it) }.formats }
+            .orEmpty()
+        val cells = CellText(strings, formats, FormatContext(workbook.dateSystem))
+        // Chart sheets are listed among the sheets too, but have no cells to show.
         val sheets = workbook.visibleSheets.mapNotNull { sheet ->
-            val path = relationships.internalTarget(sheet.relationshipId) ?: return@mapNotNull null
-            SheetHandler(SheetBuilder(sheet.name), cells).also { pkg.parse(path, it) }.result()
+            val path = relationships.internalTarget(sheet.relationshipId, WORKSHEET) ?: return@mapNotNull null
+            SheetHandler(SheetBuilder(sheet.name, SheetLimits.Xlsx), cells).also { pkg.parse(path, it) }.result()
         }
-        if (sheets.isEmpty()) throw CorruptedDocumentException("XLSX has no worksheets")
+        if (sheets.isEmpty()) throw UnsupportedFormatException("The workbook has no worksheets")
         return Workbook(sheets)
     }
 
@@ -45,6 +42,7 @@ internal class XlsxWorkbook(private val pkg: OpcPackage) {
         const val DEFAULT_WORKBOOK = "xl/workbook.xml"
         const val SHARED_STRINGS = "/sharedStrings"
         const val STYLES = "/styles"
+        const val WORKSHEET = "/worksheet"
     }
 }
 
@@ -66,15 +64,15 @@ private class CellText(
 
 private class SheetEntry(val name: String, val relationshipId: String?, val visible: Boolean)
 
-private class WorkbookHandler : DefaultHandler() {
+private class WorkbookHandler : ElementHandler() {
     private val sheets = ArrayList<SheetEntry>()
     var dateSystem = DateSystem.Excel1900
         private set
 
     val visibleSheets: List<SheetEntry> get() = sheets.filter { it.visible }
 
-    override fun startElement(uri: String?, localName: String?, qName: String?, attributes: Attributes) {
-        when (localName(localName, qName)) {
+    override fun start(name: String, attributes: Attributes) {
+        when (name) {
             "workbookPr" -> if (attributes.isOn("date1904")) dateSystem = DateSystem.Excel1904
             "sheet" -> sheets += SheetEntry(
                 name = attributes["name"].orEmpty(),
@@ -86,27 +84,21 @@ private class WorkbookHandler : DefaultHandler() {
 }
 
 /** Collects the text of every string item; phonetic guides (rPh) are not part of the value. */
-private class SharedStringsHandler : DefaultHandler() {
+private class SharedStringsHandler : ElementHandler() {
     val strings = ArrayList<String>()
-    private val text = StringBuilder()
-    private var inText = false
     private var inPhonetic = false
 
-    override fun startElement(uri: String?, localName: String?, qName: String?, attributes: Attributes) {
-        when (localName(localName, qName)) {
+    override fun start(name: String, attributes: Attributes) {
+        when (name) {
             "si" -> text.clear()
             "rPh" -> inPhonetic = true
-            "t" -> inText = !inPhonetic
+            "t" -> collecting = !inPhonetic
         }
     }
 
-    override fun characters(ch: CharArray, start: Int, length: Int) {
-        if (inText) text.appendRange(ch, start, start + length)
-    }
-
-    override fun endElement(uri: String?, localName: String?, qName: String?) {
-        when (localName(localName, qName)) {
-            "t" -> inText = false
+    override fun end(name: String) {
+        when (name) {
+            "t" -> collecting = false
             "rPh" -> inPhonetic = false
             "si" -> strings += text.toString()
         }
@@ -114,7 +106,7 @@ private class SharedStringsHandler : DefaultHandler() {
 }
 
 /** Number formats by cell style index: custom codes from numFmts, built-in ones by id. */
-private class StylesHandler : DefaultHandler() {
+private class StylesHandler : ElementHandler() {
     private val customCodes = HashMap<Int, String>()
     private val styleFormats = ArrayList<Int>()
     private var inCellStyles = false
@@ -123,8 +115,8 @@ private class StylesHandler : DefaultHandler() {
         styleFormats.map { id -> customCodes[id]?.let(NumberFormat::of) ?: NumberFormat.builtIn(id) }
     }
 
-    override fun startElement(uri: String?, localName: String?, qName: String?, attributes: Attributes) {
-        when (localName(localName, qName)) {
+    override fun start(name: String, attributes: Attributes) {
+        when (name) {
             "numFmt" -> {
                 val id = attributes["numFmtId"]?.toIntOrNull() ?: return
                 customCodes[id] = attributes["formatCode"].orEmpty()
@@ -134,38 +126,32 @@ private class StylesHandler : DefaultHandler() {
         }
     }
 
-    override fun endElement(uri: String?, localName: String?, qName: String?) {
-        if (localName(localName, qName) == "cellXfs") inCellStyles = false
+    override fun end(name: String) {
+        if (name == "cellXfs") inCellStyles = false
     }
 }
 
 /** Streams sheetData; formulas are not evaluated, the value Excel saved with them is shown. */
-private class SheetHandler(private val sheet: SheetBuilder, private val cells: CellText) : DefaultHandler() {
+private class SheetHandler(private val sheet: SheetBuilder, private val cells: CellText) : ElementHandler() {
     private var row = -1
     private var column = -1
     private var type: String? = null
     private var style = 0
-    private val value = StringBuilder()
-    private var inValue = false
 
     fun result() = sheet.build()
 
-    override fun startElement(uri: String?, localName: String?, qName: String?, attributes: Attributes) {
-        when (localName(localName, qName)) {
+    override fun start(name: String, attributes: Attributes) {
+        when (name) {
             "row" -> row = attributes["r"]?.toIntOrNull()?.minus(1) ?: (row + 1)
             "c" -> startCell(attributes)
-            "v", "t" -> inValue = true
+            "v", "t" -> collecting = true
         }
     }
 
-    override fun characters(ch: CharArray, start: Int, length: Int) {
-        if (inValue) value.appendRange(ch, start, start + length)
-    }
-
-    override fun endElement(uri: String?, localName: String?, qName: String?) {
-        when (localName(localName, qName)) {
-            "v", "t" -> inValue = false
-            "c" -> sheet[row, column] = cells.of(type, value.toString(), style)
+    override fun end(name: String) {
+        when (name) {
+            "v", "t" -> collecting = false
+            "c" -> sheet[row, column] = cells.of(type, text.toString(), style)
         }
     }
 
@@ -176,7 +162,7 @@ private class SheetHandler(private val sheet: SheetBuilder, private val cells: C
         column = reference?.column ?: (column + 1)
         type = attributes["t"]
         style = attributes["s"]?.toIntOrNull() ?: 0
-        value.clear()
+        text.clear()
     }
 }
 
@@ -184,11 +170,13 @@ private class SheetHandler(private val sheet: SheetBuilder, private val cells: C
 internal class CellReference(val row: Int, val column: Int) {
     companion object {
         private const val LETTERS = 26
+        private const val MAX_COLUMN_LETTERS = 3
 
         fun parse(reference: String): CellReference? {
             val letters = reference.takeWhile { it.isLetter() }
-            val digits = reference.drop(letters.length).toIntOrNull() ?: return null
-            if (letters.isEmpty()) return null
+            val digits = reference.drop(letters.length).toIntOrNull()
+            // Three letters reach XFD, Excel's last column; longer ones would overflow the arithmetic.
+            if (digits == null || letters.length !in 1..MAX_COLUMN_LETTERS) return null
             val column = letters.uppercase().fold(0) { acc, letter -> acc * LETTERS + (letter - 'A' + 1) } - 1
             return CellReference(digits - 1, column)
         }

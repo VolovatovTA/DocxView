@@ -6,6 +6,8 @@ import io.github.volovatovta.docviewer.core.FlowSearch
 import io.github.volovatovta.docviewer.core.model.FlowDocument
 import io.github.volovatovta.docviewer.internal.ViewerController
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
@@ -36,8 +38,20 @@ internal class FlowController(
     private val onScale: (Float) -> Unit,
 ) : ViewerController {
 
-    override fun search(query: String): Flow<List<Any>> =
-        flow { emit(FlowSearch.search(document, query)) }.flowOn(Dispatchers.Default)
+    // Block by block, so a closed viewer stops the scan of a long document at once.
+    override fun search(query: String): Flow<List<Any>> = flow {
+        val hits = ArrayList<FlowMatch>()
+        for ((index, block) in document.blocks.withIndex()) {
+            if (hits.size >= ViewerController.MAX_SEARCH_HITS) break
+            currentCoroutineContext().ensureActive()
+            FlowSearch.forEachParagraph(block) { paragraph ->
+                FlowSearch.findAll(paragraph.plainText, query) { start, end ->
+                    if (hits.size < ViewerController.MAX_SEARCH_HITS) hits += FlowMatch(index, paragraph, start, end)
+                }
+            }
+        }
+        emit(hits)
+    }.flowOn(Dispatchers.Default)
 
     override suspend fun reveal(hit: Any) {
         val match = hit as FlowMatch

@@ -17,7 +17,7 @@ internal object DocxFormat : FormatReader {
     override val peakMemoryPerByte = 7
 
     override fun recognizes(file: ProbedFile): Boolean =
-        file.isZip && (MAIN_PART in file.zipEntries || CONTENT_TYPE in file.contentTypes)
+        file.isZip && (file.mainFolder?.let { it == FOLDER } ?: (MAIN_PART in file.zipEntries))
 
     // A 2 MB file can unpack into 30 MB of XML, so the archive size says little about the work.
     override fun bytesToParse(file: File): Long = try {
@@ -32,5 +32,5 @@ internal object DocxFormat : FormatReader {
     }
 
     private const val MAIN_PART = "word/document.xml"
-    private const val CONTENT_TYPE = "wordprocessingml"
+    private const val FOLDER = "word"
 }

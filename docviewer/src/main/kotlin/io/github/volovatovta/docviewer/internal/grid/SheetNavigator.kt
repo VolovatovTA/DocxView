@@ -44,10 +44,10 @@ internal class SheetNavigator(
         it.index == row && it.offset >= 0 && it.offset + it.size <= viewportHeight * GridNavigation.VISIBLE_BOTTOM
     }
 
-    // Scrolls just enough to bring the column into view, or not at all.
+    // Scrolls just enough to bring the column into view, or not at all; a column past the grid stays put.
     private fun horizontalTarget(column: Int): Float? {
-        val left = grid.columnX[column]
-        val right = grid.columnX[column + 1]
+        val left = grid.columnX.getOrNull(column) ?: return null
+        val right = grid.columnX.getOrNull(column + 1) ?: return null
         val visibleWidth = viewportWidth - grid.rowNumberWidth
         val target = when {
             left < scroll.offset -> left

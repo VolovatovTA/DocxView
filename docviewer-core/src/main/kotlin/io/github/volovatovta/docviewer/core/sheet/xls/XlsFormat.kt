@@ -13,9 +13,9 @@ internal object XlsFormat : FormatReader {
 
     override val peakMemoryPerByte = 8
 
-    // A password-protected .xlsx is an OLE container too; DocFormat leaves it here when the name says spreadsheet.
-    override fun recognizes(file: ProbedFile): Boolean = file.isOle &&
-        (WORKBOOK in file.oleStreams || LEGACY_BOOK in file.oleStreams || ENCRYPTED_PACKAGE in file.oleStreams)
+    override fun recognizes(file: ProbedFile): Boolean =
+        WORKBOOK in file.oleStreams || LEGACY_BOOK in file.oleStreams ||
+            file.isEncryptedOffice && file.hint?.isSpreadsheet == true
 
     override fun read(request: ReadRequest): DocumentContent {
         request.requireMemoryFor(this)
@@ -25,5 +25,4 @@ internal object XlsFormat : FormatReader {
 
     private const val WORKBOOK = "workbook"
     private const val LEGACY_BOOK = "book"
-    private const val ENCRYPTED_PACKAGE = "encryptedpackage"
 }

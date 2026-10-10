@@ -13,6 +13,7 @@ import io.github.volovatovta.docviewer.core.sheet.DateSystem
 import io.github.volovatovta.docviewer.core.sheet.FormatContext
 import io.github.volovatovta.docviewer.core.sheet.NumberFormat
 import io.github.volovatovta.docviewer.core.sheet.SheetBuilder
+import io.github.volovatovta.docviewer.core.sheet.SheetLimits
 
 /**
  * Reads the visible worksheets of an Excel 97–2003 workbook ([MS-XLS], BIFF8): first the workbook globals
@@ -26,9 +27,9 @@ internal class XlsWorkbook(private val stream: ByteArray) {
         stream.biffRecords().forEach(globals::accept)
         val context = FormatContext(globals.dateSystem)
         val sheets = globals.sheets.filter { it.isVisibleWorksheet }.map { entry ->
-            SheetBuilder(entry.name).also { sheet -> readCells(entry.offset, sheet, context) }.build()
+            SheetBuilder(entry.name, SheetLimits.Xls).also { sheet -> readCells(entry.offset, sheet, context) }.build()
         }
-        if (sheets.isEmpty()) throw UnsupportedFormatException("XLS workbook has no worksheets")
+        if (sheets.isEmpty()) throw UnsupportedFormatException("The workbook has no worksheets")
         return Workbook(sheets)
     }
 
@@ -159,7 +160,10 @@ private class Globals {
 
     private fun readStrings(record: BiffRecord) {
         val reader = record.reader(SST_STRINGS)
-        repeat(record.data.int32(SST_UNIQUE_COUNT)) { if (!reader.exhausted) strings += reader.richString() }
+        val count = record.data.int32(SST_UNIQUE_COUNT)
+        var read = 0
+        // The count comes from the file, so reading stops where the strings end.
+        while (read++ < count && !reader.exhausted) strings += reader.richString()
     }
 
     private companion object {
@@ -218,11 +222,10 @@ private const val HUNDRED = 100.0
 
 /** The BIFF8 stream of an OLE container; Excel 5.0/95 wrote an older record set into a "Book" stream. */
 internal fun CompoundFile.workbookStream(): ByteArray {
-    if (find(ENCRYPTED_PACKAGE) != null) throw PasswordProtectedException()
+    if (isEncrypted) throw PasswordProtectedException()
     val reason = if (find(LEGACY_BOOK) != null) "Excel 5.0/95 workbooks are not supported" else "Not an Excel workbook"
     return stream(WORKBOOK) ?: throw UnsupportedFormatException(reason)
 }
 
 private const val WORKBOOK = "Workbook"
 private const val LEGACY_BOOK = "Book"
-private const val ENCRYPTED_PACKAGE = "EncryptedPackage"

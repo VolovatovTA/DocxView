@@ -8,7 +8,6 @@ import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.captureToImage
-import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithText
@@ -29,7 +28,7 @@ import kotlin.test.assertTrue
 class WorkbookUiTest(private val fileName: String) {
 
     @get:Rule
-    val rule = createComposeRule()
+    val rule = viewerComposeRule()
 
     private val state = DocumentViewerState()
 

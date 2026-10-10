@@ -19,7 +19,6 @@ public object DocParser {
     private object StreamName {
         const val WORD_DOCUMENT = "WordDocument"
         const val DATA = "Data"
-        const val ENCRYPTED_PACKAGE = "EncryptedPackage"
         const val ENCRYPTION_INFO = "EncryptionInfo"
     }
 
@@ -34,8 +33,8 @@ public object DocParser {
 
     // Encrypted OOXML files are OLE containers too, recognizable by their encryption streams.
     private fun wordDocumentStream(container: CompoundFile): ByteArray {
-        val encrypted = container.find(StreamName.ENCRYPTED_PACKAGE) ?: container.find(StreamName.ENCRYPTION_INFO)
-        if (encrypted != null) throw PasswordProtectedException()
+        val encrypted = container.isEncrypted || container.find(StreamName.ENCRYPTION_INFO) != null
+        if (encrypted) throw PasswordProtectedException()
         return container.stream(StreamName.WORD_DOCUMENT)
             ?: throw UnsupportedFormatException("OLE file is not a Word document")
     }

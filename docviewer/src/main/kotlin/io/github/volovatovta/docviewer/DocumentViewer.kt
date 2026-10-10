@@ -120,9 +120,10 @@ private fun rememberDocumentSession(
     val session = remember(source) { source?.let { DocumentSession(context, it) } }
     val currentConfig by rememberUpdatedState(config)
     DisposableEffect(session) {
+        // Search is stopped before the files it reads are closed.
         onDispose {
-            session?.close()
             state.resetForNewDocument()
+            session?.close()
         }
     }
     LaunchedEffect(session, state.reloadToken) {

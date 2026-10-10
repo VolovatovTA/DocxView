@@ -14,4 +14,9 @@ internal interface ViewerController {
     suspend fun zoomBy(factor: Float)
 
     suspend fun zoomTo(zoom: Float)
+
+    companion object {
+        // Past this many matches nobody steps through them one by one, and a list without end runs out of memory.
+        const val MAX_SEARCH_HITS = 10_000
+    }
 }

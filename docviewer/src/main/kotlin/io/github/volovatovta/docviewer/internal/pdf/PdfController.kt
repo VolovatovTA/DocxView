@@ -50,7 +50,8 @@ internal class PdfController(
     }
 
     override suspend fun scrollToItem(index: Int, animate: Boolean) {
-        val target = viewport.layout.top(index, viewport.scale).toFloat()
+        val page = index.coerceIn(0, (viewport.layout.pageCount - 1).coerceAtLeast(0))
+        val target = viewport.layout.top(page, viewport.scale).toFloat()
         if (animate) scrollOrJump(target, SCROLL_DURATION_MS) else viewport.scrollTo(target)
     }
 

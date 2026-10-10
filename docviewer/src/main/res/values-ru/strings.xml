@@ -7,7 +7,7 @@
     <string name="dv_error_io">Не удалось прочитать файл.</string>
     <string name="dv_error_network">Не удалось скачать файл. Проверьте подключение.</string>
     <string name="dv_error_pdf_password_old_android">PDF с паролем можно открыть на Android 15 и новее.</string>
-    <string name="dv_error_doc_password">Документы Word с паролем не поддерживаются.</string>
+    <string name="dv_error_doc_password">Документы Office с паролем не поддерживаются.</string>
     <string name="dv_error_empty">Документ пуст.</string>
     <string name="dv_retry">Повторить</string>
     <string name="dv_password_title">Документ защищён</string>

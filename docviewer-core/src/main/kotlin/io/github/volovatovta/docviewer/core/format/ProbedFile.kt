@@ -4,10 +4,11 @@ import io.github.volovatovta.docviewer.core.TextDecoding
 import io.github.volovatovta.docviewer.core.binary.startsWith
 import io.github.volovatovta.docviewer.core.model.DocumentFormat
 import io.github.volovatovta.docviewer.core.ole.CompoundFile
+import io.github.volovatovta.docviewer.core.ooxml.OpcPackage
 import io.github.volovatovta.docviewer.core.readPrefix
+import org.xml.sax.SAXException
 import java.io.File
 import java.io.IOException
-import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 
 /**
@@ -20,22 +21,30 @@ internal class ProbedFile(val file: File, val hint: DocumentFormat?) {
 
     val isZip: Boolean get() = header.startsWith(ZIP_SIGNATURE)
 
-    val isOle: Boolean get() = header.startsWith(OLE_SIGNATURE)
+    val isOle: Boolean get() = header.startsWith(CompoundFile.SIGNATURE)
 
     /** Entry names of a ZIP package, lowercased. */
     val zipEntries: Set<String> by lazy {
         readZip(fallback = emptySet()) { zip -> zip.entries().asSequence().map { it.name.lowercase() }.toSet() }
     }
 
-    /** The package's [Content_Types].xml, which names the kind of Office document inside. */
-    val contentTypes: String by lazy {
-        readZip(fallback = "") { zip -> zip.getEntry(CONTENT_TYPES)?.let { zip.readText(it) }.orEmpty() }
+    /**
+     * The folder of the part an Office package opens with, such as `word` or `xl`, read from its relationships;
+     * the folder of the expected part when the package has none. Embedded objects never change it, so an
+     * Excel file holding a Word document is still Excel.
+     */
+    val mainFolder: String? by lazy {
+        val declared = readZip(fallback = null) { zip -> OpcPackage(zip).mainPartPath() }
+        declared?.lowercase()?.substringBefore('/', missingDelimiterValue = "")
     }
 
     /** Stream names of an OLE container, lowercased. */
     val oleStreams: Set<String> by lazy {
         if (!isOle) emptySet() else runCatching { CompoundFile(file.readBytes()).streamNames }.getOrDefault(emptySet())
     }
+
+    /** A password-protected Office file; only its name tells a Word document from a workbook. */
+    val isEncryptedOffice: Boolean get() = CompoundFile.ENCRYPTED_PACKAGE.lowercase() in oleStreams
 
     /** The start of the file as text, or null when it reads like binary data. */
     val text: String? by lazy {
@@ -53,12 +62,10 @@ internal class ProbedFile(val file: File, val hint: DocumentFormat?) {
             fallback
         } catch (_: IllegalArgumentException) {
             fallback
+        } catch (_: SAXException) {
+            fallback
         }
     }
-
-    private fun ZipFile.readText(entry: ZipEntry): String = getInputStream(
-        entry
-    ).use { it.readBytes().decodeToString() }
 
     private fun isBinaryCharacter(char: Char): Boolean =
         char == '\u0000' || char == '�' || (char < ' ' && char !in TEXT_CONTROL_CHARACTERS)
@@ -68,9 +75,7 @@ internal class ProbedFile(val file: File, val hint: DocumentFormat?) {
         const val TEXT_SAMPLE_BYTES = 16 * 1024
         const val MAX_BINARY_CHARACTER_SHARE = 0.02
         const val TEXT_CONTROL_CHARACTERS = "\r\n\t\u000C"
-        const val CONTENT_TYPES = "[Content_Types].xml"
         val ZIP_SIGNATURE = bytes(0x50, 0x4B, 0x03, 0x04)
-        val OLE_SIGNATURE = bytes(0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A, 0xE1)
 
         fun bytes(vararg values: Int) = ByteArray(values.size) { values[it].toByte() }
     }

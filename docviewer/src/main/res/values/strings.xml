@@ -7,7 +7,7 @@
     <string name="dv_error_io">The file couldn\'t be read.</string>
     <string name="dv_error_network">The file couldn\'t be downloaded. Check the connection.</string>
     <string name="dv_error_pdf_password_old_android">Password-protected PDFs can be opened on Android 15 and newer.</string>
-    <string name="dv_error_doc_password">Password-protected Word documents are not supported.</string>
+    <string name="dv_error_doc_password">Password-protected Office documents are not supported.</string>
     <string name="dv_error_empty">The document is empty.</string>
     <string name="dv_retry">Try again</string>
     <string name="dv_password_title">This document is protected</string>

@@ -67,9 +67,11 @@ dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.kotlin.test)
 
+    androidTestImplementation(libs.androidx.test.core)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.compose.ui.test.junit4)
     androidTestImplementation(libs.kotlin.test)
+    androidTestImplementation(libs.kotlinx.coroutines.test)
     // Fails a test when an Activity, a composition or a document outlives it.
     androidTestImplementation(libs.leakcanary.instrumentation)
     androidTestImplementation(libs.androidx.activity.compose)

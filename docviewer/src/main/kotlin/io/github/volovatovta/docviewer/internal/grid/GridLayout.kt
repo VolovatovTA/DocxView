@@ -51,6 +51,24 @@ internal class GridLayout(
 ) {
     val columnCount: Int get() = widths.size
     val contentWidth: Float get() = rowNumberWidth + columnX.last()
+
+    // The columns a row composes: those on screen and a margin either side. Ordinary sheets fit in the margin
+    // whole; a sheet thousands of columns wide composes a screenful instead of every cell.
+    fun columnsNear(offset: Float, viewportWidth: Float): IntRange {
+        val first = columnAt(offset) - COLUMN_MARGIN
+        val last = columnAt(offset + viewportWidth) + COLUMN_MARGIN
+        return first.coerceAtLeast(0)..last.coerceAtMost(columnCount - 1)
+    }
+
+    private fun columnAt(x: Float): Int {
+        val found = columnX.binarySearch(x)
+        val column = if (found >= 0) found else -found - 2
+        return column.coerceIn(0, columnCount - 1)
+    }
+
+    private companion object {
+        const val COLUMN_MARGIN = 24
+    }
 }
 
 @Composable

@@ -55,6 +55,9 @@ private object ImageSpec {
     const val DISPLAY_SCALE = 1.25f
     const val MIN_DECODE_WIDTH_PX = 480
     const val MAX_DECODE_WIDTH_PX = 2048
+
+    // 16 MB as ARGB, whatever the image's shape.
+    const val MAX_DECODE_PIXELS = 4L * 1024 * 1024
 }
 
 private sealed interface ImageState {
@@ -148,15 +151,24 @@ private fun decodeImage(store: ImageStore, imageId: String, targetWidth: Int): I
     val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
     BitmapFactory.decodeByteArray(bytes, 0, bytes.size, bounds)
     if (bounds.outWidth <= 0) return ImageState.Unsupported
-    val options = BitmapFactory.Options().apply { inSampleSize = sampleSize(bounds.outWidth, targetWidth) }
-    val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size, options)
+    val options = BitmapFactory.Options().apply {
+        inSampleSize = sampleSize(bounds.outWidth, bounds.outHeight, targetWidth)
+    }
+    // Before Android 8 pixels live in the app's heap; an image that still does not fit is shown as unsupported.
+    val bitmap = try {
+        BitmapFactory.decodeByteArray(bytes, 0, bytes.size, options)
+    } catch (ignored: OutOfMemoryError) {
+        null
+    }
     return bitmap?.let { ImageState.Ready(it.asImageBitmap()) } ?: ImageState.Unsupported
 }
 
-// Power-of-two downsampling is cheap and keeps the bitmap at least as wide as the screen.
-private fun sampleSize(width: Int, targetWidth: Int): Int {
+// Power-of-two downsampling is cheap and keeps the bitmap at least as wide as the screen,
+// unless a very tall image would then exceed the pixel budget.
+internal fun sampleSize(width: Int, height: Int, targetWidth: Int): Int {
     var sample = 1
     while (width / (sample * 2) >= targetWidth) sample *= 2
+    while (width.toLong() * height / (sample.toLong() * sample) > ImageSpec.MAX_DECODE_PIXELS) sample *= 2
     return sample
 }
 

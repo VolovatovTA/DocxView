@@ -20,12 +20,14 @@ internal object XlsxFormat : FormatReader {
     override val peakMemoryPerByte = 6
 
     override fun recognizes(file: ProbedFile): Boolean =
-        file.isZip && (MAIN_PART in file.zipEntries || CONTENT_TYPE in file.contentTypes)
+        file.isZip && (file.mainFolder?.let { it == FOLDER } ?: (MAIN_PART in file.zipEntries))
 
-    // The worksheets and shared strings unpack to many times the archive size.
+    // The worksheets and shared strings unpack to many times the archive size; pictures are never parsed.
     override fun bytesToParse(file: File): Long = try {
         ZipFile(file).use { zip ->
-            zip.entries().asSequence().filter { it.name.startsWith(XML_FOLDER) }.sumOf { it.size.coerceAtLeast(0) }
+            zip.entries().asSequence()
+                .filter { it.name.startsWith(XML_FOLDER) && it.name.endsWith(XML_EXTENSION) }
+                .sumOf { it.size.coerceAtLeast(0) }
         }
     } catch (_: IOException) {
         file.length()
@@ -45,5 +47,6 @@ internal object XlsxFormat : FormatReader {
 
     private const val MAIN_PART = "xl/workbook.xml"
     private const val XML_FOLDER = "xl/"
-    private const val CONTENT_TYPE = "spreadsheetml"
+    private const val XML_EXTENSION = ".xml"
+    private const val FOLDER = "xl"
 }

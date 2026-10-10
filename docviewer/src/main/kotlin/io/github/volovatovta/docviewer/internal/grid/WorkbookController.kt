@@ -7,12 +7,15 @@ import androidx.compose.runtime.setValue
 import io.github.volovatovta.docviewer.core.model.Workbook
 import io.github.volovatovta.docviewer.internal.ViewerController
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.job
 
 /** Search covers every sheet of the workbook; navigation goes to the sheet on screen, switching to it first. */
 @Stable
@@ -32,12 +35,16 @@ internal class WorkbookController(private val workbook: Workbook, selectedSheet:
         if (shown.value?.navigator === navigator) shown.value = null
     }
 
+    // Streamed row by row and checked for cancellation, so a closed viewer stops the scan of a long sheet at once.
     override fun search(query: String): Flow<List<Any>> = flow {
+        val job = currentCoroutineContext().job
         val hits = ArrayList<GridHit>()
         workbook.sheets.forEachIndexed { sheet, entry ->
             entry.table.forEachRow { row, cells ->
+                job.ensureActive()
                 cells.forEachIndexed { column, cell ->
-                    if (cell.contains(query, ignoreCase = true)) hits += GridHit(sheet, row, column)
+                    val wanted = hits.size < ViewerController.MAX_SEARCH_HITS
+                    if (wanted && cell.contains(query, ignoreCase = true)) hits += GridHit(sheet, row, column)
                 }
             }
         }

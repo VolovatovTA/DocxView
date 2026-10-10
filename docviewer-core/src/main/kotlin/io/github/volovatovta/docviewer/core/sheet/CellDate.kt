@@ -8,6 +8,7 @@ import java.util.Locale
 import java.util.TimeZone
 import kotlin.math.floor
 import kotlin.math.roundToInt
+import kotlin.math.roundToLong
 
 /** How a workbook counts dates: days since 1900 (Excel for Windows) or since 1904 (early Excel for Mac). */
 internal enum class DateSystem(private val epochYear: Int, private val epochMonth: Int, private val epochDay: Int) {
@@ -26,7 +27,7 @@ internal enum class DateSystem(private val epochYear: Int, private val epochMont
             add(Calendar.DAY_OF_MONTH, days + phantomLeapDay)
             add(Calendar.SECOND, seconds)
         }
-        return CellDateTime(calendar)
+        return CellDateTime(calendar, (serial * SECONDS_PER_DAY).roundToLong())
     }
 
     private companion object {
@@ -42,7 +43,7 @@ internal enum class NameStyle { Short, Full, Narrow }
  * The date and time of a cell, split into the fields a format code shows. Built on java.util.Calendar:
  * Android has java.time only from API 26, and the SDK supports API 23.
  */
-internal class CellDateTime(private val calendar: Calendar) {
+internal class CellDateTime(private val calendar: Calendar, val elapsedSeconds: Long) {
     val year: Int get() = calendar[Calendar.YEAR]
     val month: Int get() = calendar[Calendar.MONTH] + 1
     val day: Int get() = calendar[Calendar.DAY_OF_MONTH]

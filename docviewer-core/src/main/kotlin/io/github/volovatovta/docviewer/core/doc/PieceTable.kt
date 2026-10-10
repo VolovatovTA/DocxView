@@ -18,7 +18,8 @@ internal class PieceTable private constructor(
     }
 
     fun decode(word: ByteArray, textLength: Int): DecodedText {
-        val total = minOf(textLength.coerceAtLeast(0), pieceStarts.last())
+        // Every character takes at least a byte of the stream, so a larger count can only come from a damaged file.
+        val total = minOf(textLength.coerceAtLeast(0), pieceStarts.last(), word.size)
         val chars = CharArray(total)
         val offsets = IntArray(total)
         pieces.forEachIndexed { index, piece ->

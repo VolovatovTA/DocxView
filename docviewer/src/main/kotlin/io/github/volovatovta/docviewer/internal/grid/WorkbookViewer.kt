@@ -63,7 +63,11 @@ internal fun WorkbookViewer(
             }
         }
         if (workbook.sheets.size > 1) {
-            SheetTabs(workbook.sheets.map { it.name }, controller.sheet, colors, onSelect = { controller.sheet = it })
+            SheetTabs(workbook.sheets.map { it.name }, controller.sheet, colors, onSelect = { selected ->
+                // Another sheet opens at its top, not at the row the previous one was scrolled to.
+                state.pendingPage = 0
+                controller.sheet = selected
+            })
         }
     }
 }

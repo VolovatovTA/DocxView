@@ -5,7 +5,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Rule
 import org.junit.Test
@@ -19,26 +18,27 @@ import kotlin.test.assertTrue
 class ResourceLeakTest {
 
     @get:Rule
-    val rule = createComposeRule()
+    val rule = viewerComposeRule()
 
     private val state = DocumentViewerState()
 
     @Test
     fun switchingDocumentsLeavesNoOpenFilesOrThreads() {
+        // Each source with the file name its Ready state reports, so a wait never ends on the previous document.
         val sources = listOf(
-            DocumentSource.FromAsset("book-41.pdf"),
-            DocumentSource.FromAsset("report.docx"),
-            DocumentSource.FromAsset("workbook.xlsx"),
-            DocumentSource.FromAsset("workbook.xls"),
-            DocumentSource.FromFile(generated("lines.txt") { index -> "Line $index of a log" }),
-            DocumentSource.FromFile(generated("rows.csv") { index -> "$index;name $index;\"quoted, text\"" }),
+            DocumentSource.FromAsset("book-41.pdf") to "book-41.pdf",
+            DocumentSource.FromAsset("report.docx") to "report.docx",
+            DocumentSource.FromAsset("workbook.xlsx") to "workbook.xlsx",
+            DocumentSource.FromAsset("workbook.xls") to "workbook.xls",
+            DocumentSource.FromFile(generated("lines.txt") { index -> "Line $index of a log" }) to "lines.txt",
+            DocumentSource.FromFile(generated("rows.csv") { index -> "$index;name;\"quoted, text\"" }) to "rows.csv",
         )
         var source by mutableStateOf<DocumentSource?>(null)
         rule.setContent { DocumentViewer(source, Modifier.fillMaxSize(), state = state) }
 
-        fun cycle() = sources.forEach { next ->
+        fun cycle() = sources.forEach { (next, name) ->
             rule.runOnIdle { source = next }
-            rule.waitUntil(TIMEOUT_MS) { state.status is DocumentStatus.Ready }
+            rule.waitUntil(TIMEOUT_MS) { state.info?.fileName == name }
         }
 
         cycle()

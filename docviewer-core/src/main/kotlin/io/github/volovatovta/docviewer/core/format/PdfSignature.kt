@@ -7,9 +7,19 @@ import io.github.volovatovta.docviewer.core.model.DocumentFormat
 internal object PdfSignature : FormatSignature {
     override val format = DocumentFormat.PDF
 
-    private val signature = "%PDF".toByteArray()
+    private val signature = "%PDF-".toByteArray()
 
-    // The specification allows garbage before the header within the first kilobyte.
-    override fun recognizes(file: ProbedFile): Boolean =
-        file.header.indices.any { offset -> file.header.startsWith(signature, at = offset) }
+    // Readers accept garbage before the header within the first kilobyte; a text file merely quoting a header
+    // ("%PDF-1.7" in notes) is still text, so for those only a header at the very start counts.
+    override fun recognizes(file: ProbedFile): Boolean {
+        val header = file.header
+        val at = header.indices.firstOrNull { offset -> isHeaderAt(header, offset) } ?: return false
+        return at == 0 || file.hint != DocumentFormat.TXT && file.hint != DocumentFormat.CSV
+    }
+
+    // "%PDF-" and the first digit of the version.
+    private fun isHeaderAt(bytes: ByteArray, offset: Int): Boolean {
+        val version = bytes.getOrNull(offset + signature.size)?.toInt()?.toChar()
+        return bytes.startsWith(signature, at = offset) && version in '0'..'9'
+    }
 }

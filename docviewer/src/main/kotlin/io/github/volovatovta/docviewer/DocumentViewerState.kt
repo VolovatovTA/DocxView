@@ -10,6 +10,7 @@ import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import io.github.volovatovta.docviewer.internal.ViewerController
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.currentCoroutineContext
@@ -67,7 +68,10 @@ public class DocumentViewerState(initialPage: Int = 0, initialZoom: Float = 1f) 
 
     private var lastSource: DocumentSource? = null
     private var searchJob: Job? = null
-    private var navigationJob: Job? = null
+
+    // Scrolling and zooming are independent: a zoom right after goToPage must not cancel the scroll.
+    private var scrollJob: Job? = null
+    private var zoomJob: Job? = null
 
     public fun search(query: String) {
         searchQuery = query
@@ -91,19 +95,20 @@ public class DocumentViewerState(initialPage: Int = 0, initialZoom: Float = 1f) 
             pendingPage = page
             return
         }
-        controller.scrollToItem(page.coerceIn(0, (pageCount - 1).coerceAtLeast(0)), animate)
+        // Each viewer clamps to its own length: a workbook's sheets differ from the first sheet's row count.
+        controller.scrollToItem(page.coerceAtLeast(0), animate)
     }
 
     // Fire-and-forget variant for click listeners and Java callers.
     public fun goToPage(page: Int) {
-        if (controller == null) pendingPage = page else navigate { scrollToPage(page) }
+        if (controller == null) pendingPage = page else scrollJob = relaunch(scrollJob) { scrollToPage(page) }
     }
 
-    public fun zoomIn(): Unit = navigate { controller?.zoomBy(ZOOM_STEP) }
+    public fun zoomIn(): Unit = zoom { controller?.zoomBy(ZOOM_STEP) }
 
-    public fun zoomOut(): Unit = navigate { controller?.zoomBy(1f / ZOOM_STEP) }
+    public fun zoomOut(): Unit = zoom { controller?.zoomBy(1f / ZOOM_STEP) }
 
-    public fun resetZoom(): Unit = navigate { controller?.zoomTo(1f) }
+    public fun resetZoom(): Unit = zoom { controller?.zoomTo(1f) }
 
     public fun submitPassword(password: String) {
         this.password = password
@@ -141,10 +146,16 @@ public class DocumentViewerState(initialPage: Int = 0, initialZoom: Float = 1f) 
         controller = null
     }
 
+    // A search that fails on a damaged part of the file keeps the hits found so far instead of crashing the app.
+    @Suppress("TooGenericExceptionCaught", "SwallowedException")
     private suspend fun collectHits(controller: ViewerController, query: String) {
         val self = currentCoroutineContext()[Job]
         try {
             controller.search(query).collect { hits -> showHits(hits, controller) }
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            if (searchJob === self) isSearching = false
         } finally {
             if (searchJob === self) isSearching = false
         }
@@ -172,13 +183,18 @@ public class DocumentViewerState(initialPage: Int = 0, initialZoom: Float = 1f) 
         if (hits.isEmpty()) return
         val index = Math.floorMod(currentSearchResult + delta, hits.size)
         currentSearchResult = index
-        navigate { controller?.reveal(hits[index]) }
+        scrollJob = relaunch(scrollJob) { controller?.reveal(hits[index]) }
     }
 
-    private fun navigate(block: suspend () -> Unit) {
-        val scope = scope ?: return
-        navigationJob?.cancel()
-        navigationJob = scope.launch { block() }
+    private fun zoom(block: suspend () -> Unit) {
+        zoomJob = relaunch(zoomJob, block)
+    }
+
+    // A newer request of the same kind replaces the one still running.
+    private fun relaunch(previous: Job?, block: suspend () -> Unit): Job? {
+        val scope = scope ?: return previous
+        previous?.cancel()
+        return scope.launch { block() }
     }
 
     public companion object {

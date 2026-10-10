@@ -87,13 +87,16 @@ internal class PdfDocument private constructor(
     private fun searchOnPage(index: Int, query: String): List<List<RectF>> =
         renderer.openPage(index).use { page -> page.searchText(query).map { match -> match.bounds } }
 
+    // Thrown when the document was closed meanwhile, or for a page pdfium cannot load: that page stays blank.
+    @Suppress("SwallowedException")
     private suspend fun <T> onPdfThread(block: () -> T): T? {
         if (closed) return null
         return try {
             withContext(PdfThread.dispatcher) { if (closed) null else block() }
-        } catch (expected: IllegalStateException) {
-            // PdfRenderer throws this when the document was closed between the check and the call.
-            if (closed) null else throw expected
+        } catch (failure: IllegalStateException) {
+            null
+        } catch (failure: IllegalArgumentException) {
+            null
         }
     }
 

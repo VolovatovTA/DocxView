@@ -5,8 +5,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.StateRestorationTester
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -25,7 +23,7 @@ import kotlin.test.assertIs
 class StateRestorationTest {
 
     @get:Rule
-    val rule = createComposeRule()
+    val rule = viewerComposeRule()
 
     private val restoration = StateRestorationTester(rule)
     private lateinit var state: DocumentViewerState
@@ -101,7 +99,7 @@ class StateRestorationTest {
 @RunWith(AndroidJUnit4::class)
 class RotationTest {
 
-    private val rule = createAndroidComposeRule<ViewerTestActivity>()
+    private val rule = viewerActivityRule<ViewerTestActivity>()
 
     @get:Rule
     val rules: RuleChain = RuleChain.outerRule(DetectLeaksAfterTestSuccess()).around(rule)

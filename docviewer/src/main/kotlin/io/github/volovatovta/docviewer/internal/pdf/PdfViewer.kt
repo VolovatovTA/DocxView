@@ -14,6 +14,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import io.github.volovatovta.docviewer.DocumentViewerColors
@@ -103,10 +104,12 @@ private fun SyncWithState(document: PdfDocument, viewport: PdfViewport, state: D
         state.controller = controller
         onDispose { if (state.controller === controller) state.controller = null }
     }
+    // The zoom is read before the scale mirror below overwrites it, so a restored or rotated viewer keeps it.
     LaunchedEffect(viewport) {
+        val zoom = state.zoom
         val page = state.consumeInitialPage()
         if (page in 1 until viewport.layout.pageCount) viewport.listState.scrollToItem(page)
-        state.zoom = 1f
+        if (zoom > 1f) viewport.commitZoom(zoom, Offset.Zero)
     }
     LaunchedEffect(viewport) {
         snapshotFlow { viewport.pageAtCenter }.distinctUntilChanged().collect { state.currentPage = it }
