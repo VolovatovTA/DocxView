@@ -8,6 +8,7 @@ import java.io.Closeable
 /**
  * A document after reading, in the shape it is shown: flowing text or sheets of cells. Later versions may add
  * other shapes (slides, say), so a `when` over it should keep an `else` branch; only this library creates them.
+ * Each kind is a class nested here, where the viewer's tests look for them.
  */
 public abstract class DocumentContent internal constructor() : Closeable {
 
