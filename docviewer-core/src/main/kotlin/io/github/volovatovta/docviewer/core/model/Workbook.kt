@@ -3,7 +3,7 @@ package io.github.volovatovta.docviewer.core.model
 import java.io.Closeable
 
 /** The sheets of a spreadsheet in tab order; a CSV file is a workbook of one sheet. */
-public class Workbook(public val sheets: List<Sheet>) : Closeable {
+public class Workbook internal constructor(public val sheets: List<Sheet>) : Closeable {
     init {
         require(sheets.isNotEmpty()) { "A workbook has at least one sheet" }
     }
@@ -12,4 +12,4 @@ public class Workbook(public val sheets: List<Sheet>) : Closeable {
 }
 
 /** One tab of a workbook. */
-public class Sheet(public val name: String, public val table: TableSource)
+public class Sheet internal constructor(public val name: String, public val table: TableSource)

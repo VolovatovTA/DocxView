@@ -9,7 +9,9 @@ uses [Semantic Versioning](https://semver.org/).
   grid, values formatted as Excel shows them (dates, currencies, percentages, custom formats,
   both date systems) and search across all sheets.
 - `DocumentReader` in `docviewer-core` reads any supported file into `DocumentContent` (text or
-  sheets) on any JVM, with `ReadOptions` for CSV settings and a memory budget.
+  sheets) on any JVM. `ReadOptions`, built like `DocumentViewerConfig` (`ReadOptions { … }`),
+  sets CSV options, a memory budget and `maxDocumentSizeBytes`, the viewer's size limit under
+  the same name. Only the library creates `DocumentContent`, `Workbook` and `Sheet`.
 - Formats are detected and read through one registry: supporting a format takes one reader.
 - `TableSource.delimiter` is deprecated: only CSV has a delimiter.
 - PDF no longer crashes when memory runs out while rendering a page (seen on Android 6–7,
@@ -48,8 +50,9 @@ uses [Semantic Versioning](https://semver.org/).
 - Excel formats: fractions (`# ?/?`, `?/8`), the dates Excel invents (0 January and
   29 February 1900) and `#####` for dates outside Excel's range; number formats are parsed
   once per workbook rather than once per cell.
-- Integrators with an exhaustive `when` over `DocumentFormat` or `DocumentContent` need
-  branches for `XLSX`, `XLS` and `DocumentContent.Sheets`.
+- `DocumentFormat` gains `XLSX` and `XLS`: an exhaustive `when` over it needs branches for them.
+  Minor releases may add further formats, and further kinds of `DocumentContent` (an abstract
+  class, not sealed), so keep an `else` branch in a `when` over either.
 - Built with Android Gradle Plugin 9.4, Gradle 9.8 and Kotlin 2.4. Apps still need
   `compileSdk 35` or newer, as with 1.0.0.
 - `DocumentViewerConfig` gains a no-argument JVM constructor (Kotlin 2.4 generates it for

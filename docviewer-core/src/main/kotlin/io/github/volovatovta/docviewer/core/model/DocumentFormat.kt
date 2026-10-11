@@ -1,5 +1,6 @@
 package io.github.volovatovta.docviewer.core.model
 
+/** A format the library opens; minor releases may add more, so a `when` over it should keep an `else` branch. */
 public enum class DocumentFormat(public val extensions: Set<String>, public val mimeTypes: Set<String>) {
     PDF(
         extensions = setOf("pdf"),

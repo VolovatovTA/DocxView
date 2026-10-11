@@ -120,19 +120,16 @@ public final class io/github/volovatovta/docviewer/core/docx/DocxParser {
 	public final fun parse (Ljava/io/File;)Lio/github/volovatovta/docviewer/core/model/FlowDocument;
 }
 
-public abstract interface class io/github/volovatovta/docviewer/core/format/DocumentContent : java/io/Closeable {
+public abstract class io/github/volovatovta/docviewer/core/format/DocumentContent : java/io/Closeable {
 }
 
 public final class io/github/volovatovta/docviewer/core/format/DocumentContent$Flow : io/github/volovatovta/docviewer/core/format/DocumentContent {
-	public fun <init> (Lio/github/volovatovta/docviewer/core/model/FlowDocument;Lio/github/volovatovta/docviewer/core/stream/TextFile;)V
-	public synthetic fun <init> (Lio/github/volovatovta/docviewer/core/model/FlowDocument;Lio/github/volovatovta/docviewer/core/stream/TextFile;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun close ()V
 	public final fun getDocument ()Lio/github/volovatovta/docviewer/core/model/FlowDocument;
 	public final fun getLines ()Lio/github/volovatovta/docviewer/core/stream/TextFile;
 }
 
 public final class io/github/volovatovta/docviewer/core/format/DocumentContent$Sheets : io/github/volovatovta/docviewer/core/format/DocumentContent {
-	public fun <init> (Lio/github/volovatovta/docviewer/core/model/Workbook;)V
 	public fun close ()V
 	public final fun getWorkbook ()Lio/github/volovatovta/docviewer/core/model/Workbook;
 }
@@ -145,19 +142,26 @@ public final class io/github/volovatovta/docviewer/core/format/DocumentReader {
 
 public final class io/github/volovatovta/docviewer/core/format/ReadOptions {
 	public fun <init> ()V
-	public fun <init> (Lio/github/volovatovta/docviewer/core/CsvOptions;Ljava/lang/Long;Ljava/lang/Long;)V
-	public synthetic fun <init> (Lio/github/volovatovta/docviewer/core/CsvOptions;Ljava/lang/Long;Ljava/lang/Long;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()Lio/github/volovatovta/docviewer/core/CsvOptions;
-	public final fun component2 ()Ljava/lang/Long;
-	public final fun component3 ()Ljava/lang/Long;
-	public final fun copy (Lio/github/volovatovta/docviewer/core/CsvOptions;Ljava/lang/Long;Ljava/lang/Long;)Lio/github/volovatovta/docviewer/core/format/ReadOptions;
-	public static synthetic fun copy$default (Lio/github/volovatovta/docviewer/core/format/ReadOptions;Lio/github/volovatovta/docviewer/core/CsvOptions;Ljava/lang/Long;Ljava/lang/Long;ILjava/lang/Object;)Lio/github/volovatovta/docviewer/core/format/ReadOptions;
+	public synthetic fun <init> (Lio/github/volovatovta/docviewer/core/CsvOptions;Ljava/lang/Long;Ljava/lang/Long;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCsv ()Lio/github/volovatovta/docviewer/core/CsvOptions;
-	public final fun getMaxBytesToParse ()Ljava/lang/Long;
+	public final fun getMaxDocumentSizeBytes ()Ljava/lang/Long;
 	public final fun getMemoryBudgetBytes ()Ljava/lang/Long;
 	public fun hashCode ()I
+	public final fun newBuilder ()Lio/github/volovatovta/docviewer/core/format/ReadOptions$Builder;
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/volovatovta/docviewer/core/format/ReadOptions$Builder {
+	public fun <init> ()V
+	public final fun build ()Lio/github/volovatovta/docviewer/core/format/ReadOptions;
+	public final fun csv (Lio/github/volovatovta/docviewer/core/CsvOptions;)Lio/github/volovatovta/docviewer/core/format/ReadOptions$Builder;
+	public final fun maxDocumentSizeBytes (Ljava/lang/Long;)Lio/github/volovatovta/docviewer/core/format/ReadOptions$Builder;
+	public final fun memoryBudgetBytes (Ljava/lang/Long;)Lio/github/volovatovta/docviewer/core/format/ReadOptions$Builder;
+}
+
+public final class io/github/volovatovta/docviewer/core/format/ReadOptionsKt {
+	public static final fun ReadOptions (Lkotlin/jvm/functions/Function1;)Lio/github/volovatovta/docviewer/core/format/ReadOptions;
 }
 
 public abstract interface class io/github/volovatovta/docviewer/core/model/Block {
@@ -357,7 +361,6 @@ public final class io/github/volovatovta/docviewer/core/model/RunStyle$Companion
 }
 
 public final class io/github/volovatovta/docviewer/core/model/Sheet {
-	public fun <init> (Ljava/lang/String;Lio/github/volovatovta/docviewer/core/model/TableSource;)V
 	public final fun getName ()Ljava/lang/String;
 	public final fun getTable ()Lio/github/volovatovta/docviewer/core/model/TableSource;
 }
@@ -447,7 +450,6 @@ public final class io/github/volovatovta/docviewer/core/model/VerticalAlign : ja
 }
 
 public final class io/github/volovatovta/docviewer/core/model/Workbook : java/io/Closeable {
-	public fun <init> (Ljava/util/List;)V
 	public fun close ()V
 	public final fun getSheets ()Ljava/util/List;
 }

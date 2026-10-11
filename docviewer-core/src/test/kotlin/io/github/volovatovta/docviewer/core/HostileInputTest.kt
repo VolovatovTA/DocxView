@@ -150,7 +150,7 @@ class HostileInputTest {
             sparse.write(CompoundFile.SIGNATURE)
             sparse.setLength(Runtime.getRuntime().maxMemory() / 4 + 1)
         }
-        val options = ReadOptions(memoryBudgetBytes = 64L * 1024 * 1024)
+        val options = ReadOptions { memoryBudgetBytes(64L * 1024 * 1024) }
 
         assertEquals(DocumentFormat.XLS, FormatDetector.detect(file, "huge.xls"))
         assertFailsWith<DocumentTooLargeException> { DocumentReader.read(file, "huge.xls", options = options) }

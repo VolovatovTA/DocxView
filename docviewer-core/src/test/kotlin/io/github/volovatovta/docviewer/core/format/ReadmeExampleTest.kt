@@ -18,6 +18,7 @@ class ReadmeExampleTest {
                 when (content) {
                     is DocumentContent.Flow -> FlowSearch.search(content.document, "needle")
                     is DocumentContent.Sheets -> content.workbook.sheets.map { it.name }
+                    else -> null
                 }
             }
             format to result

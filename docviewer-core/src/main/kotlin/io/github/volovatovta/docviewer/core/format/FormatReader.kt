@@ -27,7 +27,7 @@ internal class ReadRequest(val file: File, fileName: String?, val options: ReadO
 
     /** Refuses a document the memory budget cannot parse, before a single byte of it is parsed. */
     fun requireMemoryFor(reader: FormatReader) {
-        val limit = options.maxBytesToParse ?: options.memoryBudgetBytes?.div(reader.peakMemoryPerByte) ?: return
+        val limit = options.maxDocumentSizeBytes ?: options.memoryBudgetBytes?.div(reader.peakMemoryPerByte) ?: return
         val size = reader.bytesToParse(file)
         if (size > limit) throw DocumentTooLargeException(size, limit)
     }

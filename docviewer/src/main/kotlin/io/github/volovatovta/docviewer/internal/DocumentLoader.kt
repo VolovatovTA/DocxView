@@ -65,11 +65,11 @@ internal object DocumentLoader {
 
     // Every format but PDF is read by docviewer-core; this only decides how much heap it may take.
     private fun read(resolved: ResolvedFile, format: DocumentFormat, config: DocumentViewerConfig): LoadedDocument {
-        val options = ReadOptions(
-            csv = config.csvOptions,
-            memoryBudgetBytes = HeapBudget.forParsing(),
-            maxBytesToParse = config.maxDocumentSizeBytes,
-        )
+        val options = ReadOptions {
+            csv(config.csvOptions)
+            memoryBudgetBytes(HeapBudget.forParsing())
+            maxDocumentSizeBytes(config.maxDocumentSizeBytes)
+        }
         val content = try {
             DocumentReader.read(resolved.file, resolved.fileName, format, options)
         } catch (e: PasswordProtectedException) {
@@ -92,6 +92,8 @@ private val DocumentContent.itemCount: Int
     get() = when (this) {
         is DocumentContent.Flow -> lines?.lineCount ?: document.blocks.size
         is DocumentContent.Sheets -> workbook.sheets.first().table.rowCount
+        // Every kind docviewer-core creates is listed above; the viewer ships with the same version.
+        else -> 0
     }
 
 private val DocumentContent.title: String?

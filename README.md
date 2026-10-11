@@ -174,12 +174,14 @@ DocumentReader.read(file).use { content ->
     when (content) {
         is DocumentContent.Flow -> FlowSearch.search(content.document, "needle")  // DOCX, DOC, TXT
         is DocumentContent.Sheets -> content.workbook.sheets.map { it.name }       // XLSX, XLS, CSV
+        else -> null                                                                // kinds added later
     }
 }
 ```
 
-`ReadOptions(memoryBudgetBytes = ...)` refuses files that would not fit before parsing them, which
-also protects a server from archives that unpack into gigabytes.
+`ReadOptions { memoryBudgetBytes(...) }` refuses files that would not fit before parsing them, which
+also protects a server from archives that unpack into gigabytes. New formats and kinds of content
+may come in minor releases, so a `when` over `DocumentFormat` or `DocumentContent` keeps an `else`.
 
 ## Architecture
 

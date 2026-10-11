@@ -11,7 +11,7 @@ class MemoryBudgetTest {
 
     @Test
     fun `a document parsed in memory is refused when the budget cannot hold it`() {
-        val tooSmall = ReadOptions(memoryBudgetBytes = 1_000)
+        val tooSmall = ReadOptions { memoryBudgetBytes(1_000) }
         val error = assertFailsWith<DocumentTooLargeException> {
             DocumentReader.read(resource("sheets/workbook.xlsx"), options = tooSmall)
         }
@@ -21,7 +21,7 @@ class MemoryBudgetTest {
     @Test
     fun `an explicit limit replaces the estimate`() {
         assertFailsWith<DocumentTooLargeException> {
-            DocumentReader.read(resource("report.docx"), options = ReadOptions(maxBytesToParse = 10))
+            DocumentReader.read(resource("report.docx"), options = ReadOptions { maxDocumentSizeBytes(10) })
         }
     }
 
