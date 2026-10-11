@@ -1,5 +1,6 @@
 package io.github.volovatovta.docviewer.core.docx
 
+import io.github.volovatovta.docviewer.core.ooxml.Xml
 import java.io.InputStream
 
 internal class NumberingLevel(

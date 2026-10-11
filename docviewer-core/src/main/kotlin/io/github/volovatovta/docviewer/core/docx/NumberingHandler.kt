@@ -1,10 +1,12 @@
 package io.github.volovatovta.docviewer.core.docx
 
+import io.github.volovatovta.docviewer.core.ooxml.ElementHandler
+import io.github.volovatovta.docviewer.core.ooxml.get
+import io.github.volovatovta.docviewer.core.ooxml.int
 import org.xml.sax.Attributes
-import org.xml.sax.helpers.DefaultHandler
 
 // Collects w:abstractNum level definitions and the w:num instances that use them.
-internal class NumberingHandler : DefaultHandler() {
+internal class NumberingHandler : ElementHandler() {
     val abstractLevels = HashMap<String, MutableMap<Int, NumberingLevel>>()
     val instances = HashMap<String, NumberingInstance>()
 
@@ -17,21 +19,20 @@ internal class NumberingHandler : DefaultHandler() {
 
     private val insideOverride get() = overrideLevel != null
 
-    override fun startElement(uri: String?, localName: String?, qName: String?, attributes: Attributes) {
-        val element = localName(localName, qName)
-        when (element) {
+    override fun start(name: String, attributes: Attributes) {
+        when (name) {
             "abstractNum" -> abstractId = attributes["abstractNumId"]
             "lvl" -> if (!insideOverride) startLevel(attributes)
             "num" -> startInstance(attributes)
             "abstractNumId" -> if (instanceId != null) instanceAbstractId = attributes["val"]
             "lvlOverride" -> overrideLevel = attributes.int("ilvl")
             "startOverride" -> overrideLevel?.let { lvl -> attributes.int("val")?.let { startOverrides[lvl] = it } }
-            else -> level?.let { readLevelProperty(element, attributes, it) }
+            else -> level?.let { readLevelProperty(name, attributes, it) }
         }
     }
 
-    override fun endElement(uri: String?, localName: String?, qName: String?) {
-        when (localName(localName, qName)) {
+    override fun end(name: String) {
+        when (name) {
             "abstractNum" -> abstractId = null
             "lvl" -> if (!insideOverride) level = null
             "lvlOverride" -> overrideLevel = null

@@ -1,5 +1,8 @@
 package io.github.volovatovta.docviewer.core.doc
 
+import io.github.volovatovta.docviewer.core.binary.int32
+import io.github.volovatovta.docviewer.core.binary.startsWith
+import io.github.volovatovta.docviewer.core.binary.uint16
 import io.github.volovatovta.docviewer.core.model.ImageStore
 
 // Inline pictures live in the Data stream as PICF + OfficeArt records; the PNG/JPEG payload is found by its signature.

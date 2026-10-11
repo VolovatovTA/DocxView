@@ -2,6 +2,7 @@ package io.github.volovatovta.docviewer.core.stream
 
 import java.io.Closeable
 import java.io.File
+import java.io.IOException
 import java.io.RandomAccessFile
 import java.nio.charset.Charset
 
@@ -47,11 +48,18 @@ internal class LineSplitter(private val softLimit: Int, private val hardLimit: I
     }
 }
 
-// CSV rows end at a line break outside quotes; doubled quotes inside a field toggle twice and change nothing.
+// CSV rows end at a line break outside a quoted field. Quotes follow CsvReader exactly: only a quote that opens
+// a field starts a quoted value, "" inside it is a literal quote, and text after the closing quote stays in the field.
+// A quote never closed is given up on after MAX_RECORD_BYTES, and a record without line breaks is cut there,
+// so one stray quote or one endless line cannot turn the rest of the file into a single record.
 internal class CsvRowSplitter(private val delimiter: Int) : RecordSplitter {
-    private var previous = NONE
-    private var inQuotes = false
+    private enum class State { FieldStart, Plain, Quoted, AfterQuote }
 
+    private var state = State.FieldStart
+    private var previous = NONE
+    private var lineBroken = false
+    private var quotedBytes = 0
+    private var recordBytes = 0
     private var fields = 1
 
     // Fields of the record that has just ended, for the table's column count.
@@ -63,23 +71,52 @@ internal class CsvRowSplitter(private val delimiter: Int) : RecordSplitter {
     }
 
     override fun startsRecordAt(byte: Int): Boolean {
-        val endedRow = !inQuotes &&
-            (previous == RecordSplitter.LF || previous == RecordSplitter.CR && byte != RecordSplitter.LF)
+        val tooLong = recordBytes >= MAX_RECORD_BYTES && state != State.Quoted
+        val endedRow = tooLong || lineBroken && !(previous == RecordSplitter.CR && byte == RecordSplitter.LF)
+        recordBytes = if (endedRow) 1 else recordBytes + 1
         if (endedRow) {
             finishedRecordFields = fields
             fields = 1
+            state = State.FieldStart
         }
-        when {
-            byte == QUOTE -> inQuotes = !inQuotes
-            byte == delimiter && !inQuotes -> fields++
+        lineBroken = false
+        when (state) {
+            State.FieldStart -> if (byte == QUOTE) openQuote() else unquoted(byte)
+            State.Plain -> unquoted(byte)
+            State.Quoted -> quoted(byte)
+            State.AfterQuote -> if (byte == QUOTE) state = State.Quoted else unquoted(byte)
         }
         previous = byte
         return endedRow
     }
 
+    private fun openQuote() {
+        state = State.Quoted
+        quotedBytes = 0
+    }
+
+    private fun quoted(byte: Int) {
+        when {
+            byte == QUOTE -> state = State.AfterQuote
+            ++quotedBytes > MAX_RECORD_BYTES -> state = State.Plain
+        }
+    }
+
+    private fun unquoted(byte: Int) {
+        when {
+            byte == delimiter -> {
+                fields++
+                state = State.FieldStart
+            }
+            isLineBreak(byte) -> lineBroken = true
+            else -> state = State.Plain
+        }
+    }
+
     private companion object {
         const val NONE = -1
         const val QUOTE = '"'.code
+        const val MAX_RECORD_BYTES = 1 shl 20
     }
 }
 
@@ -103,9 +140,10 @@ internal class RecordFile(
         override fun removeEldestEntry(eldest: MutableMap.MutableEntry<Int, Block>) = size > CACHED_BLOCKS
     }
 
-    fun record(index: Int): String = blockOf(index).texts[index % BLOCK]
+    // A file edited after indexing may hold fewer records in a block than were counted.
+    fun record(index: Int): String = blockOf(index).texts.getOrElse(index % BLOCK) { "" }
 
-    fun endsLine(index: Int): Boolean = blockOf(index).endsLine[index % BLOCK]
+    fun endsLine(index: Int): Boolean = blockOf(index).endsLine.getOrElse(index % BLOCK) { true }
 
     // Sequential pass for search; it bypasses the cache so the on-screen blocks stay cached.
     fun forEachRecord(action: (index: Int, record: String) -> Unit) {
@@ -121,12 +159,17 @@ internal class RecordFile(
         return synchronized(this) { cache.getOrPut(block) { readBlock(block) } }
     }
 
+    // A file that shrank or vanished while on screen reads as blank records rather than failing the composition.
     private fun readBlock(block: Int): Block {
         val start = checkpoints[block]
         val end = if (block + 1 < checkpoints.size) checkpoints[block + 1] else file.length()
-        val bytes = ByteArray((end - start).toInt())
-        input.seek(start)
-        input.readFully(bytes)
+        val bytes = ByteArray((end - start).coerceAtLeast(0).toInt())
+        try {
+            input.seek(start)
+            input.readFully(bytes)
+        } catch (_: IOException) {
+            return Block(List(BLOCK) { "" }, BooleanArray(BLOCK) { true })
+        }
         val ranges = splitRecords(bytes, newSplitter(), keepBlank)
         val endsLine = BooleanArray(ranges.size) { bytes.isLineBreakAt(ranges[it].last) }
         if (ranges.isNotEmpty() && end == file.length()) endsLine[ranges.lastIndex] = true

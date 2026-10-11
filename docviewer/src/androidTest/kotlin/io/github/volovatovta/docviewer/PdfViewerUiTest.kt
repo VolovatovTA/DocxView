@@ -32,6 +32,8 @@ import kotlin.test.fail
 @RunWith(AndroidJUnit4::class)
 class PdfViewerUiTest {
 
+    // Gestures keep the default unconfined test dispatcher: input injection in this Compose version expects
+    // pointer handlers to run at once.
     @get:Rule
     val rule = createComposeRule()
 

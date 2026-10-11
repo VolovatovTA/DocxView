@@ -6,6 +6,8 @@ import io.github.volovatovta.docviewer.core.model.Paragraph
 import io.github.volovatovta.docviewer.core.model.RunStyle
 import io.github.volovatovta.docviewer.core.model.TextRun
 import io.github.volovatovta.docviewer.core.model.VerticalAlign
+import io.github.volovatovta.docviewer.core.ooxml.RelationshipTypes
+import io.github.volovatovta.docviewer.core.ooxml.Relationships
 
 // Footnotes and endnotes are numbered in order of first reference, like Word displays them.
 internal class NoteNumbers {

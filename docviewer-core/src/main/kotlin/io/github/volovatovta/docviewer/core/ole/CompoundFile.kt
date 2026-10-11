@@ -1,6 +1,12 @@
-package io.github.volovatovta.docviewer.core.doc
+package io.github.volovatovta.docviewer.core.ole
 
 import io.github.volovatovta.docviewer.core.CorruptedDocumentException
+import io.github.volovatovta.docviewer.core.binary.int32
+import io.github.volovatovta.docviewer.core.binary.startsWith
+import io.github.volovatovta.docviewer.core.binary.uint16
+import io.github.volovatovta.docviewer.core.binary.uint32
+import io.github.volovatovta.docviewer.core.binary.uint8
+import io.github.volovatovta.docviewer.core.binary.utf16
 import java.io.ByteArrayOutputStream
 
 // Minimal reader for OLE2 / Compound File Binary ([MS-CFB]) containers.
@@ -33,6 +39,13 @@ internal class CompoundFile(private val data: ByteArray) {
         ?.let { start -> readSectorChain(start, Long.MAX_VALUE).toIntArray() }
         ?: IntArray(0)
 
+    /** Names of the streams in the container, lowercased. */
+    val streamNames: Set<String> by lazy {
+        entries.filter { it.type == TYPE_STREAM }.map { it.name.lowercase() }.toSet()
+    }
+
+    val isEncrypted: Boolean get() = find(ENCRYPTED_PACKAGE) != null
+
     fun find(name: String): Entry? =
         entries.firstOrNull { it.type == TYPE_STREAM && it.name.equals(name, ignoreCase = true) }
 
@@ -46,7 +59,8 @@ internal class CompoundFile(private val data: ByteArray) {
     }
 
     private fun readFat(): IntArray {
-        val fatSectors = headerDifatSectors() + chainedDifatSectors()
+        // A FAT cannot have more sectors than the file itself; repeats only come from damaged or hostile files.
+        val fatSectors = (headerDifatSectors() + chainedDifatSectors()).distinct().take(data.size / sectorSize)
         val entriesPerSector = sectorSize / Int.SIZE_BYTES
         return IntArray(fatSectors.size * entriesPerSector) { index ->
             val sectorStart = sectorOffset(fatSectors[index / entriesPerSector])
@@ -65,8 +79,8 @@ internal class CompoundFile(private val data: ByteArray) {
         val sectors = ArrayList<Int>()
         val entriesPerSector = sectorSize / Int.SIZE_BYTES - 1
         var difatSector = data.int32(CfbHeader.FIRST_DIFAT_SECTOR)
-        var visited = 0
-        while (difatSector >= 0 && visited++ < CfbLimits.MAX_DIFAT_SECTORS) {
+        val visited = HashSet<Int>()
+        while (difatSector >= 0 && visited.add(difatSector) && visited.size <= CfbLimits.MAX_DIFAT_SECTORS) {
             val offset = sectorOffset(difatSector)
             if (offset + sectorSize > data.size) break
             (0 until entriesPerSector)
@@ -135,7 +149,10 @@ internal class CompoundFile(private val data: ByteArray) {
         const val TYPE_ROOT = 5
         private const val END_OF_CHAIN = -2
 
-        private val SIGNATURE = byteArrayOf(
+        // Password-protected Office files of every kind are this one stream in an OLE container.
+        const val ENCRYPTED_PACKAGE = "EncryptedPackage"
+
+        val SIGNATURE = byteArrayOf(
             0xD0.toByte(),
             0xCF.toByte(),
             0x11,

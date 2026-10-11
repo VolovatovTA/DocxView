@@ -69,7 +69,9 @@ internal class PdfPageImages(
     fun cached(page: Int): ImageBitmap? = cache.get(key(page))?.asImageBitmap()
 
     suspend fun load(page: Int): ImageBitmap? {
-        val bitmap = document.render(page, layout.pageWidth(baseScale), layout.pageHeight(page, baseScale))
+        val bitmap = document.render(page, layout.pageWidth(baseScale), layout.pageHeight(page, baseScale)) {
+            cache.trimToSize(cache.maxSize() / 2)
+        }
         bitmap?.let { cache.put(key(page), it) }
         return bitmap?.asImageBitmap()
     }

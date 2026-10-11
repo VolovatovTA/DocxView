@@ -1,6 +1,9 @@
 package io.github.volovatovta.docviewer.core.doc
 
 import io.github.volovatovta.docviewer.core.CorruptedDocumentException
+import io.github.volovatovta.docviewer.core.binary.int32
+import io.github.volovatovta.docviewer.core.binary.uint16
+import io.github.volovatovta.docviewer.core.binary.uint8
 
 // The document text with, for every character, its byte offset in the WordDocument stream.
 internal class DecodedText(val chars: CharArray, val offsets: IntArray)
@@ -15,7 +18,8 @@ internal class PieceTable private constructor(
     }
 
     fun decode(word: ByteArray, textLength: Int): DecodedText {
-        val total = minOf(textLength.coerceAtLeast(0), pieceStarts.last())
+        // Every character takes at least a byte of the stream, so a larger count can only come from a damaged file.
+        val total = minOf(textLength.coerceAtLeast(0), pieceStarts.last(), word.size)
         val chars = CharArray(total)
         val offsets = IntArray(total)
         pieces.forEachIndexed { index, piece ->

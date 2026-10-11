@@ -1,8 +1,12 @@
 package io.github.volovatovta.docviewer.core.docx
 
 import io.github.volovatovta.docviewer.core.model.ParagraphStyle
+import io.github.volovatovta.docviewer.core.ooxml.ElementHandler
+import io.github.volovatovta.docviewer.core.ooxml.Xml
+import io.github.volovatovta.docviewer.core.ooxml.get
+import io.github.volovatovta.docviewer.core.ooxml.isOn
+import io.github.volovatovta.docviewer.core.ooxml.parseHexColor
 import org.xml.sax.Attributes
-import org.xml.sax.helpers.DefaultHandler
 import java.io.InputStream
 
 internal class StyleDefinition(
@@ -96,7 +100,7 @@ internal class StyleSheet(
     }
 }
 
-private class StylesHandler : DefaultHandler() {
+private class StylesHandler : ElementHandler() {
     val styles = HashMap<String, StyleDefinition>()
     val defaultRun = RunProperties()
     val defaultParagraph = ParagraphProperties()
@@ -104,8 +108,8 @@ private class StylesHandler : DefaultHandler() {
     private val path = ArrayList<String>()
     private var current: StyleBuilder? = null
 
-    override fun startElement(uri: String?, localName: String?, qName: String?, attributes: Attributes) {
-        val element = localName(localName, qName)
+    override fun start(name: String, attributes: Attributes) {
+        val element = name
         val parent = path.lastOrNull()
         path += element
         val style = current
@@ -138,7 +142,7 @@ private class StylesHandler : DefaultHandler() {
         }
     }
 
-    override fun endElement(uri: String?, localName: String?, qName: String?) {
+    override fun end(name: String) {
         val closed = path.removeAt(path.lastIndex)
         if (closed == "tblStylePr") current?.condition = null
         if (closed != "style") return

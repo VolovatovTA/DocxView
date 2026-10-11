@@ -1,5 +1,9 @@
 package io.github.volovatovta.docviewer.core.doc
 
+import io.github.volovatovta.docviewer.core.binary.int16
+import io.github.volovatovta.docviewer.core.binary.int32
+import io.github.volovatovta.docviewer.core.binary.uint16
+import io.github.volovatovta.docviewer.core.binary.uint8
 import io.github.volovatovta.docviewer.core.model.ParagraphStyle
 import io.github.volovatovta.docviewer.core.model.TextAlignment
 

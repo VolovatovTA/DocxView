@@ -13,7 +13,12 @@ internal class PdfLayout(val pageSizes: List<PdfPageSize>, viewportWidth: Float,
 
     val fitPageWidth = (viewportWidth - 2 * spacing).coerceAtLeast(1f)
 
-    private val fitPageHeights = FloatArray(pageCount) { fitPageWidth * pageSizes[it].height / pageSizes[it].width }
+    // A page too tall for Compose to measure even at zoom 1 (a 10 × 3000 pt strip) is squeezed to what fits.
+    private val maxFitPageHeight = itemMaxHeight(viewportWidth.roundToInt()) * ROUNDING_HEADROOM - spacing
+
+    private val fitPageHeights = FloatArray(pageCount) {
+        minOf(fitPageWidth * pageSizes[it].height / pageSizes[it].width, maxFitPageHeight)
+    }
 
     private val pageWidthsPt = FloatArray(pageCount) { pageSizes[it].width }
 
@@ -56,10 +61,12 @@ internal class PdfLayout(val pageSizes: List<PdfPageSize>, viewportWidth: Float,
         val pageLimit = ConstraintsLimits.maxOf { (maxWidth, maxHeight) ->
             minOf(maxWidth / fitPageWidth, maxHeight / tallestFitPage)
         }
-        val itemMaxHeight = ConstraintsLimits.firstOrNull { (maxWidth, _) -> viewportWidth <= maxWidth }?.second ?: 0
-        val itemLimit = itemMaxHeight / (tallestFitPage + spacing)
+        val itemLimit = itemMaxHeight(viewportWidth) / (tallestFitPage + spacing)
         return minOf(pageLimit, itemLimit) * ROUNDING_HEADROOM
     }
+
+    private fun itemMaxHeight(viewportWidth: Int): Int =
+        ConstraintsLimits.firstOrNull { (maxWidth, _) -> viewportWidth <= maxWidth }?.second ?: 0
 
     private companion object {
         const val BASE_BITMAP_PIXELS = 2_500_000f

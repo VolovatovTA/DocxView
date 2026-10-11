@@ -2,12 +2,14 @@ package io.github.volovatovta.docviewer.core.model
 
 import java.io.Closeable
 
-/** Rows of a table, held in memory ([TableDocument]) or streamed from disk on demand (CsvFile). */
+/** Rows of a table: a CSV file held in memory or read from disk on demand, or one sheet of a workbook. */
 public interface TableSource : Closeable {
     public val header: List<String>?
     public val rowCount: Int
     public val columnCount: Int
-    public val delimiter: Char
+
+    @Deprecated("Only CSV has a delimiter: read it from TableDocument or CsvFile.")
+    public val delimiter: Char get() = ','
 
     public fun row(index: Int): List<String>
 

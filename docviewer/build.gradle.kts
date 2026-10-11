@@ -67,9 +67,14 @@ dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.kotlin.test)
 
+    androidTestImplementation(libs.androidx.test.core)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.compose.ui.test.junit4)
     androidTestImplementation(libs.kotlin.test)
+    androidTestImplementation(libs.kotlinx.coroutines.test)
+    // Fails a test when an Activity, a composition or a document outlives it.
+    androidTestImplementation(libs.leakcanary.instrumentation)
+    androidTestImplementation(libs.androidx.activity.compose)
     androidTestRuntimeOnly(libs.androidx.test.runner)
     // Espresso before 3.7 injects input through an InputManager API removed in Android 16 QPR2.
     androidTestRuntimeOnly(libs.androidx.test.espresso.core)

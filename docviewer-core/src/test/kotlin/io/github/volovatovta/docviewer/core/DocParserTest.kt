@@ -54,6 +54,13 @@ class DocParserTest {
     }
 
     @Test
+    fun `Word 6 and 95 documents open as plain text`() {
+        val texts = DocParser.parse(resource("legacy/word6.doc")).blocks
+            .filterIsInstance<Paragraph>().map { it.plainText }.filter { it.isNotBlank() }
+        assertEquals(listOf("This is a test.", "This is a new section."), texts)
+    }
+
+    @Test
     fun `garbage is reported as corrupted`() {
         val file = temp.newFile("bad.doc").apply { writeBytes(ByteArray(2048) { 7 }) }
         assertFailsWith<CorruptedDocumentException> { DocParser.parse(file) }

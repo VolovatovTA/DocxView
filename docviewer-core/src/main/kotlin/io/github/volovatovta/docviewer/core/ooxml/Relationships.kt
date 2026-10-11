@@ -1,7 +1,6 @@
-package io.github.volovatovta.docviewer.core.docx
+package io.github.volovatovta.docviewer.core.ooxml
 
 import org.xml.sax.Attributes
-import org.xml.sax.helpers.DefaultHandler
 import java.io.InputStream
 
 internal class Relationship(val type: String, val target: String, val external: Boolean)
@@ -19,6 +18,10 @@ internal object RelationshipTypes {
 internal class Relationships(private val byId: Map<String, Relationship>) {
 
     fun internalTarget(id: String?): String? = id?.let(byId::get)?.takeUnless { it.external }?.target
+
+    /** The target of [id] only when the relationship has the given type: a worksheet, say, not a chart sheet. */
+    fun internalTarget(id: String?, typeSuffix: String): String? =
+        id?.let(byId::get)?.takeIf { !it.external && it.type.endsWith(typeSuffix) }?.target
 
     fun externalTarget(id: String?): String? = id?.let(byId::get)?.takeIf { it.external }?.target
 
@@ -52,11 +55,11 @@ internal class Relationships(private val byId: Map<String, Relationship>) {
     }
 }
 
-private class RelationshipsHandler(private val ownerDirectory: String) : DefaultHandler() {
+private class RelationshipsHandler(private val ownerDirectory: String) : ElementHandler() {
     val relationships = HashMap<String, Relationship>()
 
-    override fun startElement(uri: String?, localName: String?, qName: String?, attributes: Attributes) {
-        if (localName(localName, qName) != "Relationship") return
+    override fun start(name: String, attributes: Attributes) {
+        if (name != "Relationship") return
         val id = attributes["Id"] ?: return
         val target = attributes["Target"] ?: return
         val external = attributes["TargetMode"].equals("External", ignoreCase = true)

@@ -58,4 +58,11 @@ class PdfLayoutTest {
         val height = layout.baseBitmapWidth * receipt.height / receipt.width
         assertTrue(layout.baseBitmapWidth * height <= 2_500_001f)
     }
+
+    @Test
+    fun `a page as thin as a ribbon still fits Compose constraints at zoom 1`() {
+        val ribbon = PdfLayout(listOf(PdfPageSize(10f, 3_000f)), viewportWidth = 1080f, spacing = 26f)
+        Constraints.fixed(ribbon.pageWidth(1f), ribbon.pageHeight(0, 1f))
+        Constraints.fixed(1080, ribbon.itemHeight(0, 1f))
+    }
 }

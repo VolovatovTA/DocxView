@@ -17,21 +17,26 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.UriHandler
 import io.github.volovatovta.docviewer.core.PasswordProtectedException
+import io.github.volovatovta.docviewer.core.format.DocumentContent
 import io.github.volovatovta.docviewer.internal.DocumentSession
 import io.github.volovatovta.docviewer.internal.LoadedDocument
+import io.github.volovatovta.docviewer.internal.RetainedFiles
 import io.github.volovatovta.docviewer.internal.flow.FlowViewer
-import io.github.volovatovta.docviewer.internal.grid.GridViewer
+import io.github.volovatovta.docviewer.internal.grid.WorkbookViewer
+import io.github.volovatovta.docviewer.internal.isChangingConfigurations
 import io.github.volovatovta.docviewer.internal.pdf.PdfViewer
 import io.github.volovatovta.docviewer.internal.ui.ErrorView
 import io.github.volovatovta.docviewer.internal.ui.LoadingView
 import io.github.volovatovta.docviewer.internal.ui.PasswordView
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 /** Shows a PDF, DOCX, DOC, CSV/TSV or plain-text document; a remembered [state] drives search, navigation and zoom. */
 @Composable
@@ -61,7 +66,7 @@ public fun DocumentViewer(
             val status = state.status
             when (pane) {
                 Pane.Loading -> if (source != null) loading((status as? DocumentStatus.Loading)?.progress)
-                Pane.Document -> session?.document?.let { DocumentContent(it, state, config, colors, openLink) }
+                Pane.Document -> session?.document?.let { OpenedDocument(it, state, config, colors, openLink) }
                 Pane.Password -> {
                     val wrongPassword = (status as? DocumentStatus.PasswordRequired)?.wrongPassword == true
                     passwordPrompt(wrongPassword, state::submitPassword)
@@ -90,7 +95,7 @@ private object StatusTransition {
 }
 
 @Composable
-private fun DocumentContent(
+private fun OpenedDocument(
     document: LoadedDocument,
     state: DocumentViewerState,
     config: DocumentViewerConfig,
@@ -99,8 +104,10 @@ private fun DocumentContent(
 ) {
     when (document) {
         is LoadedDocument.Pdf -> PdfViewer(document.document, state, config, colors)
-        is LoadedDocument.Flow -> FlowViewer(document.document, document.lines, state, config, colors, onLink)
-        is LoadedDocument.Grid -> GridViewer(document.document, state, config, colors)
+        is LoadedDocument.Parsed -> when (val content = document.content) {
+            is DocumentContent.Flow -> FlowViewer(content.document, content.lines, state, config, colors, onLink)
+            is DocumentContent.Sheets -> WorkbookViewer(content.workbook, state, config, colors)
+        }
     }
 }
 
@@ -114,12 +121,22 @@ private fun rememberDocumentSession(
     val context = LocalContext.current.applicationContext
     val scope = rememberCoroutineScope()
     SideEffect { state.scope = scope }
-    val session = remember(source) { source?.let { DocumentSession(context, it) } }
+    val activityContext = LocalContext.current
+    // Rotation recreates the composition; the downloaded or copied file is handed over instead of fetched again.
+    val retainKey = rememberSaveable { UUID.randomUUID().toString() }
+    val session = remember(source) {
+        source?.let { DocumentSession(context, it, RetainedFiles.take(retainKey, it)) }
+    }
     val currentConfig by rememberUpdatedState(config)
     DisposableEffect(session) {
+        // Search is stopped before the files it reads are closed.
         onDispose {
-            session?.close()
             state.resetForNewDocument()
+            if (session != null && source != null && activityContext.isChangingConfigurations) {
+                session.detach()?.let { RetainedFiles.park(retainKey, source, it) }
+            } else {
+                session?.close()
+            }
         }
     }
     LaunchedEffect(session, state.reloadToken) {

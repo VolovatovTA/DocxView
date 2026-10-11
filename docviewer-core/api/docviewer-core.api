@@ -120,6 +120,50 @@ public final class io/github/volovatovta/docviewer/core/docx/DocxParser {
 	public final fun parse (Ljava/io/File;)Lio/github/volovatovta/docviewer/core/model/FlowDocument;
 }
 
+public abstract class io/github/volovatovta/docviewer/core/format/DocumentContent : java/io/Closeable {
+}
+
+public final class io/github/volovatovta/docviewer/core/format/DocumentContent$Flow : io/github/volovatovta/docviewer/core/format/DocumentContent {
+	public fun close ()V
+	public final fun getDocument ()Lio/github/volovatovta/docviewer/core/model/FlowDocument;
+	public final fun getLines ()Lio/github/volovatovta/docviewer/core/stream/TextFile;
+}
+
+public final class io/github/volovatovta/docviewer/core/format/DocumentContent$Sheets : io/github/volovatovta/docviewer/core/format/DocumentContent {
+	public fun close ()V
+	public final fun getWorkbook ()Lio/github/volovatovta/docviewer/core/model/Workbook;
+}
+
+public final class io/github/volovatovta/docviewer/core/format/DocumentReader {
+	public static final field INSTANCE Lio/github/volovatovta/docviewer/core/format/DocumentReader;
+	public final fun read (Ljava/io/File;Ljava/lang/String;Lio/github/volovatovta/docviewer/core/model/DocumentFormat;Lio/github/volovatovta/docviewer/core/format/ReadOptions;)Lio/github/volovatovta/docviewer/core/format/DocumentContent;
+	public static synthetic fun read$default (Lio/github/volovatovta/docviewer/core/format/DocumentReader;Ljava/io/File;Ljava/lang/String;Lio/github/volovatovta/docviewer/core/model/DocumentFormat;Lio/github/volovatovta/docviewer/core/format/ReadOptions;ILjava/lang/Object;)Lio/github/volovatovta/docviewer/core/format/DocumentContent;
+}
+
+public final class io/github/volovatovta/docviewer/core/format/ReadOptions {
+	public fun <init> ()V
+	public synthetic fun <init> (Lio/github/volovatovta/docviewer/core/CsvOptions;Ljava/lang/Long;Ljava/lang/Long;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCsv ()Lio/github/volovatovta/docviewer/core/CsvOptions;
+	public final fun getMaxDocumentSizeBytes ()Ljava/lang/Long;
+	public final fun getMemoryBudgetBytes ()Ljava/lang/Long;
+	public fun hashCode ()I
+	public final fun newBuilder ()Lio/github/volovatovta/docviewer/core/format/ReadOptions$Builder;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/volovatovta/docviewer/core/format/ReadOptions$Builder {
+	public fun <init> ()V
+	public final fun build ()Lio/github/volovatovta/docviewer/core/format/ReadOptions;
+	public final fun csv (Lio/github/volovatovta/docviewer/core/CsvOptions;)Lio/github/volovatovta/docviewer/core/format/ReadOptions$Builder;
+	public final fun maxDocumentSizeBytes (Ljava/lang/Long;)Lio/github/volovatovta/docviewer/core/format/ReadOptions$Builder;
+	public final fun memoryBudgetBytes (Ljava/lang/Long;)Lio/github/volovatovta/docviewer/core/format/ReadOptions$Builder;
+}
+
+public final class io/github/volovatovta/docviewer/core/format/ReadOptionsKt {
+	public static final fun ReadOptions (Lkotlin/jvm/functions/Function1;)Lio/github/volovatovta/docviewer/core/format/ReadOptions;
+}
+
 public abstract interface class io/github/volovatovta/docviewer/core/model/Block {
 }
 
@@ -150,9 +194,12 @@ public final class io/github/volovatovta/docviewer/core/model/DocumentFormat : j
 	public static final field DOCX Lio/github/volovatovta/docviewer/core/model/DocumentFormat;
 	public static final field PDF Lio/github/volovatovta/docviewer/core/model/DocumentFormat;
 	public static final field TXT Lio/github/volovatovta/docviewer/core/model/DocumentFormat;
+	public static final field XLS Lio/github/volovatovta/docviewer/core/model/DocumentFormat;
+	public static final field XLSX Lio/github/volovatovta/docviewer/core/model/DocumentFormat;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public final fun getExtensions ()Ljava/util/Set;
 	public final fun getMimeTypes ()Ljava/util/Set;
+	public final fun isSpreadsheet ()Z
 	public static fun valueOf (Ljava/lang/String;)Lio/github/volovatovta/docviewer/core/model/DocumentFormat;
 	public static fun values ()[Lio/github/volovatovta/docviewer/core/model/DocumentFormat;
 }
@@ -313,6 +360,11 @@ public final class io/github/volovatovta/docviewer/core/model/RunStyle$Companion
 	public final fun getDefault ()Lio/github/volovatovta/docviewer/core/model/RunStyle;
 }
 
+public final class io/github/volovatovta/docviewer/core/model/Sheet {
+	public final fun getName ()Ljava/lang/String;
+	public final fun getTable ()Lio/github/volovatovta/docviewer/core/model/TableSource;
+}
+
 public final class io/github/volovatovta/docviewer/core/model/Table : io/github/volovatovta/docviewer/core/model/Block {
 	public fun <init> (Ljava/util/List;Ljava/util/List;)V
 	public synthetic fun <init> (Ljava/util/List;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -357,7 +409,7 @@ public abstract interface class io/github/volovatovta/docviewer/core/model/Table
 	public fun close ()V
 	public fun forEachRow (Lkotlin/jvm/functions/Function2;)V
 	public abstract fun getColumnCount ()I
-	public abstract fun getDelimiter ()C
+	public fun getDelimiter ()C
 	public abstract fun getHeader ()Ljava/util/List;
 	public abstract fun getRowCount ()I
 	public abstract fun row (I)Ljava/util/List;
@@ -366,6 +418,7 @@ public abstract interface class io/github/volovatovta/docviewer/core/model/Table
 public final class io/github/volovatovta/docviewer/core/model/TableSource$DefaultImpls {
 	public static fun close (Lio/github/volovatovta/docviewer/core/model/TableSource;)V
 	public static fun forEachRow (Lio/github/volovatovta/docviewer/core/model/TableSource;Lkotlin/jvm/functions/Function2;)V
+	public static fun getDelimiter (Lio/github/volovatovta/docviewer/core/model/TableSource;)C
 }
 
 public final class io/github/volovatovta/docviewer/core/model/TextAlignment : java/lang/Enum {
@@ -394,6 +447,11 @@ public final class io/github/volovatovta/docviewer/core/model/VerticalAlign : ja
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/github/volovatovta/docviewer/core/model/VerticalAlign;
 	public static fun values ()[Lio/github/volovatovta/docviewer/core/model/VerticalAlign;
+}
+
+public final class io/github/volovatovta/docviewer/core/model/Workbook : java/io/Closeable {
+	public fun close ()V
+	public final fun getSheets ()Ljava/util/List;
 }
 
 public final class io/github/volovatovta/docviewer/core/stream/CsvFile : io/github/volovatovta/docviewer/core/model/TableSource {

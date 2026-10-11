@@ -67,6 +67,23 @@ jobs:
           name: sample-debug-apk
           path: sample/build/outputs/apk/debug/*.apk
 
+  complexity:
+    name: Code complexity
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - run: pipx install lizard==1.24.1
+      # Lists the most complex functions in the job summary and fails if one exceeds the limit.
+      - run: tools/complexity.sh
+      - name: Upload the report
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: complexity
+          path: build/reports/complexity/
+
   instrumented:
     name: PDF stress tests on API ${{ matrix.api-level }}
     # Oldest and newest PdfRenderer generations: search and passwords exist only on Android 15+.

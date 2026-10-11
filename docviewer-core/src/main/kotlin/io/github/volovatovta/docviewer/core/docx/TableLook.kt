@@ -1,5 +1,6 @@
 package io.github.volovatovta.docviewer.core.docx
 
+import io.github.volovatovta.docviewer.core.ooxml.get
 import org.xml.sax.Attributes
 
 // w:tblLook: which parts of the table style a table uses; bands are counted after the header row and column.

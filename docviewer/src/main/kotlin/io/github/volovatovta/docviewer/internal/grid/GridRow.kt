@@ -8,6 +8,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
@@ -54,9 +57,12 @@ internal fun GridRow(
     highlights: RowHighlights = RowHighlights.None,
     onCellClick: ((Int) -> Unit)? = null,
 ) {
+    val columns by remember(grid, scroll) {
+        derivedStateOf { grid.columnsNear(scroll.offset, scroll.viewportWidth) }
+    }
     Layout(
         content = {
-            for (column in 0 until grid.columnCount) {
+            for (column in columns) {
                 val value = cells.getOrNull(column).orEmpty()
                 // Empty cells have nothing more to show, so they are not clickable.
                 val onClick = if (onCellClick != null && value.isNotEmpty()) ({ onCellClick(column) }) else null
@@ -73,9 +79,9 @@ internal fun GridRow(
         modifier = modifier
             .fillMaxWidth()
             .background(appearance.background)
-            .drawBehind { drawGridLines(grid, scroll.offset, colors.tableBorder) },
+            .drawBehind { drawGridLines(grid, columns, scroll.offset, colors.tableBorder) },
     ) { measurables, constraints ->
-        measureGridRow(measurables, constraints, grid) { scroll.offset }
+        measureGridRow(measurables, constraints, grid, columns) { scroll.offset }
     }
 }
 
@@ -139,29 +145,32 @@ private fun MeasureScope.measureGridRow(
     measurables: List<Measurable>,
     constraints: Constraints,
     grid: GridLayout,
+    columns: IntRange,
     offset: () -> Float,
 ): MeasureResult {
-    val cells = (0 until grid.columnCount).map { column ->
-        measurables[column].measure(Constraints.fixedWidth(grid.widths[column].roundToInt()))
+    val cells = columns.mapIndexed { index, column ->
+        measurables[index].measure(Constraints.fixedWidth(grid.widths[column].roundToInt()))
     }
-    val rowNumber = measurables.getOrNull(grid.columnCount)
+    val rowNumber = measurables.getOrNull(cells.size)
         ?.measure(Constraints.fixedWidth(grid.rowNumberWidth.roundToInt()))
     val height = cells.maxOfOrNull { it.height } ?: 0
     return layout(constraints.maxWidth, height) {
         val shift = offset().roundToInt()
         val start = grid.rowNumberWidth.roundToInt()
-        cells.forEachIndexed { column, cell -> cell.place(start + grid.columnX[column].roundToInt() - shift, 0) }
+        cells.forEachIndexed { index, cell ->
+            cell.place(start + grid.columnX[columns.first + index].roundToInt() - shift, 0)
+        }
         // Row numbers stay pinned and are placed last so they cover cells scrolled underneath.
         rowNumber?.place(0, 0, zIndex = 1f)
     }
 }
 
-private fun DrawScope.drawGridLines(grid: GridLayout, offset: Float, border: Color) {
+private fun DrawScope.drawGridLines(grid: GridLayout, columns: IntRange, offset: Float, border: Color) {
     val stroke = GridMetrics.BorderWidth.toPx()
     val bottom = size.height - stroke / 2
     drawLine(border, Offset(0f, bottom), Offset(size.width, bottom), stroke)
     val columnBorder = border.copy(alpha = GridMetrics.COLUMN_BORDER_ALPHA)
-    for (column in 1..grid.columnCount) {
+    for (column in columns.first + 1..columns.last + 1) {
         val x = grid.rowNumberWidth + grid.columnX[column] - offset
         if (x > grid.rowNumberWidth && x < size.width) {
             drawLine(columnBorder, Offset(x, 0f), Offset(x, size.height), stroke)

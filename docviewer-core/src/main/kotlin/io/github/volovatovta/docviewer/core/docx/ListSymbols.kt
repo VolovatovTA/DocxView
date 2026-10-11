@@ -10,6 +10,7 @@ internal object ListSymbols {
     private const val ALPHABET_SIZE = 26
     private const val RUSSIAN_ALPHABET = "АБВГДЕЖЗИКЛМНОПРСТУФХЦЧШЩЭЮЯ"
     private const val MAX_ROMAN = 3999
+    private const val MAX_LETTER_COUNTER = 1_000
     private const val ZERO_PADDED_WIDTH = 2
 
     private val bulletSubstitutes = mapOf(
@@ -65,12 +66,18 @@ internal object ListSymbols {
         else -> n.toString()
     }
 
-    // Word continues letter lists as aa, bb, … after the alphabet runs out.
+    // Word continues letter lists as aa, bb, … after the alphabet runs out; a counter far beyond any real list
+    // (a damaged or hostile start value) falls back to digits instead of a megabyte of letters.
     private fun letters(n: Int, first: Char, alphabetSize: Int): String =
-        (first + (n - 1) % alphabetSize).toString().repeat((n - 1) / alphabetSize + 1)
+        repeatedLetter(n, alphabetSize) { index -> first + index }
 
     private fun russian(n: Int): String =
-        RUSSIAN_ALPHABET[(n - 1) % RUSSIAN_ALPHABET.length].toString().repeat((n - 1) / RUSSIAN_ALPHABET.length + 1)
+        repeatedLetter(n, RUSSIAN_ALPHABET.length) { index -> RUSSIAN_ALPHABET[index] }
+
+    private fun repeatedLetter(n: Int, alphabetSize: Int, letter: (Int) -> Char): String {
+        if (n !in 1..MAX_LETTER_COUNTER) return n.toString()
+        return letter((n - 1) % alphabetSize).toString().repeat((n - 1) / alphabetSize + 1)
+    }
 
     private fun roman(number: Int): String {
         if (number !in 1..MAX_ROMAN) return number.toString()

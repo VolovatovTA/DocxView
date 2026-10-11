@@ -1,5 +1,6 @@
 package io.github.volovatovta.docviewer.core.model
 
+/** A format the library opens; minor releases may add more, so a `when` over it should keep an `else` branch. */
 public enum class DocumentFormat(public val extensions: Set<String>, public val mimeTypes: Set<String>) {
     PDF(
         extensions = setOf("pdf"),
@@ -25,7 +26,22 @@ public enum class DocumentFormat(public val extensions: Set<String>, public val 
         extensions = setOf("txt", "text", "log", "md", "json", "xml"),
         mimeTypes = setOf("text/plain", "text/markdown", "application/json"),
     ),
+    XLSX(
+        extensions = setOf("xlsx", "xlsm", "xltx", "xltm"),
+        mimeTypes = setOf(
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.template",
+            "application/vnd.ms-excel.sheet.macroenabled.12",
+        ),
+    ),
+    XLS(
+        extensions = setOf("xls", "xlt"),
+        mimeTypes = setOf("application/vnd.ms-excel", "application/msexcel", "application/x-msexcel"),
+    ),
     ;
+
+    /** Spreadsheets and CSV open as sheets of cells. */
+    public val isSpreadsheet: Boolean get() = this == XLSX || this == XLS || this == CSV
 
     public companion object {
         public fun fromExtension(extension: String?): DocumentFormat? {
